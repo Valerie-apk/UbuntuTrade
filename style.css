@@ -30,4 +30,34 @@
     align-self: center;
     justify-content: center;
     text-align: center;
+    height: 10px;
+    border-radius: 12px;
+    width: 50%;
+    margin-right: 10px;
+    font-size: 10px;
+    align-items: center;
+    border-radius: 4px;
+    background-color: aqua;
+    padding: 2px;
+}
+.my-img {
+    position: relative;
+    filter: blur(0.5px);
+    width: 100%;
+}
+
+.landing-title{
+    position: absolute;
+    color:rgb(255, 255, 255)
+    top: 100px;
+    left: 40px;
+    font-size: medium;
+    font-weight: bolder;
+}
+.landing-title{
+    font-size: 30px;
+    font-weight: 60px;
+}
+.subtitle{
+    margin-left: 80px;
 }
