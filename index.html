@@ -1,58 +1,106 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UbuntuTrade</title>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar">
-    <div class="left">
-        <div class="logo"><img src="/" alt="">Ubuntu <span class="color-logo">Trade</span></div>
-    </div>
-    <div class="right">
+    <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
+
+    <div class="nav-buttons">
         <button class="btn-login">Login</button>
         <button class="btn-register">Register</button>
     </div>
-
-
-
 </nav>
 
-<section class="landing-page"></section>
-<img src="/" alt="MarketPlace Image" class="my-img">
+<!-- HERO SECTION -->
+<section class="landing-page">
+    <img src="my-img.jpeg" alt="Marketplace" class="my-img">
 
-<div class="inside-img">
-<h2 class="landing-title">Buy, Sell in your Community</h2>
-<p class="subtitle">Affordable, Local & Trusted MarketPlace</p>
+    <div class="inside-img">
+        <h2 class="landing-title">Buy & Sell in Your Community</h2>
+        <p class="subtitle">Affordable, Local & Trusted Marketplace</p>
 
-<section class="input-section">
-    <input type="text" placeholder="Search Here" >
-    <button>Search</button>
-</section>
-</div>
-
-</section>
-
-<section class="featured-products"><div class="product">
-    <div class="top">
-        <img src="/" alt="" class="product-img">
+        <div class="input-section">
+            <input type="text" placeholder="Search for products...">
+            <button>Search</button>
+        </div>
     </div>
-    <div class="bottom"></div>
+    
+</section>
 
-</div></section>
+<!-- CATEGORIES -->
+<section class="categories">
+    <button>Clothing</button>
+    <button>Electronics</button>
+    <button>Home</button>
+    <button>More</button>
+</section>
 
-<section class="footer"></section>
+<!-- FEATURED PRODUCTS -->
+<section class="featured-products">
 
+    <h2>Featured Products</h2>
 
+    <div class="product-grid">
 
+        <div class="product">
+            <img src="phone.png" class="product-img">
+            <h3>Smartphone</h3>
+            <p class="price">R1500</p>
+            <button>View Product</button>
+        </div>
 
+        <div class="product">
+            <img src="trad-Dress.png" class="product-img">
+            <h3>Traditional Dress</h3>
+            <p class="price">R300</p>
+            <button>View Product</button>
+        </div>
+
+        <div class="product">
+            <img src="pots.png" class="product-img">
+            <h3>Cooking Pot</h3>
+            <p class="price">R750</p>
+            <button>View Product</button>
+        </div>
+
+        <div class="product">
+            <img src="sneaker.png" class="product-img">
+            <h3>Sneakers</h3>
+            <p class="price">R400</p>
+            <button>View Product</button>
+        </div>
+
+    </div>
+</section>
+
+<!-- FOOTER -->
+<section class="pre-footer">
+    <img src="footer.png" alt="Market">
+</section>
+
+<footer class="footer">
+    <div>
+        <h3>About UbuntuTrade</h3>
+        <p>Connecting local buyers & sellers</p>
+    </div>
+
+    <div>
+        <h3>Contact</h3>
+        <p>info@Ubuntutrade.co.za</p>
+    </div>
+</footer>
 
 </body>
 </html>
