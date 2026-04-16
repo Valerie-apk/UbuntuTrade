@@ -1,0 +1,33 @@
+*{
+    margin:0;
+    padding:0;
+
+}
+ nav{
+    background-color: black;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 20px;
+    padding: 10px;
+ }
+
+.logo{
+    font-size: 10px;
+    color: white;
+
+
+}
+
+.left-side{
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 10px;
+    width: 100px;
+}
+.btn-nav{
+    align-self: center;
+    justify-content: center;
+    text-align: center;
+}
