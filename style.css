@@ -77,16 +77,19 @@
     align-items: center;
     justify-content: center;
     padding: 40px 20px;
-    background: linear-gradient(180deg, #f7f8fb 0%, #e8edf3 100%);
+    background: linear-gradient(180deg, rgba(247, 248, 251, 0.8) 0%, rgba(232, 237, 243, 0.8) 100%), url('background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .login-card,
 .signup-card {
     width: 100%;
-    max-width: 420px;
+    max-width: 600px;
     background: white;
     border-radius: 28px;
-    padding: 40px 32px;
+    padding: 40px 62px;
     box-shadow: 0 20px 60px rgba(20, 20, 50, 0.12);
 }
 
@@ -183,15 +186,75 @@
 .categories {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin: 20px;
+    margin: 24px 16px 40px;
 }
 
-.categories button {
-    padding: 10px 20px;
+.categories-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 12px;
+    background: transparent;
+    border-radius: 28px;
+    box-shadow: none;
+    max-width: 820px;
+    width: 100%;
+}
+
+.category-button {
+    min-width: 135px;
+    padding: 12px 22px;
     border: none;
-    background: #444;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
     color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.category-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 22px rgba(0, 0, 0, 0.16);
+    filter: brightness(1.05);
+}
+
+.category-button.clothing {
+    background: #d23d12;
+}
+
+.category-button.electronics {
+    background: #2c7a3f;
+}
+
+.category-button.home {
+    background: #f07d17;
+}
+
+.category-button.more {
+    background: #774416;
+}
+
+@media (max-width: 768px) {
+    .categories {
+        margin: 20px 0 30px;
+    }
+
+    .categories-inner {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+        max-width: 100%;
+    }
+
+    .category-button {
+        width: 100%;
+        min-width: unset;
+        max-width: 100%;
+    }
 }
 
 /* PRODUCTS */
@@ -203,7 +266,7 @@
 .product-grid {
     display: flex;
     justify-content: space-around;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;  
 }
 
 .product {
@@ -240,7 +303,12 @@
     padding: 20px;
 }
 
+
+
+
+
 .pre-footer {
     width: 100%;
 
 }
+
