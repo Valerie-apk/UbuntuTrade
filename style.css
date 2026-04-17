@@ -35,6 +35,29 @@
     color: white;
 }
 
+.nav-buttons a,
+.nav-buttons button {
+    margin-left: 10px;
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-buttons a.btn-login {
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+}
+
+.nav-buttons button.btn-register {
+    background: orange;
+    color: white;
+}
+
 /* HERO SECTION */
 .landing-page {
     position: relative;
@@ -45,6 +68,85 @@
     height: 400px;
     object-fit: cover;
     filter: brightness(60%);
+}
+
+.login-page,
+.signup-page {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: linear-gradient(180deg, #f7f8fb 0%, #e8edf3 100%);
+}
+
+.login-card,
+.signup-card {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border-radius: 28px;
+    padding: 40px 32px;
+    box-shadow: 0 20px 60px rgba(20, 20, 50, 0.12);
+}
+
+.login-card h1,
+.signup-card h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.login-card p,
+.signup-card p {
+    color: #55606e;
+    line-height: 1.6;
+}
+
+.login-card form,
+.signup-card form {
+    display: grid;
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.login-card label,
+.signup-card label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #2d3a50;
+}
+
+.login-card input,
+.signup-card input {
+    width: 100%;
+    border: 1px solid #d8dde6;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 1rem;
+    color: #1e2a3b;
+}
+
+.btn-primary {
+    width: 100%;
+    border: none;
+    background: #ff8a00;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.form-footer {
+    margin-top: 18px;
+    text-align: center;
+    color: #637186;
+}
+
+.form-footer a {
+    color: orange;
+    text-decoration: none;
+    font-weight: 700;
 }
 
 .inside-img {
@@ -101,7 +203,7 @@
 .product-grid {
     display: flex;
     justify-content: space-around;
-    flex-wrap: wrap;
+    flex-wrap: wrap; 
 }
 
 .product {
@@ -120,11 +222,13 @@
     font-weight: bold;
 }
 
-.product btn {
+.product button {
     background: orange;
     color: white;
     border: none;
     padding: 8px;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 /* FOOTER */
