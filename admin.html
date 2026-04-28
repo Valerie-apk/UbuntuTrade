@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - UbuntuTrade</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-page">
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
+
+        <div class="nav-buttons">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div>
+            <div class="admin-profile">
+                <i class="fas fa-bell"></i>
+                <div class="profile-avatar">A</div>
+                <span>Admin</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Wrapper -->
+    <div class="admin-wrapper">
+        <!-- SIDEBAR -->
+        <div class="admin-sidebar">
+            <div class="sidebar-title-container">
+                <div class="sidebar-title">ADMIN PANEL</div>
+                <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+                    <i class="fas fa-angle-left"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="#" class="active">
+                    <i class="fas fa-home"></i> <span>Dashboard</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-users"></i> <span>Users</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-box"></i> <span>Products</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-shopping-cart"></i> <span>Orders</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-envelope"></i> <span>Messages</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-th"></i> <span>Categories</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-chart-bar"></i> <span>Reports</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-cog"></i> <span>Settings</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-lock"></i> <span>Roles & Permissions</span>
+                </a>
+            </div>
+
+            <a href="#" class="logout-link">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="admin-content">
+            <!-- STATS CARDS -->
+            <div class="admin-stats">
+                <div class="stat-box">
+                    <div class="stat-icon total-users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-value">1,256</div>
+                        <div class="stat-growth">
+                            <i class="fas fa-arrow-up"></i> 12% from last month
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon total-products">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total Products</div>
+                        <div class="stat-value">2,347</div>
+                        <div class="stat-growth">
+                            <i class="fas fa-arrow-up"></i> 8% from last month
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon total-orders">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value">3,892</div>
+                        <div class="stat-growth">
+                            <i class="fas fa-arrow-up"></i> 15% from last month
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon total-sales">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total Sales</div>
+                        <div class="stat-value">R 245,680</div>
+                        <div class="stat-growth">
+                            <i class="fas fa-arrow-up"></i> 18% from last month
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN GRID -->
+            <div class="admin-grid">
+                <!-- RECENT USERS -->
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>Recent Users</h3>
+                        <a href="#" class="view-all">View All Users</a>
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="avatar">Z</div>
+                                        <span>Zola Mkhize</span>
+                                    </div>
+                                </td>
+                                <td>zola@example.com</td>
+                                <td><span class="role-badge seller">Seller</span></td>
+                                <td>2024-04-20</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-trash"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="avatar">T</div>
+                                        <span>Thabo Mthembu</span>
+                                    </div>
+                                </td>
+                                <td>thabo@example.com</td>
+                                <td><span class="role-badge buyer">Buyer</span></td>
+                                <td>2024-04-18</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-trash"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="avatar">N</div>
+                                        <span>Nomvula Dube</span>
+                                    </div>
+                                </td>
+                                <td>nomvula@example.com</td>
+                                <td><span class="role-badge seller">Seller</span></td>
+                                <td>2024-04-15</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-trash"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="avatar">S</div>
+                                        <span>Sipho Khumalo</span>
+                                    </div>
+                                </td>
+                                <td>sipho@example.com</td>
+                                <td><span class="role-badge buyer">Buyer</span></td>
+                                <td>2024-04-10</td>
+                                <td><span class="status-badge inactive">Inactive</span></td>
+                                <td>
+                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-trash"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="avatar">L</div>
+                                        <span>Lerato Ndiovu</span>
+                                    </div>
+                                </td>
+                                <td>lerato@example.com</td>
+                                <td><span class="role-badge seller">Seller</span></td>
+                                <td>2024-04-08</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-trash"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SALES & CATEGORIES -->
+                <div class="admin-sidebar-content">
+                    <!-- SALES OVERVIEW -->
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3>Sales Overview</h3>
+                            <select class="time-filter">
+                                <option>This Month</option>
+                                <option>Last Month</option>
+                                <option>This Year</option>
+                            </select>
+                        </div>
+                        <div class="chart-placeholder">
+                            <div class="chart-bar" style="height: 30%;">50K</div>
+                            <div class="chart-bar" style="height: 50%;">50K</div>
+                            <div class="chart-bar" style="height: 40%;">50K</div>
+                            <div class="chart-bar" style="height: 35%;">30K</div>
+                            <div class="chart-bar" style="height: 45%;">40K</div>
+                            <div class="chart-bar" style="height: 50%;">50K</div>
+                        </div>
+                        <div class="chart-labels">
+                            <span>May 1</span>
+                            <span>May 8</span>
+                            <span>May 15</span>
+                            <span>May 22</span>
+                            <span>May 29</span>
+                        </div>
+                    </div>
+
+                    <!-- TOP CATEGORIES -->
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3>Top Categories</h3>
+                        </div>
+                        <div class="categories-list">
+                            <div class="category-item">
+                                <div class="category-name">Electronics</div>
+                                <div class="category-bar-container">
+                                    <div class="category-bar" style="width: 35%;"></div>
+                                </div>
+                                <div class="category-percent">35%</div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-name">Clothing</div>
+                                <div class="category-bar-container">
+                                    <div class="category-bar" style="width: 28%;"></div>
+                                </div>
+                                <div class="category-percent">28%</div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-name">Home & Living</div>
+                                <div class="category-bar-container">
+                                    <div class="category-bar" style="width: 20%;"></div>
+                                </div>
+                                <div class="category-percent">20%</div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-name">Sports</div>
+                                <div class="category-bar-container">
+                                    <div class="category-bar" style="width: 10%;"></div>
+                                </div>
+                                <div class="category-percent">10%</div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-name">Others</div>
+                                <div class="category-bar-container">
+                                    <div class="category-bar" style="width: 7%;"></div>
+                                </div>
+                                <div class="category-percent">7%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT PRODUCTS & ORDERS -->
+            <div class="admin-grid-bottom">
+                <!-- RECENT PRODUCTS -->
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>Recent Products</h3>
+                    </div>
+                    <div class="products-list">
+                        <div class="product-item">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23ff6b35' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='30' fill='white' text-anchor='middle' dy='.3em'%3E📱%3C/text%3E%3C/svg%3E" alt="Smartphone">
+                            <div class="product-details">
+                                <div class="product-name">Smartphone Samsung A14</div>
+                                <div class="product-category">Electronics</div>
+                            </div>
+                            <div class="product-price">R2,500</div>
+                            <span class="status-badge active">Active</span>
+                        </div>
+                        <div class="product-item">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23f76c5e' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='30' fill='white' text-anchor='middle' dy='.3em'%3E👗%3C/text%3E%3C/svg%3E" alt="Dress">
+                            <div class="product-details">
+                                <div class="product-name">Traditional Zulu Dress</div>
+                                <div class="product-category">Clothing</div>
+                            </div>
+                            <div class="product-price">R350</div>
+                            <span class="status-badge active">Active</span>
+                        </div>
+                        <div class="product-item">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23ffa500' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='30' fill='white' text-anchor='middle' dy='.3em'%3E🍳%3C/text%3E%3C/svg%3E" alt="Pot">
+                            <div class="product-details">
+                                <div class="product-name">Cooking Pot Set</div>
+                                <div class="product-category">Home & Living</div>
+                            </div>
+                            <div class="product-price">R650</div>
+                            <span class="status-badge active">Active</span>
+                        </div>
+                        <div class="product-item">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23c1c1c1' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='30' fill='white' text-anchor='middle' dy='.3em'%3E👟%3C/text%3E%3C/svg%3E" alt="Sneakers">
+                            <div class="product-details">
+                                <div class="product-name">Nike Air Max Sneakers</div>
+                                <div class="product-category">Sports</div>
+                            </div>
+                            <div class="product-price">R1,200</div>
+                            <span class="status-badge active">Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RECENT ORDERS -->
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>Recent Orders</h3>
+                        <a href="#" class="view-all">View All Orders</a>
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#1001</td>
+                                <td>Zola Mkhize</td>
+                                <td>Smartphone Samsung A14</td>
+                                <td>R2,500</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>2024-05-29</td>
+                            </tr>
+                            <tr>
+                                <td>#1002</td>
+                                <td>Thabo Mthembu</td>
+                                <td>Traditional Zulu Dress</td>
+                                <td>R350</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2024-05-28</td>
+                            </tr>
+                            <tr>
+                                <td>#1003</td>
+                                <td>Nomvula Dube</td>
+                                <td>Cooking Pot Set</td>
+                                <td>R650</td>
+                                <td><span class="status-badge shipped">Shipped</span></td>
+                                <td>2024-05-27</td>
+                            </tr>
+                            <tr>
+                                <td>#1004</td>
+                                <td>Sipho Khumalo</td>
+                                <td>Nike Air Max Sneakers</td>
+                                <td>R1,200</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>2024-05-26</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar Toggle Functionality
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const adminSidebar = document.querySelector('.admin-sidebar');
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                adminSidebar.classList.toggle('collapsed');
+                
+                // Rotate the icon
+                const icon = sidebarToggle.querySelector('i');
+                if (adminSidebar.classList.contains('collapsed')) {
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    icon.style.transform = 'rotate(0deg)';
+                }
+                
+                // Save preference to localStorage
+                const isCollapsed = adminSidebar.classList.contains('collapsed');
+                localStorage.setItem('sidebarCollapsed', isCollapsed);
+            });
+
+            // Load sidebar preference on page load
+            window.addEventListener('DOMContentLoaded', function() {
+                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (isCollapsed) {
+                    adminSidebar.classList.add('collapsed');
+                    const icon = sidebarToggle.querySelector('i');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
