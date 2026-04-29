@@ -4,59 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - UbuntuTrade</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="dashboard-page">
     <!-- TOP NAVBAR - Full Width -->
-    <div class="dashboard-navbar">
-        <div class="navbar-logo">
-            Ubuntu <span class="color-logo">Trade</span>
+    <nav class="navbar">
+        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
+
+        <div class="nav-buttons">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div>
+            <div class="admin-profile">
+                <i class="fas fa-bell"></i>
+                <div class="profile-avatar" id="userInitial">U</div>
+                <span id="username">User</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
         </div>
-        <div class="navbar-user">
-            <span>Welcome, <span id="username">User</span></span>
-            <button class="logout-btn">Logout</button>
-        </div>
-    </div>
+    </nav>
 
     <!-- Dashboard Wrapper -->
     <div class="dashboard-wrapper">
         <!-- SIDEBAR -->
-        <div class="sidebar">
-            <div class="sidebar-toggle-container">
-                <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
-                    <i class="fas fa-angle-left"></i>
-                </button>
-            </div>
-
-            <button class="add-product-btn">
-                <i class="fas fa-plus"></i> <span>Add Product</span>
-            </button>
-            
-            <div class="sidebar-menu">
-                <a href="#" class="active">
-                    <i class="fas fa-home"></i> <span>Dashboard</span>
-                </a>
-                <a href="#">
-                    <i class="fas fa-box"></i> <span>My Products</span>
-                </a>
-                <a href="#">
-                    <i class="fas fa-envelope"></i> <span>Messages</span>
-                </a>
-                <a href="#">
-                    <i class="fas fa-shopping-cart"></i> <span>Orders</span>
-                </a>
-                <a href="#">
-                    <i class="fas fa-cog"></i> <span>Settings</span>
-                </a>
-            </div>
-
-            <div class="sidebar-footer">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
+        <div id="sidebarContainer"></div>
 
         <!-- MAIN CONTENT -->
         <div class="main-content">
@@ -186,36 +159,45 @@
     </div>
 
     <script>
+        // Load Sidebar Component
+        fetch('sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebarContainer').innerHTML = html;
+                initializeSidebarFunctionality();
+            })
+            .catch(error => console.error('Error loading sidebar:', error));
+
         // Sidebar Toggle Functionality
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.querySelector('.sidebar');
+        function initializeSidebarFunctionality() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
 
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                
-                // Rotate the icon
-                const icon = sidebarToggle.querySelector('i');
-                if (sidebar.classList.contains('collapsed')) {
-                    icon.style.transform = 'rotate(180deg)';
-                } else {
-                    icon.style.transform = 'rotate(0deg)';
-                }
-                
-                // Save preference to localStorage
-                const isCollapsed = sidebar.classList.contains('collapsed');
-                localStorage.setItem('sidebarCollapsed', isCollapsed);
-            });
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    // Rotate the icon
+                    const icon = sidebarToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                    
+                    // Save preference to localStorage
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    localStorage.setItem('sidebarCollapsed', isCollapsed);
+                });
 
-            // Load sidebar preference on page load
-            window.addEventListener('DOMContentLoaded', function() {
+                // Load sidebar preference on page load
                 const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
                 if (isCollapsed) {
                     sidebar.classList.add('collapsed');
                     const icon = sidebarToggle.querySelector('i');
                     icon.style.transform = 'rotate(180deg)';
                 }
-            });
+            }
         }
     </script>
 </body>

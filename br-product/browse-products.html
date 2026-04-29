@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Products - UbuntuTrade</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="browse-products.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <!-- TOP NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
+
+        <div class="nav-buttons">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div>
+            <div class="admin-profile">
+                <i class="fas fa-bell"></i>
+                <div class="profile-avatar" id="userInitial">U</div>
+                <span id="username">User</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Wrapper -->
+    <div class="dashboard-wrapper">
+        <!-- SIDEBAR -->
+        <div id="sidebarContainer"></div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- CONTENT -->
+            <div class="dashboard-content browse-products-page">
+                <!-- PAGE HEADER -->
+                <div class="browse-header">
+                    <div class="browse-title-section">
+                        <h1>All Products</h1>
+                        <p class="results-info">Showing 1 - 12 of 120 results</p>
+                    </div>
+                    <div class="sort-filter-section">
+                        <div class="sort-section">
+                            <label for="sort">Sort by:</label>
+                            <select id="sort" class="sort-dropdown">
+                                <option value="newest">Newest First</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="popular">Most Popular</option>
+                            </select>
+                        </div>
+                        <button class="filter-btn" id="filterBtn">
+                            <span>Filter</span>
+                            <i class="fas fa-sliders-h"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FILTER MODAL -->
+                <div class="filter-modal" id="filterModal">
+                    <div class="filter-modal-content">
+                        <div class="filter-header">
+                            <h2>Filter Products</h2>
+                            <button class="filter-close-btn" id="closeFilterBtn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="filter-body">
+                            <!-- CATEGORY FILTER -->
+                            <div class="filter-group">
+                                <h3>Category</h3>
+                                <div class="filter-options">
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="electronics">
+                                        <span>Electronics</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="clothing">
+                                        <span>Clothing & Fashion</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="home">
+                                        <span>Home & Living</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="accessories">
+                                        <span>Accessories</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="sports">
+                                        <span>Sports & Outdoors</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="jewelry">
+                                        <span>Jewelry</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- PRICE FILTER -->
+                            <div class="filter-group">
+                                <h3>Price Range</h3>
+                                <div class="price-inputs">
+                                    <input type="number" id="priceMin" class="price-input" placeholder="Min" min="0">
+                                    <span class="price-separator">-</span>
+                                    <input type="number" id="priceMax" class="price-input" placeholder="Max" min="0">
+                                </div>
+                                <div class="price-range-slider">
+                                    <input type="range" id="priceMinSlider" class="range-input" min="0" max="10000" value="0">
+                                    <input type="range" id="priceMaxSlider" class="range-input" min="0" max="10000" value="10000">
+                                    <div class="range-track"></div>
+                                    <div class="range-fill"></div>
+                                </div>
+                                <div class="price-display">
+                                    R<span id="minDisplay">0</span> - R<span id="maxDisplay">10000</span>
+                                </div>
+                            </div>
+
+                            <!-- LOCATION FILTER -->
+                            <div class="filter-group">
+                                <h3>Location</h3>
+                                <div class="filter-options">
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="location" value="johannesburg">
+                                        <span>Johannesburg</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="location" value="cape-town">
+                                        <span>Cape Town</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="location" value="durban">
+                                        <span>Durban</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="location" value="pretoria">
+                                        <span>Pretoria</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="location" value="bloemfontein">
+                                        <span>Bloemfontein</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="location" value="port-elizabeth">
+                                        <span>Port Elizabeth</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="location" value="east-london">
+                                        <span>East London</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- DEPARTMENT FILTER -->
+                            <div class="filter-group">
+                                <h3>Department</h3>
+                                <div class="filter-options">
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="department" value="mens">
+                                        <span>Men's</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="department" value="womens">
+                                        <span>Women's</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="department" value="kids">
+                                        <span>Kids</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="department" value="unisex">
+                                        <span>Unisex</span>
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="department" value="home-general">
+                                        <span>Home & General</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-footer">
+                            <button class="filter-clear-btn" id="clearFilterBtn">Clear All</button>
+                            <button class="filter-apply-btn" id="applyFilterBtn">Apply Filters</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRODUCTS GRID -->
+                <div class="products-grid">
+                    <!-- Product Card 1 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23f0f0f0' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23999' text-anchor='middle' dy='.3em'%3E👟%3C/text%3E%3C/svg%3E" alt="Nike Air Force 1">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>Nike Air Force 1 '07</h3>
+                            <p class="product-price">R950</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Johannesburg</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23333' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23fff' text-anchor='middle' dy='.3em'%3E📱%3C/text%3E%3C/svg%3E" alt="iPhone 13 Pro">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>iPhone 13 Pro - 128GB</h3>
+                            <p class="product-price">R8,500</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Cape Town</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ff9500' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23fff' text-anchor='middle' dy='.3em'%3E👗%3C/text%3E%3C/svg%3E" alt="Traditional Zulu Dress">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>Traditional Zulu Dress</h3>
+                            <p class="product-price">R650</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Durban</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23888' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23fff' text-anchor='middle' dy='.3em'%3E🛋️%3C/text%3E%3C/svg%3E" alt="2-Seater Sofa">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>2-Seater Sofa</h3>
+                            <p class="product-price">R2,200</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Pretoria</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 5 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23555' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23fff' text-anchor='middle' dy='.3em'%3E🎧%3C/text%3E%3C/svg%3E" alt="Sony WH-1000XM4">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>Sony WH-1000XM4</h3>
+                            <p class="product-price">R2,100</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Johannesburg</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 6 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ccc' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23333' text-anchor='middle' dy='.3em'%3E🍳%3C/text%3E%3C/svg%3E" alt="Stainless Steel Cookware">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>6-Piece Stainless Steel Cookware Set</h3>
+                            <p class="product-price">R750</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Bloemfontein</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 7 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23333' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23fff' text-anchor='middle' dy='.3em'%3E👟%3C/text%3E%3C/svg%3E" alt="Adidas Superstar">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>Adidas Superstar</h3>
+                            <p class="product-price">R900</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Port Elizabeth</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 8 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23222' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23fff' text-anchor='middle' dy='.3em'%3E📺%3C/text%3E%3C/svg%3E" alt="Samsung 4K TV">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>Samsung 55" 4K UHD TV</h3>
+                            <p class="product-price">R6,500</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> East London</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 9 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ddd' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23333' text-anchor='middle' dy='.3em'%3E⌚%3C/text%3E%3C/svg%3E" alt="Smart Watch">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>Apple Watch Series 7</h3>
+                            <p class="product-price">R3,200</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Nelspruit</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 10 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23f5deb3' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23333' text-anchor='middle' dy='.3em'%3E👜%3C/text%3E%3C/svg%3E" alt="Leather Handbag">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>Designer Leather Handbag</h3>
+                            <p class="product-price">R1,800</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Sandton</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 11 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23444' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23fff' text-anchor='middle' dy='.3em'%3E🎮%3C/text%3E%3C/svg%3E" alt="Gaming Console">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>PlayStation 5 Console</h3>
+                            <p class="product-price">R7,500</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Randburg</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 12 -->
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ffd700' width='200' height='200'/%3E%3Ctext x='100' y='100' font-size='60' fill='%23333' text-anchor='middle' dy='.3em'%3E💍%3C/text%3E%3C/svg%3E" alt="Gold Ring">
+                            <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                        </div>
+                        <div class="product-card-info">
+                            <h3>14k Gold Ring</h3>
+                            <p class="product-price">R4,500</p>
+                            <p class="product-location"><i class="fas fa-map-marker-alt"></i> Kempton Park</p>
+                            <button class="view-product-btn">View Product</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGINATION -->
+                <div class="pagination">
+                    <button class="pagination-btn prev-btn" title="Previous">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <span class="pagination-dots">...</span>
+                    <button class="pagination-btn">10</button>
+                    <button class="pagination-btn next-btn" title="Next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load Sidebar Component
+        fetch('../dashboard/sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebarContainer').innerHTML = html;
+                initializeSidebarFunctionality();
+            })
+            .catch(error => console.error('Error loading sidebar:', error));
+
+        // Sidebar Toggle Functionality
+        function initializeSidebarFunctionality() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    const icon = sidebarToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                    
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    localStorage.setItem('sidebarCollapsed', isCollapsed);
+                });
+
+                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (isCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    const icon = sidebarToggle.querySelector('i');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            }
+        }
+
+        // Wishlist functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.wishlist-btn')) {
+                const btn = e.target.closest('.wishlist-btn');
+                const icon = btn.querySelector('i');
+                icon.classList.toggle('far');
+                icon.classList.toggle('fas');
+            }
+        });
+
+        // FILTER FUNCTIONALITY
+        const filterBtn = document.getElementById('filterBtn');
+        const filterModal = document.getElementById('filterModal');
+        const closeFilterBtn = document.getElementById('closeFilterBtn');
+        const applyFilterBtn = document.getElementById('applyFilterBtn');
+        const clearFilterBtn = document.getElementById('clearFilterBtn');
+
+        // Open filter modal
+        filterBtn.addEventListener('click', function() {
+            filterModal.classList.add('active');
+        });
+
+        // Close filter modal
+        closeFilterBtn.addEventListener('click', function() {
+            filterModal.classList.remove('active');
+        });
+
+        // Close filter modal when clicking outside
+        filterModal.addEventListener('click', function(e) {
+            if (e.target === filterModal) {
+                filterModal.classList.remove('active');
+            }
+        });
+
+        // Price range slider functionality
+        const priceMinSlider = document.getElementById('priceMinSlider');
+        const priceMaxSlider = document.getElementById('priceMaxSlider');
+        const priceMinInput = document.getElementById('priceMin');
+        const priceMaxInput = document.getElementById('priceMax');
+        const minDisplay = document.getElementById('minDisplay');
+        const maxDisplay = document.getElementById('maxDisplay');
+
+        function updatePriceRange() {
+            let minVal = parseInt(priceMinSlider.value);
+            let maxVal = parseInt(priceMaxSlider.value);
+
+            if (minVal > maxVal) {
+                priceMinSlider.value = maxVal;
+                minVal = maxVal;
+            }
+
+            minDisplay.textContent = minVal.toLocaleString();
+            maxDisplay.textContent = maxVal.toLocaleString();
+            priceMinInput.value = minVal;
+            priceMaxInput.value = maxVal;
+
+            const range = maxVal - minVal;
+            const percent1 = (minVal / priceMinSlider.max) * 100;
+            const percent2 = (maxVal / priceMaxSlider.max) * 100;
+        }
+
+        priceMinSlider.addEventListener('input', updatePriceRange);
+        priceMaxSlider.addEventListener('input', updatePriceRange);
+
+        // Update sliders when typing in input fields
+        priceMinInput.addEventListener('input', function() {
+            priceMinSlider.value = this.value;
+            updatePriceRange();
+        });
+
+        priceMaxInput.addEventListener('input', function() {
+            priceMaxSlider.value = this.value;
+            updatePriceRange();
+        });
+
+        // Apply filters
+        applyFilterBtn.addEventListener('click', function() {
+            const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
+            const selectedLocations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
+            const selectedDepartments = Array.from(document.querySelectorAll('input[name="department"]:checked')).map(cb => cb.value);
+            const minPrice = parseInt(priceMinSlider.value);
+            const maxPrice = parseInt(priceMaxSlider.value);
+
+            console.log('Filters Applied:', {
+                categories: selectedCategories,
+                locations: selectedLocations,
+                departments: selectedDepartments,
+                priceRange: { min: minPrice, max: maxPrice }
+            });
+
+            filterModal.classList.remove('active');
+        });
+
+        // Clear all filters
+        clearFilterBtn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-checkbox input').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            priceMinSlider.value = 0;
+            priceMaxSlider.value = 10000;
+            updatePriceRange();
+        });
+    </script>
+</body>
+</html>

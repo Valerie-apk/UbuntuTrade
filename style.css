@@ -96,7 +96,7 @@
     align-items: center;
     justify-content: center;
     padding: 40px 20px;
-    background: linear-gradient(180deg, rgba(247, 248, 251, 0.8) 0%, rgba(232, 237, 243, 0.8) 100%), url('background.png');
+    background: linear-gradient(180deg, rgba(247, 248, 251, 0.8) 0%, rgba(232, 237, 243, 0.8) 100%), url('index/background.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -395,6 +395,7 @@ body.dashboard-page .dashboard-wrapper {
 /* SIDEBAR */
 .sidebar {
     width: 200px;
+    height: 100%;
     background: #3d2817;
     color: white;
     padding: 20px 0;
@@ -537,6 +538,20 @@ body.dashboard-page .dashboard-wrapper {
     padding: 10px 0;
 }
 
+.sidebar.collapsed .logout-link {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.sidebar.collapsed .logout-link span {
+    display: none;
+}
+
+.sidebar.collapsed .logout-link i {
+    margin-right: 0;
+    font-size: 1.3rem;
+}
+
 /* MAIN CONTENT */
 .main-content {
     flex: 1;
@@ -554,7 +569,7 @@ body.dashboard-page .dashboard-wrapper {
 }
 
 .welcome-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('user-market.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('index/user-market.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -846,7 +861,7 @@ body.admin-page {
 
 /* ADMIN NAVBAR */
 .navbar {
-    background-color: #1a1a1a;
+    background-color: black;
     color: white;
     display: flex;
     justify-content: space-between;
