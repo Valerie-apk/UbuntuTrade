@@ -1,10 +1,13 @@
 const express = require('express');
+const cors = require('cors'); // 1. Import the cors package
 const app = express();
 
 //  import database connection and models
 const { connectDB, sequelize } = require('./config/db');
 const User = require('./models/user'); 
 
+// Middleware
+app.use(cors()); // 2. Enable CORS to let your HTML frontend access the API
 app.use(express.json());
 
 const PORT = 3000;
