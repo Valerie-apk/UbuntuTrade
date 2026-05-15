@@ -30,7 +30,7 @@
             <p>Join UbuntuTrade and start buying or selling locally.</p>
         </div>
 
-        <form>
+        <form id="signup-form">
             <label for="name">Full name</label>
             <input id="name" type="text" placeholder="Your full name" required>
 
@@ -43,14 +43,65 @@
             <label for="confirm-password">Confirm password</label>
             <input id="confirm-password" type="password" placeholder="Repeat your password" required>
 
+            <div id="signupError" style="color: red; margin-bottom: 8px; display: none;"></div>
+
             <button type="submit" class="btn-primary">Sign Up</button>
         </form>
+    
 
         <div class="form-footer">
             <p>Already have an account? <a href="login.html">Sign in</a></p>
         </div>
     </div>
 </section>
+<script>
+     //Access the form element
+     document.getElementById('signup-form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission
 
+        // Get form values
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const error = document.getElementById("signupError");  
+        error.style.display = "none"; // Hide error message by default
+
+        // Basic validation
+        if (password !== confirmPassword) {
+            error.style.display = "block"; // Show error message
+            error.textContent = "Passwords do not match.";
+            return;
+        }
+
+
+        try{
+            const res = await fetch('http://localhost:3000/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({name, email, password })
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                // Registration failed, show error message
+                error.style.display = "block"; // Show error message
+                error.textContent = data.message || "Registration failed.";
+                return;
+            }
+            // Registration successful, redirect to login page
+            window.location.href = 'login.html'; 
+        } catch (err) {
+            error.style.display = "block"; // Show error message
+                error.textContent = "An error occurred. Please try again.";
+            
+
+
+        }
+     } );
+
+</script>
 </body>
 </html>

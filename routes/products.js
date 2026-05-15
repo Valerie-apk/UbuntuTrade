@@ -23,7 +23,6 @@ router.post('/add', async (req, res) => {
             subcategory,
             condition,
             location,
-            department,
             userId
         } = req.body;
         
@@ -37,7 +36,6 @@ router.post('/add', async (req, res) => {
             subcategory,
             condition,
             location,
-            department,
             userId
         });
 
@@ -65,7 +63,6 @@ router.get('/', async (req, res) => {
             status = 'Active',
             minPrice,
             maxPrice,
-            userId,
             sort = 'newest'
         } = req.query;
 
@@ -74,7 +71,6 @@ router.get('/', async (req, res) => {
         if (status && status !== 'all') where.status = status;
         if (category) where.category = category;
         if (location) where.location = { [Op.like]: `%${location}%` };
-        if (userId) where.userId = userId;
         if (search) {
             where[Op.or] = [
                 { name: { [Op.like]: `%${search}%` } },

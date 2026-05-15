@@ -1,12 +1,15 @@
 const express = require('express');
 const cors = require('cors'); // 1. Import the cors package
 const app = express();
+const path = require('path');
 
 //  import database connection and models
 const { connectDB, sequelize } = require('./config/db');
 
 require('./models');
+app.use(cors()); // 2. Enable CORS for all routes
 app.use(express.json());
+app.use(express.static(path.join(__dirname)));
 
 const PORT = 3000;
 
@@ -36,7 +39,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/pay', paymentRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/api/messages', messageRoutes);
 
 app.listen(PORT, () => {
