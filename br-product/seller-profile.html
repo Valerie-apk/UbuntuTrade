@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipho D. - UbuntuTrade</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../cart/popup-cart.css">
+    <link rel="stylesheet" href="seller-profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-page seller-profile-page">
+    <nav class="navbar">
+        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
+
+        <div class="nav-buttons">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div>
+            <div class="admin-profile">
+                <i class="fas fa-bell"></i>
+                <a href="../cart/cart.html" class="navbar-cart-link" aria-label="Cart" title="Open cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="navbar-cart-count">3</span>
+                </a>
+                <div class="profile-avatar" id="userInitial">U</div>
+                <span id="username">User</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </nav>
+    <div id="cartPopupRoot" class="cart-popup-root" aria-hidden="true"></div>
+
+    <div class="dashboard-wrapper">
+        <div id="sidebarContainer"></div>
+
+        <main class="main-content">
+            <section class="dashboard-content seller-profile-content">
+                <section class="seller-hero">
+                    <div class="seller-identity">
+                        <div class="seller-avatar" aria-hidden="true">SD</div>
+                        <a href="#" class="message-seller-btn">
+                            <i class="far fa-comment-dots"></i>
+                            Message Seller
+                        </a>
+                    </div>
+
+                    <div class="seller-overview">
+                        <div class="seller-title-row">
+                            <h1>Sipho D.</h1>
+                            <span class="verified-pill"><i class="fas fa-check-circle"></i> Verified Seller</span>
+                        </div>
+
+                        <div class="seller-rating">
+                            <span><i class="fas fa-star"></i> <strong>4.9</strong> (54 reviews)</span>
+                            <span>256 sales</span>
+                        </div>
+
+                        <ul class="seller-facts">
+                            <li><i class="fas fa-location-dot"></i> Soweto, Gauteng</li>
+                            <li><i class="far fa-calendar"></i> Member since May 2023</li>
+                            <li><i class="far fa-message"></i> Response rate: 98%</li>
+                            <li><i class="fas fa-shield-halved"></i> ID Verified</li>
+                        </ul>
+                    </div>
+
+                    <div class="seller-about-panel">
+                        <h2>About Sipho</h2>
+                        <p>Hi, I'm Sipho. I sell quality electronics at fair prices and keep buyers updated from checkout to delivery.</p>
+
+                        <div class="seller-metrics">
+                            <div class="metric-card green">
+                                <i class="fas fa-briefcase"></i>
+                                <strong>256</strong>
+                                <span>Products Sold</span>
+                            </div>
+                            <div class="metric-card blue">
+                                <i class="far fa-star"></i>
+                                <strong>54</strong>
+                                <span>Reviews</span>
+                            </div>
+                            <div class="metric-card purple">
+                                <i class="far fa-clock"></i>
+                                <strong>1h</strong>
+                                <span>Avg. Response Time</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="seller-tabs" aria-label="Seller profile sections">
+                    <button class="active" type="button">Products</button>
+                    <button type="button">Reviews (54)</button>
+                </div>
+
+                <div class="seller-body-grid">
+                    <aside class="seller-info-column">
+                        <section class="seller-side-card">
+                            <h2>Shop Information</h2>
+                            <dl>
+                                <dt>Shop Name</dt>
+                                <dd>Sipho's Electronics</dd>
+                                <dt>Category</dt>
+                                <dd>Electronics</dd>
+                                <dt>Location</dt>
+                                <dd>Soweto, Gauteng</dd>
+                                <dt>Member Since</dt>
+                                <dd>May 2023</dd>
+                                <dt>Last Active</dt>
+                                <dd class="online-status"><span></span> Online now</dd>
+                            </dl>
+                        </section>
+                    </aside>
+
+                    <section class="seller-products-section">
+                        <div class="seller-products-header">
+                            <div>
+                                <h2>Products by Sipho D.</h2>
+                                <p>Showing 10 of 256 products</p>
+                            </div>
+                            <label>
+                                <span>Sort by:</span>
+                                <select>
+                                    <option>Newest</option>
+                                    <option>Price: Low to High</option>
+                                    <option>Price: High to Low</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="seller-product-grid">
+                            <article class="seller-product-card">
+                                <button class="seller-wishlist" type="button" aria-label="Save iPhone 13 Pro"><i class="far fa-heart"></i></button>
+                                <img src="../index/phone.png" alt="iPhone 13 Pro">
+                                <h3>iPhone 13 Pro - 128GB</h3>
+                                <strong>R8,500</strong>
+                                <span><i class="fas fa-star"></i> 4.8 (128)</span>
+                            </article>
+                            <article class="seller-product-card">
+                                <button class="seller-wishlist" type="button" aria-label="Save Sony headphones"><i class="far fa-heart"></i></button>
+                                <div class="seller-product-icon"><i class="fas fa-headphones-simple"></i></div>
+                                <h3>Sony WH-1000XM4 Headphones</h3>
+                                <strong>R2,100</strong>
+                                <span><i class="fas fa-star"></i> 4.9 (76)</span>
+                            </article>
+                            <article class="seller-product-card">
+                                <button class="seller-wishlist" type="button" aria-label="Save Dell Inspiron"><i class="far fa-heart"></i></button>
+                                <div class="seller-product-icon laptop"><i class="fas fa-laptop"></i></div>
+                                <h3>Dell Inspiron 15 Laptop</h3>
+                                <strong>R7,200</strong>
+                                <span><i class="fas fa-star"></i> 4.6 (64)</span>
+                            </article>
+                            <article class="seller-product-card">
+                                <button class="seller-wishlist" type="button" aria-label="Save Samsung TV"><i class="far fa-heart"></i></button>
+                                <div class="seller-product-icon tv"><i class="fas fa-tv"></i></div>
+                                <h3>Samsung 55" 4K UHD TV</h3>
+                                <strong>R6,500</strong>
+                                <span><i class="fas fa-star"></i> 4.7 (40)</span>
+                            </article>
+                            <article class="seller-product-card">
+                                <button class="seller-wishlist" type="button" aria-label="Save iPhone 12"><i class="far fa-heart"></i></button>
+                                <img src="../index/phone.png" alt="iPhone 12">
+                                <h3>iPhone 12 - 64GB</h3>
+                                <strong>R6,500</strong>
+                                <span><i class="fas fa-star"></i> 4.7 (98)</span>
+                            </article>
+                            <article class="seller-product-card">
+                                <button class="seller-wishlist" type="button" aria-label="Save AirPods Pro"><i class="far fa-heart"></i></button>
+                                <div class="seller-product-icon earbuds"><i class="fas fa-ear-listen"></i></div>
+                                <h3>AirPods Pro (2nd Gen)</h3>
+                                <strong>R3,199</strong>
+                                <span><i class="fas fa-star"></i> 4.8 (112)</span>
+                            </article>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const cartPopupRoot = document.getElementById('cartPopupRoot');
+        const cartButtons = document.querySelectorAll('.navbar-cart-link');
+
+        function closeCartPopup() {
+            cartPopupRoot.classList.remove('active');
+            cartPopupRoot.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('cart-popup-open');
+        }
+
+        function openCartPopup(event) {
+            event.preventDefault();
+            if (!cartPopupRoot.dataset.loaded) {
+                fetch('../cart/popup-cart.html')
+                    .then(response => response.text())
+                    .then(html => {
+                        cartPopupRoot.innerHTML = html;
+                        cartPopupRoot.dataset.loaded = 'true';
+                        showCartPopup();
+                    })
+                    .catch(() => window.location.href = '../cart/cart.html');
+            } else {
+                showCartPopup();
+            }
+        }
+
+        function showCartPopup() {
+            cartPopupRoot.classList.add('active');
+            cartPopupRoot.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('cart-popup-open');
+        }
+
+        cartButtons.forEach(button => button.addEventListener('click', openCartPopup));
+
+        cartPopupRoot.addEventListener('click', function(event) {
+            if (event.target.closest('[data-cart-popup-close]') || event.target.matches('[data-cart-popup-backdrop]')) {
+                closeCartPopup();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && cartPopupRoot.classList.contains('active')) {
+                closeCartPopup();
+            }
+        });
+
+        fetch('../dashboard/sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebarContainer').innerHTML = html;
+                normalizeSidebarLinks();
+                initializeSidebarFunctionality();
+                setActiveSidebarItem();
+            })
+            .catch(error => console.error('Error loading sidebar:', error));
+
+        function normalizeSidebarLinks() {
+            const linkMap = {
+                Dashboard: '../dashboard/market.html',
+                'Browse Products': 'browse-products.html',
+                'My Products': '../dashboard/my-products.html',
+                Messages: '../dashboard/messages.html'
+            };
+
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                const label = link.textContent.trim();
+                if (linkMap[label]) {
+                    link.setAttribute('href', linkMap[label]);
+                }
+            });
+        }
+
+        function setActiveSidebarItem() {
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            sidebarLinks.forEach(link => link.classList.remove('active'));
+
+            const browseLink = Array.from(sidebarLinks).find(link =>
+                link.textContent.includes('Browse Products')
+            );
+
+            if (browseLink) {
+                browseLink.classList.add('active');
+            }
+        }
+
+        function initializeSidebarFunctionality() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
+
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+
+                    const icon = sidebarToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+
+                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+                });
+
+                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (isCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    const icon = sidebarToggle.querySelector('i');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

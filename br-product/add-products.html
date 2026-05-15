@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Product - UbuntuTrade</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../cart/popup-cart.css">
+    <link rel="stylesheet" href="add-products.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-page product-detail-page">
+    <!-- TOP NAVBAR - Same as market.html -->
+    <nav class="navbar">
+        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
+
+        <div class="nav-buttons">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div>
+            <div class="admin-profile">
+                <i class="fas fa-bell"></i>
+                <a href="../cart/cart.html" class="navbar-cart-link" aria-label="Cart" title="Open cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="navbar-cart-count">3</span>
+                </a>
+                <div class="profile-avatar" id="userInitial">U</div>
+                <span id="username">User</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </nav>
+    <div id="cartPopupRoot" class="cart-popup-root" aria-hidden="true"></div>
+
+    <div class="dashboard-wrapper">
+        <div id="sidebarContainer"></div>
+
+        <main class="main-content">
+            <section class="dashboard-content product-detail-content">
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <a href="../dashboard/market.html">Dashboard</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="../dashboard/my-products.html">My Products</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Add New Product</span>
+                </nav>
+
+                <header class="product-detail-header">
+                    <h1>Add New Product</h1>
+                    <p>Fill in the details below to list your product.</p>
+                </header>
+
+                <div class="product-detail-layout">
+                    <form class="product-form-card">
+                        <div class="form-grid">
+                            <label class="form-field">
+                                <span>Product Title <strong>*</strong></span>
+                                <input type="text" placeholder="e.g. Nike Air Force 1 '07">
+                            </label>
+
+                            <label class="form-field">
+                                <span>Category <strong>*</strong></span>
+                                <select>
+                                    <option>Select a category</option>
+                                    <option>Shoes</option>
+                                    <option>Electronics</option>
+                                    <option>Clothing</option>
+                                    <option>Home & Living</option>
+                                </select>
+                            </label>
+
+                            <label class="form-field">
+                                <span>Price (R) <strong>*</strong></span>
+                                <input type="number" placeholder="e.g. 650">
+                            </label>
+
+                            <label class="form-field">
+                                <span>Condition <strong>*</strong></span>
+                                <select>
+                                    <option>Select condition</option>
+                                    <option>Brand New</option>
+                                    <option>Like New</option>
+                                    <option>Good</option>
+                                    <option>Used</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <label class="form-field full-width">
+                            <span>Description <strong>*</strong></span>
+                            <textarea maxlength="500" placeholder="Describe your product, its condition, size, color, brand, etc."></textarea>
+                            <small>0 / 500</small>
+                        </label>
+
+                        <label class="form-field full-width">
+                            <span>Location <strong>*</strong></span>
+                            <div class="input-with-icon">
+                                <i class="fas fa-location-dot"></i>
+                                <input type="text" value="Johannesburg, Gauteng">
+                            </div>
+                            <em>This helps buyers near you.</em>
+                        </label>
+
+                        <div class="form-field full-width">
+                            <span>Product Images <strong>*</strong></span>
+                            <div class="image-uploader">
+                                <label class="upload-dropzone">
+                                    <input type="file" accept="image/png,image/jpeg" multiple>
+                                    <i class="fas fa-cloud-arrow-up"></i>
+                                    <strong>Click to upload images</strong>
+                                    <span>or drag and drop</span>
+                                    <small>You can upload up to 5 images (JPG, PNG)</small>
+                                </label>
+
+                                <div class="uploaded-images">
+                                    <div class="uploaded-image">
+                                        <img src="../index/sneaker.png" alt="White sneaker preview">
+                                        <button type="button" aria-label="Remove image"><i class="fas fa-xmark"></i></button>
+                                    </div>
+                                    <div class="uploaded-image">
+                                        <img src="../index/sneaker.png" alt="White sneaker side preview">
+                                        <button type="button" aria-label="Remove image"><i class="fas fa-xmark"></i></button>
+                                    </div>
+                                    <div class="uploaded-image">
+                                        <img src="../pexels-kold-shots-61080370-33489786.jpg" alt="Sneaker lifestyle preview">
+                                        <button type="button" aria-label="Remove image"><i class="fas fa-xmark"></i></button>
+                                    </div>
+                                    <button class="add-more-image" type="button">
+                                        <i class="fas fa-plus"></i>
+                                        <span>Add more</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="cancel-btn" type="button">Cancel</button>
+                            <button class="publish-btn" type="submit">Publish Product</button>
+                        </div>
+                    </form>
+
+                    <aside class="preview-panel" aria-label="Product preview">
+                        <h2>Preview</h2>
+                        <p>This is how your product will appear.</p>
+
+                        <article class="preview-card">
+                            <img src="../index/sneaker.png" alt="Nike Air Force 1 preview">
+                            <div class="preview-body">
+                                <h3>Nike Air Force 1 '07</h3>
+                                <strong class="preview-price">R650</strong>
+                                <span class="preview-location">
+                                    <i class="fas fa-location-dot"></i>
+                                    Johannesburg, Gauteng
+                                </span>
+                                <span class="condition-badge">Like New</span>
+                                <p>Original Nike Air Force 1 in excellent condition. White colorway, size UK 8. Worn only a few times.</p>
+                                <dl>
+                                    <div>
+                                        <dt>Category:</dt>
+                                        <dd>Shoes</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Condition:</dt>
+                                        <dd>Like New</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </article>
+                    </aside>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const cartPopupRoot = document.getElementById('cartPopupRoot');
+        const cartButtons = document.querySelectorAll('.navbar-cart-link');
+
+        function closeCartPopup() {
+            cartPopupRoot.classList.remove('active');
+            cartPopupRoot.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('cart-popup-open');
+        }
+
+        function openCartPopup(event) {
+            event.preventDefault();
+            if (!cartPopupRoot.dataset.loaded) {
+                fetch('../cart/popup-cart.html')
+                    .then(response => response.text())
+                    .then(html => {
+                        cartPopupRoot.innerHTML = html;
+                        cartPopupRoot.dataset.loaded = 'true';
+                        showCartPopup();
+                    })
+                    .catch(() => window.location.href = '../cart/cart.html');
+            } else {
+                showCartPopup();
+            }
+        }
+
+        function showCartPopup() {
+            cartPopupRoot.classList.add('active');
+            cartPopupRoot.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('cart-popup-open');
+        }
+
+        cartButtons.forEach(button => button.addEventListener('click', openCartPopup));
+
+        cartPopupRoot.addEventListener('click', function(event) {
+            if (event.target.closest('[data-cart-popup-close]') || event.target.matches('[data-cart-popup-backdrop]')) {
+                closeCartPopup();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && cartPopupRoot.classList.contains('active')) {
+                closeCartPopup();
+            }
+        });
+
+        fetch('../dashboard/sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebarContainer').innerHTML = html;
+                normalizeSidebarLinks();
+                initializeSidebarFunctionality();
+                setActiveSidebarItem();
+            })
+            .catch(error => console.error('Error loading sidebar:', error));
+
+        function normalizeSidebarLinks() {
+            const linkMap = {
+                Dashboard: '../dashboard/market.html',
+                'Browse Products': 'browse-products.html',
+                'My Products': '../dashboard/my-products.html',
+                Messages: '../dashboard/messages.html'
+            };
+
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                const label = link.textContent.trim();
+                if (linkMap[label]) {
+                    link.setAttribute('href', linkMap[label]);
+                }
+            });
+        }
+
+        function setActiveSidebarItem() {
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            sidebarLinks.forEach(link => link.classList.remove('active'));
+
+            const myProductsLink = Array.from(sidebarLinks).find(link =>
+                link.textContent.includes('My Products')
+            );
+
+            if (myProductsLink) {
+                myProductsLink.classList.add('active');
+            }
+        }
+
+        function initializeSidebarFunctionality() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
+
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+
+                    const icon = sidebarToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+
+                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+                });
+
+                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (isCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    const icon = sidebarToggle.querySelector('i');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

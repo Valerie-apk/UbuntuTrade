@@ -1,12 +1,16 @@
 const router = require('express').Router();
-const User = require('../models/user');
+const { User } = require('../models');
 
 // POST: /api/auth/register
 router.post('/register', async (req, res) => {
     // FIX: Added username here so it's not undefined
-    const { username, email, password } = req.body;
+    const { username, fullName, name, email, password, location } = req.body;
 
     try {
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email and password are required" });
+        }
+
         const userExists = await User.findOne({ where: { email } });
         
         if (userExists) {
@@ -14,13 +18,19 @@ router.post('/register', async (req, res) => {
         }
 
         // FIX: Added username to the creation object
-        await User.create({ 
-            username, 
+        const displayName = username || fullName || name || email.split('@')[0];
+        const user = await User.create({ 
+            username: displayName,
+            fullName: fullName || name || displayName,
             email, 
-            password 
+            password,
+            location
         });
+
+        const responseUser = user.toJSON();
+        delete responseUser.password;
         
-        res.status(201).json({ message: "User registered successfully" });
+        res.status(201).json({ message: "User registered successfully", user: responseUser });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Database error", error: err.message });
@@ -38,10 +48,13 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: "Invalid email or password" });
         }
 
+        const responseUser = user.toJSON();
+        delete responseUser.password;
+
         res.json({ 
             message: "Login successful", 
             token: "sample_jwt_token", 
-            user: user.email 
+            user: responseUser
         });
     } catch (err) {
         console.error(err);

@@ -4,10 +4,8 @@ const app = express();
 
 //  import database connection and models
 const { connectDB, sequelize } = require('./config/db');
-const User = require('./models/user'); 
 
-// Middleware
-app.use(cors()); // 2. Enable CORS to let your HTML frontend access the API
+require('./models');
 app.use(express.json());
 
 const PORT = 3000;
@@ -28,12 +26,18 @@ const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const cartRoutes = require('./routes/cart');
 const paymentRoutes = require('./routes/payments');
+const orderRoutes = require('./routes/orders');
+const messageRoutes = require('./routes/messages');
+const userRoutes = require('./routes/users');
 
 // Use Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
 app.use('/api/pay', paymentRoutes);
+app.use('/api/messages', messageRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running at: http://localhost:${PORT}`);

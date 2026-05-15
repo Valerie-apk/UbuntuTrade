@@ -4,7 +4,7 @@ const { Sequelize } = require('sequelize');
 const dbPass = require('../routes/password'); 
 
 
-const sequelize = new Sequelize('my_db', 'root', dbPass, { 
+const sequelize = new Sequelize('TradeDataBase', 'root', dbPass, { 
     host: '127.0.0.1',
     dialect: 'mysql',
     logging: false

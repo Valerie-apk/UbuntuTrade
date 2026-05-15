@@ -538,6 +538,11 @@
         align-items: flex-start;
     }
 
+    .sort-filter-section {
+        width: 100%;
+        gap: 10px;
+    }
+
     .sort-section {
         width: 100%;
         justify-content: space-between;
@@ -545,6 +550,15 @@
 
     .sort-dropdown {
         min-width: 150px;
+    }
+
+    .filter-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .filter-modal-content {
+        max-width: 90%;
     }
 }
 
@@ -562,10 +576,24 @@
         gap: 15px;
     }
 
+    .sort-filter-section {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .sort-section {
+        width: 100%;
+    }
+
     .sort-dropdown {
         min-width: 140px;
         padding: 6px 10px;
         font-size: 0.9rem;
+    }
+
+    .filter-btn {
+        width: 100%;
     }
 
     .pagination {
@@ -576,6 +604,12 @@
         width: 35px;
         height: 35px;
         font-size: 0.9rem;
+    }
+
+    .filter-modal-content {
+        max-width: 100%;
+        border-radius: 12px 12px 0 0;
+        max-height: 80vh;
     }
 }
 

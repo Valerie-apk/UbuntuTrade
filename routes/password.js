@@ -1,2 +1,2 @@
-const password  = "Ema@2023.564#";
+const password  = "Hlang@s1";
 module.exports = password;

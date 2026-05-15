@@ -17,12 +17,46 @@ const Product = sequelize.define('Product', {
         type: DataTypes.STRING,
         defaultValue: 'default-product.png'
     },
+    images: {
+        type: DataTypes.JSON
+    },
     status: {
-        type: DataTypes.ENUM('Active', 'Sold', 'Pending'),
+        type: DataTypes.ENUM('Active', 'Sold', 'Pending', 'Removed'),
         defaultValue: 'Active'
     },
     category: {
         type: DataTypes.STRING
+    },
+    subcategory: {
+        type: DataTypes.STRING
+    },
+    condition: {
+        type: DataTypes.ENUM('Brand New', 'Like New', 'Good', 'Used')
+    },
+    location: {
+        type: DataTypes.STRING
+    },
+    department: {
+        type: DataTypes.STRING
+    },
+    views: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    soldCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    rating: {
+        type: DataTypes.DECIMAL(3, 2),
+        defaultValue: 0
+    },
+    reviewCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    userId: {
+        type: DataTypes.INTEGER
     }
 }, {
     tableName: 'products',

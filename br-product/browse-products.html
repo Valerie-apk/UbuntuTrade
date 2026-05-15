@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Products - UbuntuTrade</title>
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../cart/popup-cart.css">
     <link rel="stylesheet" href="browse-products.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -20,12 +21,17 @@
             </div>
             <div class="admin-profile">
                 <i class="fas fa-bell"></i>
+                <a href="../cart/cart.html" class="navbar-cart-link" aria-label="Cart" title="Open cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="navbar-cart-count">3</span>
+                </a>
                 <div class="profile-avatar" id="userInitial">U</div>
                 <span id="username">User</span>
                 <i class="fas fa-chevron-down"></i>
             </div>
         </div>
     </nav>
+    <div id="cartPopupRoot" class="cart-popup-root" aria-hidden="true"></div>
 
     <!-- Dashboard Wrapper -->
     <div class="dashboard-wrapper">
@@ -380,14 +386,76 @@
     </div>
 
     <script>
+        const cartPopupRoot = document.getElementById('cartPopupRoot');
+        const cartButtons = document.querySelectorAll('.navbar-cart-link');
+
+        function closeCartPopup() {
+            cartPopupRoot.classList.remove('active');
+            cartPopupRoot.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('cart-popup-open');
+        }
+
+        function openCartPopup(event) {
+            event.preventDefault();
+            if (!cartPopupRoot.dataset.loaded) {
+                fetch('../cart/popup-cart.html')
+                    .then(response => response.text())
+                    .then(html => {
+                        cartPopupRoot.innerHTML = html;
+                        cartPopupRoot.dataset.loaded = 'true';
+                        showCartPopup();
+                    })
+                    .catch(() => window.location.href = '../cart/cart.html');
+            } else {
+                showCartPopup();
+            }
+        }
+
+        function showCartPopup() {
+            cartPopupRoot.classList.add('active');
+            cartPopupRoot.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('cart-popup-open');
+        }
+
+        cartButtons.forEach(button => button.addEventListener('click', openCartPopup));
+
+        cartPopupRoot.addEventListener('click', function(event) {
+            if (event.target.closest('[data-cart-popup-close]') || event.target.matches('[data-cart-popup-backdrop]')) {
+                closeCartPopup();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && cartPopupRoot.classList.contains('active')) {
+                closeCartPopup();
+            }
+        });
+
         // Load Sidebar Component
         fetch('../dashboard/sidebar.html')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('sidebarContainer').innerHTML = html;
                 initializeSidebarFunctionality();
+                setActiveSidebarItem();
             })
             .catch(error => console.error('Error loading sidebar:', error));
+
+        // Set active sidebar item based on current page
+        function setActiveSidebarItem() {
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            sidebarLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Find and activate the Browse Products link
+            const browseLink = Array.from(sidebarLinks).find(link => 
+                link.textContent.includes('Browse Products')
+            );
+            if (browseLink) {
+                browseLink.classList.add('active');
+            }
+        }
 
         // Sidebar Toggle Functionality
         function initializeSidebarFunctionality() {
