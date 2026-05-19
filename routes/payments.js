@@ -1,52 +1,34 @@
-const router = require('express').Router();
-const { Payment, Order } = require('../models');
+const router  = require('express').Router();
+const Payment = require('../models/Payment');
+const Order   = require('../models/Order');
 
-// GET: /api/pay/:userId (Fetch all payments for a user)
+// GET /api/pay/:userId
 router.get('/:userId', async (req, res) => {
     try {
-        const payments = await Payment.findAll({
-            where: { userId: req.params.userId },
-            include: [{ model: Order, as: 'order' }],
-            order: [['createdAt', 'DESC']]
-        });
-
+        const payments = await Payment.findByUser(req.params.userId);
         res.json(payments);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
-// POST: /api/pay/checkout (Create a successful payment for an order)
+// POST /api/pay/checkout
 router.post('/checkout', async (req, res) => {
     try {
         const { orderId, userId, amount, method = 'Card' } = req.body;
-
         if (!orderId || !userId || !amount) {
-            return res.status(400).json({ message: "orderId, userId and amount are required" });
+            return res.status(400).json({ message: 'orderId, userId and amount are required' });
         }
-
-        const order = await Order.findByPk(orderId);
-        if (!order) return res.status(404).json({ message: "Order not found" });
+        const order = await Order.findById(orderId);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
 
         const transactionId = `TXN_${Date.now()}`;
-        const payment = await Payment.create({
-            orderId,
-            userId,
-            amount,
-            method,
-            transactionId,
-            status: 'Successful'
-        });
+        const payment = await Payment.create({ orderId, userId, amount, method, transactionId });
+        await Order.updateStatus(orderId, 'Paid');
 
-        await order.update({ status: 'Paid' });
-
-        res.status(201).json({
-            status: "Payment Successful",
-            transactionId,
-            payment
-        });
-    } catch (error) {
-        res.status(500).json({ status: "Payment Failed", error: error.message });
+        res.status(201).json({ status: 'Payment Successful', transactionId, payment });
+    } catch (err) {
+        res.status(500).json({ status: 'Payment Failed', error: err.message });
     }
 });
 

@@ -1,39 +1,47 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const pool = require('../config/db');
 
-const Order = sequelize.define('Order', {
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+const Order = {
+    async findById(id) {
+        const [orders] = await pool.query('SELECT * FROM orders WHERE id = ?', [id]);
+        if (orders.length === 0) return null;
+        const [items] = await pool.query(
+            `SELECT oi.*, p.imageUrl, p.category,
+                u.id AS seller_id, u.username AS seller_username, u.fullName AS seller_fullName
+             FROM order_items oi
+             LEFT JOIN products p ON oi.productId = p.id
+             LEFT JOIN users u ON p.userId = u.id
+             WHERE oi.orderId = ?`,
+            [id]
+        );
+        const [payments] = await pool.query('SELECT * FROM payments WHERE orderId = ?', [id]);
+        return { ...orders[0], items, payment: payments[0] || null };
     },
-    status: {
-        type: DataTypes.ENUM('Pending', 'Paid', 'Cancelled', 'Delivered'),
-        defaultValue: 'Pending'
+
+    async findByUser(userId) {
+        const [orders] = await pool.query(
+            'SELECT * FROM orders WHERE userId = ? ORDER BY createdAt DESC', [userId]
+        );
+        return Promise.all(orders.map(async order => {
+            const [items] = await pool.query(
+                'SELECT oi.*, p.imageUrl FROM order_items oi LEFT JOIN products p ON oi.productId = p.id WHERE oi.orderId = ?',
+                [order.id]
+            );
+            const [payments] = await pool.query('SELECT * FROM payments WHERE orderId = ?', [order.id]);
+            return { ...order, items, payment: payments[0] || null };
+        }));
     },
-    subtotal: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        defaultValue: 0
+
+    async create({ userId, deliveryAddress, notes, subtotal, deliveryFee, total }) {
+        const [result] = await pool.query(
+            'INSERT INTO orders (userId, deliveryAddress, notes, subtotal, deliveryFee, total) VALUES (?, ?, ?, ?, ?, ?)',
+            [userId, deliveryAddress || null, notes || null, subtotal, deliveryFee, total]
+        );
+        return result.insertId;
     },
-    deliveryFee: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        defaultValue: 0
-    },
-    total: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        defaultValue: 0
-    },
-    deliveryAddress: {
-        type: DataTypes.STRING
-    },
-    notes: {
-        type: DataTypes.TEXT
+
+    async updateStatus(id, status) {
+        await pool.query('UPDATE orders SET status = ? WHERE id = ?', [status, id]);
     }
-}, {
-    tableName: 'orders',
-    timestamps: true
-});
+};
 
 module.exports = Order;

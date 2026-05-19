@@ -1,24 +1,25 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const pool = require('../config/db');
 
-const WishlistItem = sequelize.define('WishlistItem', {
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+const WishlistItem = {
+    async findOne(userId, productId) {
+        const [rows] = await pool.query(
+            'SELECT * FROM wishlist_items WHERE userId = ? AND productId = ?',
+            [userId, productId]
+        );
+        return rows[0] || null;
     },
-    productId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+
+    async create(userId, productId) {
+        const [result] = await pool.query(
+            'INSERT INTO wishlist_items (userId, productId) VALUES (?, ?)',
+            [userId, productId]
+        );
+        return { id: result.insertId, userId, productId };
+    },
+
+    async delete(userId, productId) {
+        await pool.query('DELETE FROM wishlist_items WHERE userId = ? AND productId = ?', [userId, productId]);
     }
-}, {
-    tableName: 'wishlist_items',
-    timestamps: true,
-    indexes: [
-        {
-            unique: true,
-            fields: ['userId', 'productId']
-        }
-    ]
-});
+};
 
 module.exports = WishlistItem;

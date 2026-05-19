@@ -1,35 +1,35 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const pool = require('../config/db');
 
-const Payment = sequelize.define('Payment', {
-    orderId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+const Payment = {
+    async findByUser(userId) {
+        const [rows] = await pool.query(
+            `SELECT pay.*, o.status AS orderStatus, o.total AS orderTotal, o.deliveryAddress
+             FROM payments pay
+             LEFT JOIN orders o ON pay.orderId = o.id
+             WHERE pay.userId = ?
+             ORDER BY pay.createdAt DESC`,
+            [userId]
+        );
+        return rows;
     },
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+
+    async findByOrder(orderId) {
+        const [rows] = await pool.query('SELECT * FROM payments WHERE orderId = ?', [orderId]);
+        return rows[0] || null;
     },
-    amount: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false
+
+    async findById(id) {
+        const [rows] = await pool.query('SELECT * FROM payments WHERE id = ?', [id]);
+        return rows[0] || null;
     },
-    method: {
-        type: DataTypes.ENUM('Card', 'EFT', 'Cash', 'Wallet'),
-        defaultValue: 'Card'
-    },
-    status: {
-        type: DataTypes.ENUM('Pending', 'Successful', 'Failed', 'Refunded'),
-        defaultValue: 'Successful'
-    },
-    transactionId: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+
+    async create({ orderId, userId, amount, method = 'Card', transactionId }) {
+        const [result] = await pool.query(
+            "INSERT INTO payments (orderId, userId, amount, method, transactionId, status) VALUES (?, ?, ?, ?, ?, 'Successful')",
+            [orderId, userId, amount, method, transactionId]
+        );
+        return this.findById(result.insertId);
     }
-}, {
-    tableName: 'payments',
-    timestamps: true
-});
+};
 
 module.exports = Payment;

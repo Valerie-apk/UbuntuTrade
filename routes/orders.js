@@ -1,108 +1,80 @@
-const router = require('express').Router();
-const { CartItem, Order, OrderItem, Product, Payment, User } = require('../models');
+const router    = require('express').Router();
+const Order     = require('../models/Order');
+const OrderItem = require('../models/OrderItem');
+const CartItem  = require('../models/CartItem');
+const pool      = require('../config/db');
 
 const deliveryFeeFor = subtotal => (subtotal > 0 && subtotal < 1000 ? 60 : 0);
 
-// GET: /api/orders/detail/:id (Fetch one order with items and payment)
+// GET /api/orders/detail/:id
 router.get('/detail/:id', async (req, res) => {
     try {
-        const order = await Order.findByPk(req.params.id, {
-            include: [
-                {
-                    model: OrderItem,
-                    as: 'items',
-                    include: [
-                        {
-                            model: Product,
-                            as: 'product',
-                            include: [{ model: User, as: 'seller', attributes: ['id', 'username', 'fullName'] }]
-                        }
-                    ]
-                },
-                { model: Payment, as: 'payment' }
-            ]
-        });
-
-        if (!order) return res.status(404).json({ message: "Order not found" });
+        const order = await Order.findById(req.params.id);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
         res.json(order);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
-// GET: /api/orders/:userId (Fetch all orders for a user)
+// GET /api/orders/:userId
 router.get('/:userId', async (req, res) => {
     try {
-        const orders = await Order.findAll({
-            where: { userId: req.params.userId },
-            include: [
-                {
-                    model: OrderItem,
-                    as: 'items',
-                    include: [{ model: Product, as: 'product' }]
-                },
-                { model: Payment, as: 'payment' }
-            ],
-            order: [['createdAt', 'DESC']]
-        });
-
+        const orders = await Order.findByUser(req.params.userId);
         res.json(orders);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
-// POST: /api/orders/checkout (Create an order from a user's cart)
+// POST /api/orders/checkout
 router.post('/checkout', async (req, res) => {
+    const conn = await pool.getConnection();
     try {
         const { userId, deliveryAddress, notes } = req.body;
-        if (!userId) return res.status(400).json({ message: "userId is required" });
+        if (!userId) return res.status(400).json({ message: 'userId is required' });
 
-        const cartItems = await CartItem.findAll({
-            where: { userId },
-            include: [{ model: Product, as: 'product' }]
-        });
+        const [cartRows] = await conn.query(
+            `SELECT ci.*, p.price, p.name AS productName, p.userId AS sellerId
+             FROM cart_items ci
+             JOIN products p ON ci.productId = p.id
+             WHERE ci.userId = ?`,
+            [userId]
+        );
+        if (cartRows.length === 0) return res.status(400).json({ message: 'Cart is empty' });
 
-        if (!cartItems.length) {
-            return res.status(400).json({ message: "Cart is empty" });
-        }
-
-        const subtotal = cartItems.reduce((sum, item) => {
-            return sum + Number(item.product.price) * item.quantity;
-        }, 0);
+        const subtotal    = cartRows.reduce((sum, i) => sum + Number(i.price) * i.quantity, 0);
         const deliveryFee = deliveryFeeFor(subtotal);
 
-        const order = await Order.create({
-            userId,
-            deliveryAddress,
-            notes,
-            subtotal,
-            deliveryFee,
-            total: subtotal + deliveryFee
-        });
+        await conn.beginTransaction();
 
-        const orderItems = await Promise.all(cartItems.map(item => {
-            const unitPrice = Number(item.product.price);
+        const orderId = await Order.create({ userId, deliveryAddress, notes, subtotal, deliveryFee, total: subtotal + deliveryFee });
+
+        const orderItems = await Promise.all(cartRows.map(item => {
+            const unitPrice = Number(item.price);
             return OrderItem.create({
-                orderId: order.id,
-                productId: item.productId,
-                sellerId: item.product.userId,
-                productName: item.product.name,
-                unitPrice,
-                quantity: item.quantity,
+                orderId, productId: item.productId, sellerId: item.sellerId,
+                productName: item.productName, unitPrice, quantity: item.quantity,
                 lineTotal: unitPrice * item.quantity
             });
         }));
 
-        await CartItem.destroy({ where: { userId } });
+        await CartItem.clearByUser(userId);
+        await conn.commit();
 
         res.status(201).json({
             success: true,
-            message: "Order created successfully",
-            data: { order, items: orderItems }
+            message: 'Order created successfully',
+            data: {
+                order: { id: orderId, userId, subtotal, deliveryFee, total: subtotal + deliveryFee, status: 'Pending', deliveryAddress, notes },
+                items: orderItems
+            }
         });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+    } catch (err) {
+        await conn.rollback();
+        res.status(500).json({ success: false, error: err.message });
+    } finally {
+        conn.release();
     }
 });
 

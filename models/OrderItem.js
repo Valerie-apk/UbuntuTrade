@@ -1,38 +1,21 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const pool = require('../config/db');
 
-const OrderItem = sequelize.define('OrderItem', {
-    orderId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+const OrderItem = {
+    async create({ orderId, productId, sellerId, productName, unitPrice, quantity, lineTotal }) {
+        const [result] = await pool.query(
+            'INSERT INTO order_items (orderId, productId, sellerId, productName, unitPrice, quantity, lineTotal) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [orderId, productId, sellerId || null, productName, unitPrice, quantity, lineTotal]
+        );
+        return { id: result.insertId, orderId, productId, sellerId, productName, unitPrice, quantity, lineTotal };
     },
-    productId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    sellerId: {
-        type: DataTypes.INTEGER
-    },
-    productName: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    unitPrice: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false
-    },
-    quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 1
-    },
-    lineTotal: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false
+
+    async findByOrder(orderId) {
+        const [rows] = await pool.query(
+            'SELECT oi.*, p.imageUrl FROM order_items oi LEFT JOIN products p ON oi.productId = p.id WHERE oi.orderId = ?',
+            [orderId]
+        );
+        return rows;
     }
-}, {
-    tableName: 'order_items',
-    timestamps: true
-});
+};
 
 module.exports = OrderItem;

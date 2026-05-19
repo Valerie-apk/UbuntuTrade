@@ -1,25 +1,15 @@
-const { Sequelize } = require('sequelize');
+require('dotenv').config();
+const mysql = require('mysql2/promise');
 
-// was in routes folder 
-const dbPass = require('../routes/password'); 
-
-
-const sequelize = new Sequelize('TradeDataBase', 'root', dbPass, { 
-    host: '127.0.0.1',
-    dialect: 'mysql',
-    logging: false
+const pool = mysql.createPool({
+    host:     process.env.DB_HOST || '127.0.0.1',
+    user:     process.env.DB_USER || 'root',
+    password: process.env.DB_PASS || '',
+    database: process.env.DB_NAME || 'TradeDataBase',
+    port:     Number(process.env.DB_PORT) || 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-// The connection function
-const connectDB = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('MySQL Connected successfully via Sequelize');
-    } catch (err) {
-        console.error('Database Connection Error:', err);
-        process.exit(1);
-    }
-};
-
-// Export both so app.js can find them
-module.exports = { connectDB, sequelize };
+module.exports = pool;

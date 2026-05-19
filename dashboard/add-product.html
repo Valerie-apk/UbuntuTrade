@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - UbuntuTrade</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .add-product-page { max-width: 620px; margin: 100px auto 40px; padding: 0 20px; }
+        .add-product-card { background: #fff; border-radius: 12px; padding: 32px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .add-product-card h2 { margin-bottom: 24px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 14px; color: #444; }
+        .form-group input,
+        .form-group textarea,
+        .form-group select { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; box-sizing: border-box; font-family: inherit; }
+        .form-group textarea { resize: vertical; min-height: 90px; }
+        .form-row { display: flex; gap: 14px; }
+        .form-row .form-group { flex: 1; }
+        .submit-btn { width: 100%; padding: 14px; background: #e07b39; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 8px; }
+        .submit-btn:hover { background: #c96a2c; }
+        #formMsg { margin-bottom: 12px; padding: 10px; border-radius: 6px; display: none; }
+        #formMsg.success { background: #d4edda; color: #155724; }
+        #formMsg.error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
+        <div class="nav-buttons">
+            <a href="market.html" style="text-decoration:none;color:inherit;">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <div class="add-product-page">
+        <div class="add-product-card">
+            <h2><i class="fas fa-plus-circle"></i> List a New Product</h2>
+
+            <div id="formMsg"></div>
+
+            <form id="addProductForm">
+                <div class="form-group">
+                    <label for="prodName">Product Name *</label>
+                    <input type="text" id="prodName" placeholder="e.g. Nike Air Force 1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="prodDescription">Description</label>
+                    <textarea id="prodDescription" placeholder="Describe your product — condition, size, brand, etc."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prodPrice">Price (R) *</label>
+                        <input type="number" id="prodPrice" placeholder="0.00" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodCategory">Category *</label>
+                        <select id="prodCategory" required>
+                            <option value="">Select category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing &amp; Fashion</option>
+                            <option value="home">Home &amp; Living</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="sports">Sports &amp; Outdoors</option>
+                            <option value="jewelry">Jewelry</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prodLocation">Location</label>
+                        <select id="prodLocation">
+                            <option value="">Select location</option>
+                            <option value="johannesburg">Johannesburg</option>
+                            <option value="cape-town">Cape Town</option>
+                            <option value="durban">Durban</option>
+                            <option value="pretoria">Pretoria</option>
+                            <option value="bloemfontein">Bloemfontein</option>
+                            <option value="port-elizabeth">Port Elizabeth</option>
+                            <option value="east-london">East London</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodDepartment">Department</label>
+                        <select id="prodDepartment">
+                            <option value="">Select department</option>
+                            <option value="mens">Men's</option>
+                            <option value="womens">Women's</option>
+                            <option value="kids">Kids</option>
+                            <option value="unisex">Unisex</option>
+                            <option value="home-general">Home &amp; General</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="prodImageUrl">Image URL (optional)</label>
+                    <input type="url" id="prodImageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-upload"></i> List Product
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:3000/api';
+        const userId = localStorage.getItem('userId');
+
+        document.getElementById('addProductForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const msg = document.getElementById('formMsg');
+
+            const body = {
+                name: document.getElementById('prodName').value,
+                description: document.getElementById('prodDescription').value,
+                price: parseFloat(document.getElementById('prodPrice').value),
+                category: document.getElementById('prodCategory').value,
+                location: document.getElementById('prodLocation').value,
+                department: document.getElementById('prodDepartment').value,
+                imageUrl: document.getElementById('prodImageUrl').value || 'default-product.png',
+                userId: parseInt(userId) || null
+            };
+
+            try {
+                const res = await fetch(`${API}/products/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    msg.className = 'success';
+                    msg.style.display = 'block';
+                    msg.textContent = 'Product listed successfully!';
+                    document.getElementById('addProductForm').reset();
+                    setTimeout(() => { window.location.href = 'market.html'; }, 1500);
+                } else {
+                    msg.className = 'error';
+                    msg.style.display = 'block';
+                    msg.textContent = data.error || 'Failed to list product.';
+                }
+            } catch (err) {
+                msg.className = 'error';
+                msg.style.display = 'block';
+                msg.textContent = 'Cannot connect to server. Make sure it is running.';
+            }
+        });
+    </script>
+</body>
+</html>

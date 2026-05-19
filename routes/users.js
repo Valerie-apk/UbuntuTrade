@@ -1,57 +1,39 @@
-const router = require('express').Router();
-const { User, Product } = require('../models');
+const router  = require('express').Router();
+const User    = require('../models/User');
+const Product = require('../models/Product');
 
-// GET: /api/users (Fetch all users)
+// GET /api/users
 router.get('/', async (req, res) => {
     try {
-        const users = await User.findAll({
-            attributes: { exclude: ['password'] },
-            order: [['createdAt', 'DESC']]
-        });
-
+        const users = await User.findAll();
         res.json(users);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
-// GET: /api/users/:id (Fetch one user with their products)
+// GET /api/users/:id
 router.get('/:id', async (req, res) => {
     try {
-        const user = await User.findByPk(req.params.id, {
-            attributes: { exclude: ['password'] },
-            include: [{ model: Product, as: 'products' }]
-        });
-
-        if (!user) return res.status(404).json({ message: "User not found" });
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        const products = await Product.findBySeller(req.params.id);
+        res.json({ ...user, products });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
-// PUT: /api/users/:id (Update a user profile)
+// PUT /api/users/:id
 router.put('/:id', async (req, res) => {
     try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) return res.status(404).json({ message: "User not found" });
-
-        const allowedFields = ['username', 'fullName', 'phone', 'avatarUrl', 'location', 'role', 'isVerified', 'rating', 'responseRate'];
-        const updates = {};
-
-        allowedFields.forEach(field => {
-            if (Object.prototype.hasOwnProperty.call(req.body, field)) {
-                updates[field] = req.body[field];
-            }
-        });
-
-        await user.update(updates);
-        const responseUser = user.toJSON();
-        delete responseUser.password;
-
-        res.json({ success: true, data: responseUser });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        const existing = await User.findById(req.params.id);
+        if (!existing) return res.status(404).json({ message: 'User not found' });
+        const updated = await User.update(req.params.id, req.body);
+        if (!updated) return res.status(400).json({ message: 'No valid fields to update' });
+        res.json({ success: true, data: updated });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 

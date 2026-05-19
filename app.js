@@ -1,46 +1,35 @@
+require('dotenv').config();
 const express = require('express');
-const cors = require('cors'); // 1. Import the cors package
-const app = express();
-const path = require('path');
+const cors    = require('cors');
+const path    = require('path');
+const pool    = require('./config/db');
 
-//  import database connection and models
-const { connectDB, sequelize } = require('./config/db');
+const app  = express();
+const PORT = process.env.PORT || 3000;
 
-require('./models');
-app.use(cors()); // 2. Enable CORS for all routes
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-const PORT = 3000;
+// Routes
+app.use('/api/auth',     require('./routes/auth'));
+app.use('/api/products', require('./routes/products'));
+app.use('/api/cart',     require('./routes/cart'));
+app.use('/api/orders',   require('./routes/orders'));
+app.use('/api/pay',      require('./routes/payments'));
+app.use('/api/messages', require('./routes/messages'));
+app.use('/api/users',    require('./routes/users'));
+app.use('/api/admin',    require('./routes/admin'));
+app.use('/info',         require('./routes/info'));
 
-//  Connect to mysql and sync models
-connectDB();
-sequelize.sync({ alter: true })
-    .then(() => console.log('Database & Tables Synchronized'))
-    .catch(err => console.error(' Database Sync Error:', err));
-
-// Root Route
 app.get('/', (req, res) => {
-    res.send('<h1>Server is up and running!</h1><p>Try the API routes at /api/products</p>');
+    res.send('<h1>UbuntuTrade is running!</h1><p>API available at <a href="/api/products">/api/products</a></p><p><a href="/info">Platform Info</a></p>');
 });
 
-// Import Routes
-const authRoutes = require('./routes/auth');
-const productRoutes = require('./routes/products');
-const cartRoutes = require('./routes/cart');
-const paymentRoutes = require('./routes/payments');
-const orderRoutes = require('./routes/orders');
-const messageRoutes = require('./routes/messages');
-const userRoutes = require('./routes/users');
-
-// Use Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/messages', messageRoutes);
+// Test DB on startup
+pool.query('SELECT 1')
+    .then(() => console.log('MySQL connected successfully'))
+    .catch(err => { console.error('MySQL connection error:', err.message); process.exit(1); });
 
 app.listen(PORT, () => {
     console.log(`Server running at: http://localhost:${PORT}`);

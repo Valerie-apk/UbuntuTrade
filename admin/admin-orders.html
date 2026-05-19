@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - Admin | UbuntuTrade</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/sidebar-init.js"></script>
+    <style>
+        .page-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:24px; }
+        .page-header h1 { font-size:22px;font-weight:700;margin:0; }
+        .page-header p { color:#888;margin:4px 0 0;font-size:13px; }
+        .btn-green { background:#22c55e;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px; }
+        .btn-blue { background:#3b82f6;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px; }
+        .btn-red { background:#ef4444;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px; }
+        .controls { display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center; }
+        .controls .search-bar { flex:1;min-width:200px; }
+        .ctrl-select { padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:13px;background:#fff; }
+        .form-label { display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;margin-bottom:12px; }
+        .form-input { padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:100%;box-sizing:border-box; }
+        .modal-footer { display:flex;gap:8px;justify-content:flex-end;margin-top:20px; }
+        .btn-cancel { background:#f5f5f5;color:#333;border:1px solid #ddd;padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px; }
+        .btn-save { background:#e04a2f;color:#fff;border:none;padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600; }
+        .action-btns { display:flex;gap:6px; }
+        .card-header { display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #f0f0f0; }
+        .card-header h3 { margin:0;font-size:15px; }
+        .order-item-row { display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5; }
+        .order-item-row:last-child { border-bottom:none; }
+        .order-thumb { width:36px;height:36px;border-radius:6px;object-fit:cover;background:#f0f0f0;flex-shrink:0; }
+    </style>
+</head>
+<body class="admin-page">
+    <nav class="navbar">
+        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
+        <div class="nav-buttons">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search orders...">
+            </div>
+            <div class="admin-profile">
+                <i class="fas fa-bell"></i>
+                <div class="profile-avatar" id="adminInitial">A</div>
+                <span id="adminName">Admin</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-wrapper">
+        <div id="sidebarContainer"></div>
+
+        <div class="admin-content">
+            <div class="page-header">
+                <div>
+                    <h1>Orders</h1>
+                    <p>Monitor and manage all customer orders</p>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="admin-stats">
+                <div class="stat-box">
+                    <div class="stat-icon total-orders"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="stat-info"><div class="stat-label">Total Orders</div><div class="stat-value" id="sTotal">—</div></div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon total-users"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info"><div class="stat-label">Pending</div><div class="stat-value" id="sPending">—</div></div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon total-products"><i class="fas fa-truck"></i></div>
+                    <div class="stat-info"><div class="stat-label">Delivered</div><div class="stat-value" id="sDelivered">—</div></div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon total-sales"><i class="fas fa-rand-sign"></i></div>
+                    <div class="stat-info"><div class="stat-label">Revenue</div><div class="stat-value" id="sRevenue">—</div></div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="orderSearch" placeholder="Search by order ID or buyer..." oninput="filterOrders()">
+                </div>
+                <select id="statusFilter" class="ctrl-select" onchange="filterOrders()">
+                    <option value="">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <!-- Table -->
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3>All Orders</h3>
+                    <span id="orderCount" style="color:#888;font-size:13px;"></span>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Buyer</th>
+                            <th>Items</th>
+                            <th>Subtotal</th>
+                            <th>Delivery</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersBody">
+                        <tr><td colspan="9" style="padding:24px;text-align:center;color:#888;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:32px;position:relative;margin:16px;">
+            <button onclick="closeModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;line-height:1;">&times;</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:3000';
+        let allOrders = [];
+
+        const admin = localStorage.getItem('username') || 'Admin';
+        document.getElementById('adminName').textContent = admin;
+        document.getElementById('adminInitial').textContent = admin.charAt(0).toUpperCase();
+
+        async function loadOrders() {
+            try {
+                const res = await fetch(`${API}/api/orders`);
+                allOrders = await res.json();
+                renderStats(allOrders);
+                renderTable(allOrders);
+            } catch {
+                document.getElementById('ordersBody').innerHTML =
+                    '<tr><td colspan="9" style="padding:24px;text-align:center;color:red;">Failed to load orders.</td></tr>';
+            }
+        }
+
+        function renderStats(orders) {
+            const revenue = orders
+                .filter(o => o.status === 'Paid' || o.status === 'Delivered')
+                .reduce((s, o) => s + Number(o.total || 0), 0);
+            document.getElementById('sTotal').textContent = orders.length;
+            document.getElementById('sPending').textContent = orders.filter(o => o.status === 'Pending').length;
+            document.getElementById('sDelivered').textContent = orders.filter(o => o.status === 'Delivered').length;
+            document.getElementById('sRevenue').textContent = `R${revenue.toLocaleString()}`;
+        }
+
+        function renderTable(orders) {
+            document.getElementById('orderCount').textContent = `${orders.length} order${orders.length !== 1 ? 's' : ''}`;
+            const tbody = document.getElementById('ordersBody');
+            if (!orders.length) {
+                tbody.innerHTML = '<tr><td colspan="9" style="padding:24px;text-align:center;color:#888;">No orders found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = orders.map(o => {
+                const buyer = o.buyer ? o.buyer.username : '—';
+                const itemCount = Array.isArray(o.items) ? o.items.length : 0;
+                return `
+                <tr>
+                    <td><strong>#${o.id}</strong></td>
+                    <td>${buyer}</td>
+                    <td>${itemCount} item${itemCount !== 1 ? 's' : ''}</td>
+                    <td>R${Number(o.subtotal || 0).toLocaleString()}</td>
+                    <td>R${Number(o.deliveryFee || 0).toLocaleString()}</td>
+                    <td><strong>R${Number(o.total || 0).toLocaleString()}</strong></td>
+                    <td><span class="status-badge ${(o.status || 'pending').toLowerCase()}">${o.status || 'Pending'}</span></td>
+                    <td>${new Date(o.createdAt).toLocaleDateString('en-ZA')}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-blue" onclick="openViewModal(${o.id})"><i class="fas fa-eye"></i> View</button>
+                            <button class="btn-green" onclick="openStatusModal(${o.id})"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn-red" onclick="deleteOrder(${o.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function filterOrders() {
+            const q = document.getElementById('orderSearch').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            let list = allOrders;
+            if (q) list = list.filter(o =>
+                String(o.id).includes(q) ||
+                (o.buyer && o.buyer.username || '').toLowerCase().includes(q) ||
+                (o.buyer && o.buyer.email || '').toLowerCase().includes(q));
+            if (status) list = list.filter(o => o.status === status);
+            renderTable(list);
+        }
+
+        function openModal() { document.getElementById('modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        document.getElementById('modal').addEventListener('click', e => {
+            if (e.target === document.getElementById('modal')) closeModal();
+        });
+
+        function openViewModal(id) {
+            const o = allOrders.find(x => x.id === id);
+            if (!o) return;
+            const buyer = o.buyer ? `${o.buyer.username} (${o.buyer.email})` : '—';
+            const itemsHTML = Array.isArray(o.items) && o.items.length
+                ? o.items.map(i => {
+                    const prod = i.product || {};
+                    const img = prod.imageUrl && prod.imageUrl !== 'default-product.png' ? prod.imageUrl : '';
+                    return `
+                    <div class="order-item-row">
+                        <img class="order-thumb" src="${img}" alt="${i.productName}" onerror="this.src=''">
+                        <div style="flex:1;">
+                            <div style="font-size:13px;font-weight:600;">${i.productName}</div>
+                            <div style="font-size:11px;color:#888;">×${i.quantity} @ R${Number(i.unitPrice).toLocaleString()}</div>
+                        </div>
+                        <div style="font-size:13px;font-weight:700;">R${Number(i.lineTotal).toLocaleString()}</div>
+                    </div>`;
+                }).join('')
+                : '<p style="color:#888;font-size:13px;">No items found.</p>';
+
+            const payMethod = o.payment ? o.payment.method : '—';
+            const payTxn = o.payment ? o.payment.transactionId : '—';
+
+            document.getElementById('modalContent').innerHTML = `
+                <h2 style="margin:0 0 4px;font-size:18px;font-weight:700;">Order #${o.id}</h2>
+                <p style="color:#888;font-size:13px;margin:0 0 16px;">${new Date(o.createdAt).toLocaleString('en-ZA')}</p>
+
+                <div style="background:#f9f9f9;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:#888;">Buyer</span><strong>${buyer}</strong></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:#888;">Status</span><span class="status-badge ${(o.status||'pending').toLowerCase()}">${o.status}</span></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:#888;">Delivery to</span><span>${o.deliveryAddress || '—'}</span></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:#888;">Payment</span><span>${payMethod}</span></div>
+                    <div style="display:flex;justify-content:space-between;"><span style="color:#888;">Transaction</span><span style="font-size:11px;">${payTxn}</span></div>
+                </div>
+
+                <h3 style="font-size:14px;font-weight:700;margin:0 0 8px;">Items</h3>
+                <div style="margin-bottom:16px;">${itemsHTML}</div>
+
+                <div style="border-top:2px solid #f0f0f0;padding-top:12px;font-size:13px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>Subtotal</span><span>R${Number(o.subtotal||0).toLocaleString()}</span></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span>Delivery</span><span>R${Number(o.deliveryFee||0).toLocaleString()}</span></div>
+                    <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;"><span>Total</span><span style="color:#e04a2f;">R${Number(o.total||0).toLocaleString()}</span></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="closeModal()">Close</button>
+                    <button class="btn-save" onclick="closeModal();openStatusModal(${o.id})">Change Status</button>
+                </div>`;
+            openModal();
+        }
+
+        function openStatusModal(id) {
+            const o = allOrders.find(x => x.id === id);
+            if (!o) return;
+            document.getElementById('modalContent').innerHTML = `
+                <h2 style="margin:0 0 20px;font-size:18px;font-weight:700;">Update Order #${id} Status</h2>
+                <div style="margin-bottom:4px;font-size:13px;color:#888;">Current: <strong>${o.status}</strong></div>
+                <label class="form-label" style="margin-top:12px;">New Status
+                    <select class="form-input" id="newStatus">
+                        <option ${o.status==='Pending'?'selected':''}>Pending</option>
+                        <option ${o.status==='Paid'?'selected':''}>Paid</option>
+                        <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
+                        <option ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
+                    </select>
+                </label>
+                <div id="statusErr" style="color:red;font-size:13px;display:none;"></div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button class="btn-save" id="saveStatusBtn" onclick="saveStatus(${id})">Update Status</button>
+                </div>`;
+            openModal();
+        }
+
+        async function saveStatus(id) {
+            const status = document.getElementById('newStatus').value;
+            const err = document.getElementById('statusErr');
+            const btn = document.getElementById('saveStatusBtn');
+            btn.disabled = true; btn.textContent = 'Saving...';
+            try {
+                const res = await fetch(`${API}/api/orders/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                if (!res.ok) throw new Error('Update failed');
+                closeModal();
+                loadOrders();
+            } catch (e) {
+                err.textContent = e.message; err.style.display = 'block';
+                btn.disabled = false; btn.textContent = 'Update Status';
+            }
+        }
+
+        async function deleteOrder(id) {
+            if (!confirm(`Delete order #${id}?\nThis permanently removes the order.`)) return;
+            try {
+                const res = await fetch(`${API}/api/orders/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Delete failed');
+                loadOrders();
+            } catch (e) {
+                alert('Failed: ' + e.message);
+            }
+        }
+
+        loadOrders();
+        loadSidebar('/admin/admin-sidebar.html');
+    </script>
+</body>
+</html>
