@@ -25,7 +25,7 @@
                 <div class="welcome-section">
                     <h2 id="welcomeMsg">Welcome back!</h2>
                     <p>Manage your products and view your latest activities.</p>
-                    <button class="add-new-product-btn" type="button" id="addProductBtn" style="display:none;" onclick="window.location.href='../br-product/add-products.html'">Add New Product</button>
+                    <button class="add-new-product-btn" type="button" onclick="window.location.href='../br-product/add-products.html'">Add New Product</button>
                 </div>
 
                 <!-- QUICK CARDS -->
@@ -84,12 +84,7 @@
     <script>
         UTComponents.init({ type: 'customer', activePage: 'market' });
         const user = UTComponents.getUser();
-        if (user) {
-            document.getElementById('welcomeMsg').textContent = 'Welcome back, ' + (user.username || user.email) + '!';
-            if (user.role === 'Seller' || user.role === 'Admin') {
-                document.getElementById('addProductBtn').style.display = '';
-            }
-        }
+        if (user) document.getElementById('welcomeMsg').textContent = 'Welcome back, ' + (user.username || user.email) + '!';
 
         // Load dashboard data
         async function loadDashboard() {

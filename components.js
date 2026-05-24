@@ -261,17 +261,13 @@
                 '<a href="#" class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>' +
                 '</div>';
         } else {
-            var sidebarUser = getUser();
-            var addProductBtn = (sidebarUser && (sidebarUser.role === 'Seller' || sidebarUser.role === 'Admin'))
-                ? '<button class="add-product-btn" type="button" onclick="window.location.href=\'/br-product/add-products.html\'">' +
-                  '<i class="fas fa-plus"></i> <span>Add Product</span></button>'
-                : '';
             el.innerHTML =
                 '<div class="sidebar" id="appSidebar">' +
                 '<div class="sidebar-toggle-container">' +
                 '<button class="sidebar-toggle" id="sidebarToggle" title="Toggle"><i class="fas fa-angle-left"></i></button>' +
                 '</div>' +
-                addProductBtn +
+                '<button class="add-product-btn" type="button" onclick="window.location.href=\'/br-product/add-products.html\'">' +
+                '<i class="fas fa-plus"></i> <span>Add Product</span></button>' +
                 '<div class="sidebar-menu">' + linksHTML + '</div>' +
                 '<div class="sidebar-footer">' +
                 '<a href="#"><i class="fab fa-facebook"></i></a>' +
