@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone 13 Pro - UbuntuTrade</title>
+    <title>Product - UbuntuTrade</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../cart/popup-cart.css">
     <link rel="stylesheet" href="product-detail.css">
@@ -41,41 +41,20 @@
                     </section>
 
                     <section class="product-info-panel" aria-label="Product information">
-                        <h1>iPhone 13 Pro - 128GB</h1>
+                        <h1 id="productName" style="color:#aaa;font-style:italic;">Loading...</h1>
 
-                        <div class="rating-row">
-                            <span><i class="fas fa-star"></i> 4.8 (128 reviews)</span>
-                            <span>256 sold</span>
+                        <div class="rating-row" id="productRating">
+                            <span><i class="fas fa-star"></i> —</span>
+                            <span>— sold</span>
                         </div>
 
-                        <div class="detail-price">R8,500</div>
+                        <div class="detail-price" id="productPrice">—</div>
 
-                        <div class="meta-list">
-                            <div>
-                                <span>Condition:</span>
-                                <strong class="condition-pill">Like New</strong>
-                            </div>
-                            <div>
-                                <span>Category:</span>
-                                <strong>Electronics <i class="fas fa-chevron-right"></i> Phones</strong>
-                            </div>
-                            <div>
-                                <span>Listed:</span>
-                                <strong>2 days ago</strong>
-                            </div>
-                        </div>
+                        <div class="meta-list" id="productMeta"></div>
 
-                        <div class="description-block">
+                        <div class="description-block" id="descriptionBlock">
                             <h2>Description</h2>
-                            <p>iPhone 13 Pro in excellent condition. Always used with a screen protector and case. No scratches or dents. Battery health: 91%.</p>
-                            <ul>
-                                <li>128GB Storage</li>
-                                <li>6.1-inch Super Retina XDR display</li>
-                                <li>A15 Bionic chip</li>
-                                <li>12MP Pro camera system</li>
-                                <li>Includes original box and charging cable</li>
-                            </ul>
-                            <button class="show-less-btn" type="button">Show Less <i class="fas fa-chevron-up"></i></button>
+                            <p style="color:#aaa;">Loading...</p>
                         </div>
 
                         <div class="purchase-actions">
@@ -99,20 +78,12 @@
                     <aside class="seller-column" aria-label="Seller and delivery information">
                         <div class="side-panel seller-card">
                             <h2>Seller Information</h2>
-                            <div class="seller-profile">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%235a3a2a'/%3E%3Ctext x='50' y='59' font-size='42' fill='white' text-anchor='middle'%3ESD%3C/text%3E%3C/svg%3E" alt="Sipho D.">
-                                <div>
-                                    <h3>Sipho D.</h3>
-                                    <span>Verified Seller</span>
-                                </div>
+                            <div class="seller-profile" id="sellerProfile">
+                                <div style="width:50px;height:50px;border-radius:50%;background:#eee;flex-shrink:0;"></div>
+                                <div><h3 style="color:#aaa;">Loading...</h3></div>
                             </div>
-                            <ul class="seller-stats">
-                                <li><i class="fas fa-star"></i> <strong>4.9</strong> (54 reviews)</li>
-                                <li><i class="fas fa-location-dot"></i> Soweto, Gauteng</li>
-                                <li><i class="far fa-calendar"></i> Member since May 2023</li>
-                                <li><i class="far fa-message"></i> Response rate: 98%</li>
-                            </ul>
-                            <a href="seller-profile.html" class="seller-profile-link">View Seller Profile</a>
+                            <ul class="seller-stats" id="sellerStats"></ul>
+                            <a href="seller-profile.html" class="seller-profile-link" id="sellerProfileLink">View Seller Profile</a>
                         </div>
 
                         <div class="side-panel delivery-card">
@@ -195,51 +166,64 @@
 
         function renderProduct(p) {
             document.title = p.name + ' - UbuntuTrade';
-            document.querySelector('.product-breadcrumb span').textContent = p.name;
-            if (p.category) {
-                const catLinks = document.querySelectorAll('.product-breadcrumb a');
-                if (catLinks[1]) catLinks[1].textContent = p.category;
-            }
 
+            // Breadcrumb
+            document.querySelector('.product-breadcrumb span').textContent = p.name;
+            const catLinks = document.querySelectorAll('.product-breadcrumb a');
+            if (catLinks[1] && p.category) catLinks[1].textContent = p.category;
+            if (catLinks[2] && p.subcategory) catLinks[2].textContent = p.subcategory;
+
+            // Image
             const imgContainer = document.getElementById('productMainImg');
             if (p.imageUrl && p.imageUrl !== 'default-product.png') {
-                imgContainer.innerHTML = `<img src="${p.imageUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+                const img = new Image();
+                img.alt = p.name;
+                img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:12px;display:block;';
+                img.onerror = function() {
+                    imgContainer.innerHTML = '<i class="fas fa-image" style="font-size:64px;color:#ddd;"></i>';
+                    imgContainer.style.background = '#f5f5f5';
+                };
+                img.src = p.imageUrl;
+                imgContainer.innerHTML = '';
+                imgContainer.style.background = 'none';
+                imgContainer.appendChild(img);
             }
-            // else keep the grey icon placeholder
 
-            document.querySelector('.product-info-panel h1').textContent = p.name;
-            document.querySelector('.detail-price').textContent = 'R' + Number(p.price).toLocaleString();
+            // Info panel
+            document.getElementById('productName').textContent = p.name;
+            document.getElementById('productName').style.cssText = '';
+            document.getElementById('productPrice').textContent = 'R' + Number(p.price).toLocaleString();
+            document.getElementById('productRating').innerHTML =
+                `<span><i class="fas fa-star" style="color:#f5a623;"></i> ${p.rating || '0'} (${p.reviewCount || 0} reviews)</span><span>${p.soldCount || 0} sold</span>`;
 
-            const metaList = document.querySelector('.meta-list');
-            metaList.innerHTML = `
+            document.getElementById('productMeta').innerHTML = `
                 <div><span>Condition:</span><strong class="condition-pill">${p.condition || 'N/A'}</strong></div>
                 <div><span>Category:</span><strong>${p.category || 'N/A'}${p.subcategory ? ' <i class="fas fa-chevron-right"></i> ' + p.subcategory : ''}</strong></div>
                 <div><span>Location:</span><strong>${p.location || 'SA'}</strong></div>
                 <div><span>Listed:</span><strong>${timeAgo(p.createdAt)}</strong></div>
             `;
 
-            const descBlock = document.querySelector('.description-block p');
-            descBlock.textContent = p.description || 'No description provided.';
+            // Description — replace entire block to remove hardcoded ul/bullets
+            document.getElementById('descriptionBlock').innerHTML =
+                `<h2>Description</h2><p>${p.description || 'No description provided.'}</p>`;
 
-            if (p.category) loadRecommendations(p.category, p.id);
-
-            const ratingRow = document.querySelector('.rating-row');
-            ratingRow.innerHTML = `<span><i class="fas fa-star"></i> ${p.rating || '0'} (${p.reviewCount || 0} reviews)</span><span>${p.soldCount || 0} sold</span>`;
-
+            // Seller card
             if (p.seller) {
-                const sellerCard = document.querySelector('.seller-card');
                 const initials = (p.seller.username || p.seller.fullName || '?').substring(0, 2).toUpperCase();
-                sellerCard.querySelector('.seller-profile').innerHTML = `
-                    <div style="width:50px;height:50px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">${initials}</div>
-                    <div><h3>${p.seller.username || p.seller.fullName}</h3><span>${p.seller.isVerified ? 'Verified Seller' : 'Seller'}</span></div>
-                `;
-                sellerCard.querySelector('ul.seller-stats').innerHTML = `
+                const avatarHTML = p.seller.avatarUrl
+                    ? `<img src="${p.seller.avatarUrl}" alt="${p.seller.username}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.outerHTML='<div style=\'width:50px;height:50px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;flex-shrink:0;\'>${initials}</div>'">`
+                    : `<div style="width:50px;height:50px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;flex-shrink:0;">${initials}</div>`;
+                document.getElementById('sellerProfile').innerHTML =
+                    `${avatarHTML}<div><h3>${p.seller.username || p.seller.fullName}</h3><span>${p.seller.isVerified ? 'Verified Seller' : 'Seller'}</span></div>`;
+                document.getElementById('sellerStats').innerHTML = `
                     <li><i class="fas fa-star"></i> <strong>${p.seller.rating || '0'}</strong> rating</li>
                     <li><i class="fas fa-location-dot"></i> ${p.seller.location || 'SA'}</li>
                     <li><i class="far fa-message"></i> Response rate: ${p.seller.responseRate || 'N/A'}%</li>
                 `;
-                sellerCard.querySelector('.seller-profile-link').href = 'seller-profile.html?id=' + p.seller.id;
+                document.getElementById('sellerProfileLink').href = 'seller-profile.html?id=' + p.seller.id;
             }
+
+            if (p.category) loadRecommendations(p.category, p.id);
         }
 
         loadProduct();
