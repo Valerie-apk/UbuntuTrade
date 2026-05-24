@@ -73,7 +73,9 @@
                 return;
             }
             localStorage.setItem('utUser', JSON.stringify(data.user));
-            window.location.href = '../dashboard/market.html';
+            window.location.href = data.user.role === 'Admin'
+                ? '/admin/admin.html'
+                : '../dashboard/market.html';
         } catch (err) {
             errEl.textContent = 'Network error. Please try again.';
             errEl.style.display = 'block';

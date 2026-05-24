@@ -199,6 +199,21 @@
         UTComponents.init({ type: 'customer', activePage: 'browse' });
         const user = UTComponents.getUser();
 
+        // Read URL params (from landing page search / category buttons)
+        const _urlParams   = new URLSearchParams(window.location.search);
+        const _initSearch  = _urlParams.get('search')   || '';
+        const _initCategory = _urlParams.get('category') || '';
+
+        // Pre-fill navbar search bar with URL search term
+        if (_initSearch) {
+            const sb = document.querySelector('.search-bar input');
+            if (sb) sb.value = _initSearch;
+        }
+
+        // Update page heading
+        if (_initSearch)   document.querySelector('.browse-title-section h1').textContent = 'Results for "' + _initSearch + '"';
+        if (_initCategory) document.querySelector('.browse-title-section h1').textContent = _initCategory;
+
         // Product grid
         const grid = document.getElementById('productsGrid');
         const resultsInfo = document.querySelector('.results-info');
@@ -266,7 +281,11 @@
             }
         }
 
-        loadProducts({ sort: 'newest' });
+        // Initial load — honour URL params
+        const _initParams = { sort: 'newest' };
+        if (_initSearch)   _initParams.search   = _initSearch;
+        if (_initCategory) _initParams.category  = _initCategory;
+        loadProducts(_initParams);
 
         // Sort
         document.getElementById('sort').addEventListener('change', function() {

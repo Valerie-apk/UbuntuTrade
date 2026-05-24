@@ -23,7 +23,7 @@ app.use('/api/admin',    require('./routes/admin'));
 app.use('/info',         require('./routes/info'));
 
 app.get('/', (req, res) => res.redirect('/index/index.html'));
-app.get('/admin', (req, res) => res.redirect('/admin/admin.html'));
+app.get('/admin', (req, res) => res.redirect('/admin/login.html'));
 
 // Test DB on startup
 pool.query('SELECT 1')
