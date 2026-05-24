@@ -25,7 +25,14 @@
                 <!-- PAGE HEADER -->
                 <div class="browse-header">
                     <div class="browse-title-section">
-                        <h1>All Products</h1>
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+                            <button onclick="history.length > 1 ? history.back() : window.location.href='/dashboard/market.html'"
+                                style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#f5f5f5;border:none;border-radius:8px;cursor:pointer;font-size:13px;color:#555;font-family:inherit;transition:background .15s;"
+                                onmouseover="this.style.background='#ebebeb'" onmouseout="this.style.background='#f5f5f5'">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <h1 style="margin:0;">All Products</h1>
+                        </div>
                         <p class="results-info">Showing 1 - 12 of 120 results</p>
                     </div>
                     <div class="sort-filter-section">
@@ -211,8 +218,9 @@
         }
 
         // Update page heading
-        if (_initSearch)   document.querySelector('.browse-title-section h1').textContent = 'Results for "' + _initSearch + '"';
-        if (_initCategory) document.querySelector('.browse-title-section h1').textContent = _initCategory;
+        const _h1 = document.querySelector('.browse-title-section h1');
+        if (_initSearch)   _h1.textContent = 'Results for "' + _initSearch + '"';
+        if (_initCategory) _h1.textContent = _initCategory;
 
         // Product grid
         const grid = document.getElementById('productsGrid');

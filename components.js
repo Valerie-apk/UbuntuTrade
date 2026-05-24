@@ -39,9 +39,10 @@
               '<span class="navbar-cart-count" id="navCartCount">0</span></a>'
             : '';
 
+        var logoHref = type === 'admin' ? '/admin/admin.html' : '/dashboard/market.html';
         el.innerHTML =
             '<nav class="navbar">' +
-            '<div class="logo">Ubuntu <span class="color-logo">Trade</span></div>' +
+            '<a href="' + logoHref + '" class="logo" style="text-decoration:none;color:inherit;">Ubuntu <span class="color-logo">Trade</span></a>' +
             '<div class="nav-buttons">' +
             '<div class="search-bar"><i class="fas fa-search"></i><input type="text" placeholder="Search here..."></div>' +
             '<div class="admin-profile">' +
