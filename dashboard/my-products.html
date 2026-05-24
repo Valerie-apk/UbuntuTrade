@@ -27,7 +27,7 @@
                         <h1>My Products</h1>
                         <p class="header-subtitle">Manage all the products you have listed.</p>
                     </div>
-                    <button class="add-new-product-btn" onclick="window.location.href='../br-product/add-products.html'">
+                    <button class="add-new-product-btn" id="addProductBtn" style="display:none;" onclick="window.location.href='../br-product/add-products.html'">
                         <i class="fas fa-plus"></i> Add New Product
                     </button>
                 </div>
@@ -94,6 +94,9 @@
     <script>
         UTComponents.init({ type: 'customer', activePage: 'my-products' });
         const user = UTComponents.getUser();
+        if (user && (user.role === 'Seller' || user.role === 'Admin')) {
+            document.getElementById('addProductBtn').style.display = '';
+        }
 
         let allProducts = [];
         let activeTab = 'all';

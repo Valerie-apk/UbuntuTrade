@@ -1,5 +1,5 @@
 (function () {
-    const API = 'http://localhost:3000';
+    const API = '';
     let rootEl = null;
 
     // ── Badge ──────────────────────────────────────────────────────────────
@@ -10,7 +10,7 @@
     }
 
     async function refreshBadge() {
-        const userId = localStorage.getItem('userId');
+        const _u = JSON.parse(localStorage.getItem('utUser') || 'null'); const userId = _u && _u.id;
         if (!userId) { setBadge(0); return; }
         try {
             const res = await fetch(`${API}/api/cart/${userId}`);
@@ -21,7 +21,7 @@
 
     // ── Render ─────────────────────────────────────────────────────────────
     async function loadCart() {
-        const userId = localStorage.getItem('userId');
+        const _u = JSON.parse(localStorage.getItem('utUser') || 'null'); const userId = _u && _u.id;
         const itemsEl  = document.getElementById('popupCartItems');
         const titleEl  = document.getElementById('popupCartTitle');
         const summaryEl = document.getElementById('popupCartSummary');
