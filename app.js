@@ -22,9 +22,8 @@ app.use('/api/users',    require('./routes/users'));
 app.use('/api/admin',    require('./routes/admin'));
 app.use('/info',         require('./routes/info'));
 
-app.get('/', (req, res) => {
-    res.send('<h1>UbuntuTrade is running!</h1><p>API available at <a href="/api/products">/api/products</a></p><p><a href="/info">Platform Info</a></p>');
-});
+app.get('/', (req, res) => res.redirect('/index/index.html'));
+app.get('/admin', (req, res) => res.redirect('/admin/admin.html'));
 
 // Test DB on startup
 pool.query('SELECT 1')
