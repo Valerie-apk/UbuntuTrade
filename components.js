@@ -23,14 +23,56 @@
         try { return JSON.parse(localStorage.getItem('utUser') || 'null'); } catch (e) { return null; }
     }
 
+    function injectStyles() {
+        if (document.getElementById('utComponentsStyle')) return;
+        var s = document.createElement('style');
+        s.id = 'utComponentsStyle';
+        s.textContent = [
+            /* ── User dropdown ── */
+            '.nav-user-dropdown{position:relative;display:flex;align-items:center;}',
+            '.nav-user-trigger{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 10px;border-radius:10px;transition:background .15s;user-select:none;}',
+            '.nav-user-trigger:hover{background:rgba(255,255,255,.1);}',
+            '.nav-user-trigger .fa-chevron-down{font-size:11px;transition:transform .2s;color:rgba(255,255,255,.7);}',
+            '.nav-user-dropdown.open .nav-user-trigger .fa-chevron-down{transform:rotate(180deg);}',
+            '.nav-dropdown-menu{position:absolute;top:calc(100% + 10px);right:0;width:240px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.16);z-index:9999;overflow:hidden;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .18s,transform .18s;}',
+            '.nav-user-dropdown.open .nav-dropdown-menu{opacity:1;transform:translateY(0);pointer-events:auto;}',
+            '.nav-dropdown-header{padding:16px;background:#fafafa;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:12px;}',
+            '.nav-dropdown-avatar{width:42px;height:42px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0;}',
+            '.nav-dropdown-avatar img{width:42px;height:42px;border-radius:50%;object-fit:cover;}',
+            '.nav-dropdown-name{font-weight:600;font-size:14px;color:#1a1a1a;line-height:1.2;}',
+            '.nav-dropdown-email{font-size:12px;color:#888;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;}',
+            '.nav-dropdown-role{display:inline-block;margin-top:5px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}',
+            '.nav-dropdown-role.role-admin{background:#fef3eb;color:#e07b39;}',
+            '.nav-dropdown-role.role-seller{background:#eaf4fb;color:#2980b9;}',
+            '.nav-dropdown-role.role-buyer{background:#eafbea;color:#27ae60;}',
+            '.nav-dropdown-divider{height:1px;background:#f0f0f0;margin:4px 0;}',
+            '.nav-dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:14px;color:#333;text-decoration:none;transition:background .12s;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;}',
+            '.nav-dropdown-item:hover{background:#f7f7f7;color:#e07b39;}',
+            '.nav-dropdown-item i{width:16px;text-align:center;color:#aaa;font-size:13px;}',
+            '.nav-dropdown-item:hover i{color:#e07b39;}',
+            '.nav-dropdown-item.danger{color:#e74c3c;}',
+            '.nav-dropdown-item.danger i{color:#e74c3c;}',
+            '.nav-dropdown-item.danger:hover{background:#fdf0f0;}',
+            '.nav-dropdown-item.highlight{color:#e07b39;font-weight:600;}',
+            '.nav-dropdown-item.highlight i{color:#e07b39;}',
+            /* ── Navbar search ── */
+            '.search-bar input{background:none;border:none;outline:none;font-size:14px;width:180px;}',
+        ].join('');
+        document.head.appendChild(s);
+    }
+
     function initNavbar(opts) {
         opts = opts || {};
         var type = opts.type || 'customer';
         var el = document.getElementById(opts.containerId || 'navbarContainer');
         if (!el) return;
 
+        injectStyles();
+
         var user = getUser();
-        var name = user ? (user.username || user.email || 'User') : 'User';
+        var name    = user ? (user.username || user.email || 'User') : 'User';
+        var email   = user ? (user.email || '') : '';
+        var role    = user ? (user.role || 'Buyer') : 'Buyer';
         var initial = name[0].toUpperCase();
 
         var cartHTML = type === 'customer'
@@ -39,19 +81,98 @@
               '<span class="navbar-cart-count" id="navCartCount">0</span></a>'
             : '';
 
+        // Build dropdown menu items
+        var menuItems = '';
+        if (type === 'customer') {
+            menuItems +=
+                '<a href="/dashboard/market.html" class="nav-dropdown-item"><i class="fas fa-home"></i> Dashboard</a>' +
+                '<a href="/br-product/browse-products.html" class="nav-dropdown-item"><i class="fas fa-store"></i> Browse Products</a>' +
+                '<a href="/dashboard/my-products.html" class="nav-dropdown-item"><i class="fas fa-box"></i> My Products</a>' +
+                '<a href="/dashboard/messages.html" class="nav-dropdown-item"><i class="fas fa-envelope"></i> Messages</a>' +
+                '<div class="nav-dropdown-divider"></div>';
+            if (role === 'Admin') {
+                menuItems += '<a href="/admin/admin.html" class="nav-dropdown-item highlight"><i class="fas fa-shield-halved"></i> Admin Panel</a>' +
+                    '<div class="nav-dropdown-divider"></div>';
+            }
+        } else {
+            menuItems +=
+                '<a href="/admin/admin.html" class="nav-dropdown-item"><i class="fas fa-home"></i> Admin Dashboard</a>' +
+                '<a href="/admin/admin-users.html" class="nav-dropdown-item"><i class="fas fa-users"></i> Manage Users</a>' +
+                '<a href="/admin/admin-products.html" class="nav-dropdown-item"><i class="fas fa-box"></i> Manage Products</a>' +
+                '<a href="/admin/admin-orders.html" class="nav-dropdown-item"><i class="fas fa-shopping-cart"></i> Manage Orders</a>' +
+                '<div class="nav-dropdown-divider"></div>' +
+                '<a href="/dashboard/market.html" class="nav-dropdown-item"><i class="fas fa-eye"></i> Customer View</a>' +
+                '<div class="nav-dropdown-divider"></div>';
+        }
+        menuItems += '<button class="nav-dropdown-item danger" id="navDropdownLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>';
+
+        var avatarHTML = user && user.avatarUrl
+            ? '<img src="' + user.avatarUrl + '" alt="' + name + '" onerror="this.outerHTML=\'<span>' + initial + '</span>\'">'
+            : initial;
+
         var logoHref = type === 'admin' ? '/admin/admin.html' : '/dashboard/market.html';
         el.innerHTML =
             '<nav class="navbar">' +
             '<a href="' + logoHref + '" class="logo" style="text-decoration:none;color:inherit;">Ubuntu <span class="color-logo">Trade</span></a>' +
             '<div class="nav-buttons">' +
-            '<div class="search-bar"><i class="fas fa-search"></i><input type="text" placeholder="Search here..."></div>' +
+            '<div class="search-bar"><i class="fas fa-search"></i><input type="text" id="navSearchInput" placeholder="Search products..."></div>' +
             '<div class="admin-profile">' +
             '<i class="fas fa-bell"></i>' +
             cartHTML +
-            '<div class="profile-avatar" id="navUserInitial">' + initial + '</div>' +
+            '<div class="nav-user-dropdown" id="navUserDropdown">' +
+            '<div class="nav-user-trigger" id="navUserTrigger">' +
+            '<div class="profile-avatar nav-dropdown-avatar">' + avatarHTML + '</div>' +
             '<span id="navUsername">' + name + '</span>' +
             '<i class="fas fa-chevron-down"></i>' +
+            '</div>' +
+            '<div class="nav-dropdown-menu" id="navDropdownMenu">' +
+            '<div class="nav-dropdown-header">' +
+            '<div class="nav-dropdown-avatar">' + avatarHTML + '</div>' +
+            '<div>' +
+            '<div class="nav-dropdown-name">' + name + '</div>' +
+            '<div class="nav-dropdown-email">' + email + '</div>' +
+            '<span class="nav-dropdown-role role-' + role.toLowerCase() + '">' + role + '</span>' +
+            '</div></div>' +
+            '<div class="nav-dropdown-divider"></div>' +
+            menuItems +
+            '</div></div>' +
             '</div></div></nav>';
+
+        // Toggle dropdown
+        var trigger  = document.getElementById('navUserTrigger');
+        var dropdown = document.getElementById('navUserDropdown');
+        if (trigger && dropdown) {
+            trigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('open');
+            });
+            document.addEventListener('click', function () {
+                dropdown.classList.remove('open');
+            });
+            document.getElementById('navDropdownMenu').addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        }
+
+        // Logout
+        var logoutBtn = document.getElementById('navDropdownLogout');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function () {
+                localStorage.removeItem('utUser');
+                window.location.href = '/index/login.html';
+            });
+        }
+
+        // Navbar search → browse-products
+        var navSearch = document.getElementById('navSearchInput');
+        if (navSearch) {
+            navSearch.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    var q = navSearch.value.trim();
+                    if (q) window.location.href = '/br-product/browse-products.html?search=' + encodeURIComponent(q);
+                }
+            });
+        }
 
         if (type === 'customer') {
             var popupRoot = document.getElementById('cartPopupRoot');
@@ -140,13 +261,17 @@
                 '<a href="#" class="logout-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>' +
                 '</div>';
         } else {
+            var sidebarUser = getUser();
+            var addProductBtn = (sidebarUser && (sidebarUser.role === 'Seller' || sidebarUser.role === 'Admin'))
+                ? '<button class="add-product-btn" type="button" onclick="window.location.href=\'/br-product/add-products.html\'">' +
+                  '<i class="fas fa-plus"></i> <span>Add Product</span></button>'
+                : '';
             el.innerHTML =
                 '<div class="sidebar" id="appSidebar">' +
                 '<div class="sidebar-toggle-container">' +
                 '<button class="sidebar-toggle" id="sidebarToggle" title="Toggle"><i class="fas fa-angle-left"></i></button>' +
                 '</div>' +
-                '<button class="add-product-btn" type="button" onclick="window.location.href=\'/br-product/add-products.html\'">' +
-                '<i class="fas fa-plus"></i> <span>Add Product</span></button>' +
+                addProductBtn +
                 '<div class="sidebar-menu">' + linksHTML + '</div>' +
                 '<div class="sidebar-footer">' +
                 '<a href="#"><i class="fab fa-facebook"></i></a>' +

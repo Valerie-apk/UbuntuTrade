@@ -2,7 +2,16 @@ require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
 const path    = require('path');
+const multer  = require('multer');
 const pool    = require('./config/db');
+
+const upload = multer({
+    dest: path.join(__dirname, 'uploads'),
+    limits: { fileSize: 8 * 1024 * 1024 },
+    fileFilter(req, file, cb) {
+        cb(null, /^image\/(jpeg|png|webp|gif)$/.test(file.mimetype));
+    }
+});
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -10,6 +19,17 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// POST /api/upload  — single image upload, returns { url }
+app.post('/api/upload', upload.single('image'), (req, res) => {
+    if (!req.file) return res.status(400).json({ message: 'No image provided' });
+    const ext = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif' }[req.file.mimetype] || '.jpg';
+    const fs   = require('fs');
+    const newPath = req.file.path + ext;
+    fs.renameSync(req.file.path, newPath);
+    res.json({ url: '/uploads/' + path.basename(newPath) });
+});
 
 // Routes
 app.use('/api/auth',     require('./routes/auth'));
