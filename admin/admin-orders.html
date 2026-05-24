@@ -6,7 +6,7 @@
     <title>Orders - Admin | UbuntuTrade</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="/sidebar-init.js"></script>
+    <script src="/components.js"></script>
     <style>
         .page-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:24px; }
         .page-header h1 { font-size:22px;font-weight:700;margin:0; }
@@ -31,20 +31,7 @@
     </style>
 </head>
 <body class="admin-page">
-    <nav class="navbar">
-        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
-        <div class="nav-buttons">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search orders...">
-            </div>
-            <div class="admin-profile">
-                <i class="fas fa-bell"></i>
-                <div class="profile-avatar" id="adminInitial">A</div>
-                <span id="adminName">Admin</span>
-            </div>
-        </div>
-    </nav>
+    <div id="navbarContainer"></div>
 
     <div class="admin-wrapper">
         <div id="sidebarContainer"></div>
@@ -129,16 +116,12 @@
     </div>
 
     <script>
-        const API = 'http://localhost:3000';
+        UTComponents.init({ type: 'admin', activePage: 'admin-orders' });
         let allOrders = [];
-
-        const admin = localStorage.getItem('username') || 'Admin';
-        document.getElementById('adminName').textContent = admin;
-        document.getElementById('adminInitial').textContent = admin.charAt(0).toUpperCase();
 
         async function loadOrders() {
             try {
-                const res = await fetch(`${API}/api/orders`);
+                const res = await fetch('/api/admin/orders');
                 allOrders = await res.json();
                 renderStats(allOrders);
                 renderTable(allOrders);
@@ -285,7 +268,7 @@
             const btn = document.getElementById('saveStatusBtn');
             btn.disabled = true; btn.textContent = 'Saving...';
             try {
-                const res = await fetch(`${API}/api/orders/${id}`, {
+                const res = await fetch(`/api/admin/orders/${id}/status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status })
@@ -302,7 +285,7 @@
         async function deleteOrder(id) {
             if (!confirm(`Delete order #${id}?\nThis permanently removes the order.`)) return;
             try {
-                const res = await fetch(`${API}/api/orders/${id}`, { method: 'DELETE' });
+                const res = await fetch(`/api/admin/orders/${id}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error('Delete failed');
                 loadOrders();
             } catch (e) {
@@ -311,7 +294,6 @@
         }
 
         loadOrders();
-        loadSidebar('/admin/admin-sidebar.html');
     </script>
 </body>
 </html>

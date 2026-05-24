@@ -6,7 +6,7 @@
     <title>Products - Admin | UbuntuTrade</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="/sidebar-init.js"></script>
+    <script src="/components.js"></script>
     <style>
         .page-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:24px; }
         .page-header h1 { font-size:22px;font-weight:700;margin:0; }
@@ -32,20 +32,7 @@
     </style>
 </head>
 <body class="admin-page">
-    <nav class="navbar">
-        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
-        <div class="nav-buttons">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search products...">
-            </div>
-            <div class="admin-profile">
-                <i class="fas fa-bell"></i>
-                <div class="profile-avatar" id="adminInitial">A</div>
-                <span id="adminName">Admin</span>
-            </div>
-        </div>
-    </nav>
+    <div id="navbarContainer"></div>
 
     <div class="admin-wrapper">
         <div id="sidebarContainer"></div>
@@ -143,19 +130,15 @@
     </div>
 
     <script>
-        const API = 'http://localhost:3000';
+        UTComponents.init({ type: 'admin', activePage: 'admin-products' });
         let allProducts = [];
         let allUsers = [];
-
-        const admin = localStorage.getItem('username') || 'Admin';
-        document.getElementById('adminName').textContent = admin;
-        document.getElementById('adminInitial').textContent = admin.charAt(0).toUpperCase();
 
         async function loadData() {
             try {
                 const [pRes, uRes] = await Promise.all([
-                    fetch(`${API}/api/products?status=all`),
-                    fetch(`${API}/api/users`)
+                    fetch('/api/admin/products'),
+                    fetch('/api/admin/users')
                 ]);
                 allProducts = await pRes.json();
                 allUsers = await uRes.json();
@@ -291,7 +274,7 @@
                 e.preventDefault();
                 const body = Object.fromEntries(new FormData(this).entries());
                 body.price = Number(body.price);
-                await submitForm(`${API}/api/products/add`, 'POST', body, 'Create Product');
+                await submitForm('/api/products/add', 'POST', body, 'Create Product');
             });
         }
 
@@ -304,7 +287,7 @@
                 e.preventDefault();
                 const body = Object.fromEntries(new FormData(this).entries());
                 body.price = Number(body.price);
-                await submitForm(`${API}/api/products/${id}`, 'PUT', body, 'Save Changes');
+                await submitForm(`/api/admin/products/${id}`, 'PUT', body, 'Save Changes');
             });
         }
 
@@ -331,7 +314,7 @@
         async function deleteProduct(id, name) {
             if (!confirm(`Remove product "${name}"?\nIt will be marked as Removed.`)) return;
             try {
-                const res = await fetch(`${API}/api/products/${id}`, { method: 'DELETE' });
+                const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error('Delete failed');
                 loadData();
             } catch (e) {
@@ -340,7 +323,6 @@
         }
 
         loadData();
-        loadSidebar('/admin/admin-sidebar.html');
     </script>
 </body>
 </html>

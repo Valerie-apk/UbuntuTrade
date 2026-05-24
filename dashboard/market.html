@@ -7,30 +7,10 @@
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../cart/popup-cart.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/components.js"></script>
 </head>
 <body class="dashboard-page">
-    <!-- TOP NAVBAR - Full Width -->
-    <nav class="navbar">
-        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
-
-        <div class="nav-buttons">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div>
-            <div class="admin-profile">
-                <i class="fas fa-bell"></i>
-                <a href="../cart/cart.html" class="navbar-cart-link" aria-label="Cart" title="Open cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="navbar-cart-count">3</span>
-                </a>
-                <div class="profile-avatar" id="userInitial">U</div>
-                <span id="username">User</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </div>
-    </nav>
-    <div id="cartPopupRoot" class="cart-popup-root" aria-hidden="true"></div>
+    <div id="navbarContainer"></div>
 
     <!-- Dashboard Wrapper -->
     <div class="dashboard-wrapper">
@@ -43,7 +23,7 @@
             <div class="dashboard-content">
                 <!-- WELCOME SECTION -->
                 <div class="welcome-section">
-                    <h2>Welcome back, User!</h2>
+                    <h2 id="welcomeMsg">Welcome back!</h2>
                     <p>Manage your products and view your latest activities.</p>
                     <button class="add-new-product-btn" type="button" onclick="window.location.href='../br-product/add-products.html'">Add New Product</button>
                 </div>
@@ -51,25 +31,19 @@
                 <!-- QUICK CARDS -->
                 <div class="dashboard-cards">
                     <div class="card-box products-card">
-                        <div class="card-icon">
-                            <i class="fas fa-cube"></i>
-                        </div>
+                        <div class="card-icon"><i class="fas fa-cube"></i></div>
                         <h3>My Products</h3>
-                        <div class="amount">R1500</div>
+                        <div class="amount" id="cardProducts">—</div>
                     </div>
                     <div class="card-box messages-card">
-                        <div class="card-icon">
-                            <i class="fas fa-comments"></i>
-                        </div>
+                        <div class="card-icon"><i class="fas fa-comments"></i></div>
                         <h3>New Messages</h3>
-                        <div class="amount">300</div>
+                        <div class="amount" id="cardMessages">—</div>
                     </div>
                     <div class="card-box orders-card">
-                        <div class="card-icon">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
+                        <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
                         <h3>Total Orders</h3>
-                        <div class="amount">2</div>
+                        <div class="amount" id="cardOrders">—</div>
                     </div>
                 </div>
 
@@ -77,7 +51,7 @@
                 <div class="products-section">
                     <div class="section-header">
                         <h3>My Products</h3>
-                        <a href="#" class="view-all">View All <i class="fas fa-chevron-right"></i></a>
+                        <a href="my-products.html" class="view-all">View All <i class="fas fa-chevron-right"></i></a>
                     </div>
                     <table>
                         <thead>
@@ -87,43 +61,8 @@
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23ff6b35' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='30' fill='white' text-anchor='middle' dy='.3em'%3E📱%3C/text%3E%3C/svg%3E" alt="Smartphone" class="product-img">
-                                        <div class="product-info">
-                                            <h4>Smartphone</h4>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>R1500</td>
-                                <td><span class="status-badge">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23f76c5e' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='30' fill='white' text-anchor='middle' dy='.3em'%3E👗%3C/text%3E%3C/svg%3E" alt="Traditional Dress" class="product-img">
-                                        <div class="product-info">
-                                            <h4>Traditional Dress</h4>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>R300</td>
-                                <td><span class="status-badge">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23ffa500' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='30' fill='white' text-anchor='middle' dy='.3em'%3E🍳%3C/text%3E%3C/svg%3E" alt="Cooking Pot" class="product-img">
-                                        <div class="product-info">
-                                            <h4>Cooking Pot</h4>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>R750</td>
-                                <td><span class="status-badge">Active</span></td>
-                            </tr>
+                        <tbody id="dashboardProductsBody">
+                            <tr><td colspan="3" style="color:#999;padding:16px;">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -131,33 +70,11 @@
                 <!-- MESSAGES SECTION -->
                 <div class="messages-section">
                     <div class="section-header">
-                        <h3>Messages</h3>
+                        <h3>Recent Messages</h3>
+                        <a href="messages.html" class="view-all">View All <i class="fas fa-chevron-right"></i></a>
                     </div>
-                    <div class="messages-list">
-                        <div class="message-item">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%238b5a3c'/%3E%3Ctext x='50' y='60' font-size='50' fill='white' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E" alt="Thabo M." class="message-avatar">
-                            <div class="message-content">
-                                <h4>Thabo M.</h4>
-                                <div class="message-text">Hi, is the smartphone still available?</div>
-                                <div class="message-time">5 minutes ago <span style="float: right; color: #999;">19:00 ago</span></div>
-                            </div>
-                        </div>
-                        <div class="message-item">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%236b4423'/%3E%3Ctext x='50' y='60' font-size='50' fill='white' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E" alt="Nomvula D." class="message-avatar">
-                            <div class="message-content">
-                                <h4>Nomvula D.</h4>
-                                <div class="message-text">Can i see more pictures of the dress?</div>
-                                <div class="message-time">1 hour ago <span style="float: right; color: #999;">3 hrs ago</span></div>
-                            </div>
-                        </div>
-                        <div class="message-item">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%235a3a2a'/%3E%3Ctext x='50' y='60' font-size='50' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" alt="Sipho K." class="message-avatar">
-                            <div class="message-content">
-                                <h4>Sipho K.</h4>
-                                <div class="message-text">I would like to buy the pot set. Let's...</div>
-                                <div class="message-time">3 hours ago <span style="float: right; color: #999;">3 hrs ago</span></div>
-                            </div>
-                        </div>
+                    <div class="messages-list" id="dashboardMessagesList">
+                        <p style="color:#999;padding:16px;">Loading...</p>
                     </div>
                 </div>
             </div>
@@ -165,108 +82,68 @@
     </div>
 
     <script>
-        const cartPopupRoot = document.getElementById('cartPopupRoot');
-        const cartButtons = document.querySelectorAll('.navbar-cart-link');
+        UTComponents.init({ type: 'customer', activePage: 'market' });
+        const user = UTComponents.getUser();
+        if (user) document.getElementById('welcomeMsg').textContent = 'Welcome back, ' + (user.username || user.email) + '!';
 
-        function closeCartPopup() {
-            cartPopupRoot.classList.remove('active');
-            cartPopupRoot.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('cart-popup-open');
-        }
+        // Load dashboard data
+        async function loadDashboard() {
+            if (!user) return;
+            try {
+                const [productsRes, ordersRes, convsRes] = await Promise.all([
+                    fetch('/api/products/seller/' + user.id),
+                    fetch('/api/orders/' + user.id),
+                    fetch('/api/messages/conversations/' + user.id)
+                ]);
+                const products = await productsRes.json();
+                const orders = await ordersRes.json();
+                const conversations = await convsRes.json();
 
-        function openCartPopup(event) {
-            event.preventDefault();
-            if (!cartPopupRoot.dataset.loaded) {
-                fetch('../cart/popup-cart.html')
-                    .then(response => response.text())
-                    .then(html => {
-                        cartPopupRoot.innerHTML = html;
-                        cartPopupRoot.dataset.loaded = 'true';
-                        showCartPopup();
-                    })
-                    .catch(() => window.location.href = '../cart/cart.html');
-            } else {
-                showCartPopup();
-            }
-        }
+                document.getElementById('cardProducts').textContent = products.length;
+                document.getElementById('cardOrders').textContent = orders.length;
+                const unread = conversations.reduce((sum, c) => {
+                    return sum + (Number(c.sellerId) === Number(user.id) ? (c.unreadForSeller || 0) : (c.unreadForBuyer || 0));
+                }, 0);
+                document.getElementById('cardMessages').textContent = unread;
 
-        function showCartPopup() {
-            cartPopupRoot.classList.add('active');
-            cartPopupRoot.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('cart-popup-open');
-        }
-
-        cartButtons.forEach(button => button.addEventListener('click', openCartPopup));
-
-        cartPopupRoot.addEventListener('click', function(event) {
-            if (event.target.closest('[data-cart-popup-close]') || event.target.matches('[data-cart-popup-backdrop]')) {
-                closeCartPopup();
-            }
-        });
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && cartPopupRoot.classList.contains('active')) {
-                closeCartPopup();
-            }
-        });
-
-        // Load Sidebar Component
-        fetch('sidebar.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('sidebarContainer').innerHTML = html;
-                initializeSidebarFunctionality();
-                setActiveSidebarItem();
-            })
-            .catch(error => console.error('Error loading sidebar:', error));
-
-        // Set active sidebar item based on current page
-        function setActiveSidebarItem() {
-            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
-            sidebarLinks.forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Find and activate the Dashboard link
-            const dashboardLink = Array.from(sidebarLinks).find(link => 
-                link.textContent.includes('Dashboard')
-            );
-            if (dashboardLink) {
-                dashboardLink.classList.add('active');
-            }
-        }
-
-        // Sidebar Toggle Functionality
-        function initializeSidebarFunctionality() {
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.querySelector('.sidebar');
-
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('collapsed');
-                    
-                    // Rotate the icon
-                    const icon = sidebarToggle.querySelector('i');
-                    if (sidebar.classList.contains('collapsed')) {
-                        icon.style.transform = 'rotate(180deg)';
-                    } else {
-                        icon.style.transform = 'rotate(0deg)';
-                    }
-                    
-                    // Save preference to localStorage
-                    const isCollapsed = sidebar.classList.contains('collapsed');
-                    localStorage.setItem('sidebarCollapsed', isCollapsed);
-                });
-
-                // Load sidebar preference on page load
-                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (isCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    const icon = sidebarToggle.querySelector('i');
-                    icon.style.transform = 'rotate(180deg)';
+                const tbody = document.getElementById('dashboardProductsBody');
+                if (products.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="color:#999;padding:16px;">No products yet. <a href="../br-product/add-products.html">Add one!</a></td></tr>';
+                } else {
+                    tbody.innerHTML = products.slice(0, 5).map(p => `
+                        <tr>
+                            <td><div class="product-cell">
+                                <div style="width:40px;height:40px;background:#f0f0f0;border-radius:6px;flex-shrink:0;"></div>
+                                <div class="product-info"><h4>${p.name}</h4></div>
+                            </div></td>
+                            <td>R${Number(p.price).toLocaleString()}</td>
+                            <td><span class="status-badge">${p.status}</span></td>
+                        </tr>`).join('');
                 }
+
+                const msgList = document.getElementById('dashboardMessagesList');
+                if (conversations.length === 0) {
+                    msgList.innerHTML = '<p style="color:#999;padding:16px;">No messages yet.</p>';
+                } else {
+                    msgList.innerHTML = conversations.slice(0, 3).map(c => {
+                        const other = Number(c.buyerId) === Number(user.id) ? c.seller : c.buyer;
+                        const name = other ? (other.username || other.fullName) : 'Unknown';
+                        const initials = name.substring(0, 2).toUpperCase();
+                        return `<div class="message-item" onclick="window.location.href='messages.html'" style="cursor:pointer;">
+                            <div class="message-avatar" style="width:42px;height:42px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;flex-shrink:0;">${initials}</div>
+                            <div class="message-content">
+                                <h4>${name}</h4>
+                                <div class="message-text">${c.lastMessage || 'No messages yet'}</div>
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+            } catch (e) {
+                console.error('Dashboard load error:', e);
             }
         }
+
+        loadDashboard();
     </script>
 </body>
 </html>

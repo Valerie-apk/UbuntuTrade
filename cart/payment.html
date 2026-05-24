@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - UbuntuTrade</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/components.js"></script>
+</head>
+<body class="dashboard-page cart-page">
+    <div id="navbarContainer"></div>
+
+    <div class="dashboard-wrapper">
+        <div id="sidebarContainer"></div>
+
+        <main class="main-content">
+            <section class="dashboard-content cart-content">
+                <div class="cart-header">
+                    <div>
+                        <h1>Complete Payment</h1>
+                        <p>Review your order and choose a payment method.</p>
+                    </div>
+                    <a href="cart.html" class="cart-link-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Cart
+                    </a>
+                </div>
+
+                <div class="cart-layout">
+                    <div class="cart-main-column">
+                        <!-- Order Summary -->
+                        <div class="cart-table-card" style="padding:24px;">
+                            <h2 style="margin-bottom:16px;">Order Summary</h2>
+                            <div id="orderItems" style="margin-bottom:16px;">
+                                <p style="color:#999;">Loading order...</p>
+                            </div>
+                            <div style="border-top:1px solid #f0f0f0;padding-top:12px;">
+                                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                                    <span>Subtotal</span><strong id="paySubtotal">R0</strong>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                                    <span>Delivery Fee</span><strong id="payDelivery">R0</strong>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:700;margin-top:8px;padding-top:8px;border-top:2px solid #eee;">
+                                    <span>Total</span><strong id="payTotal">R0</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="cart-table-card" style="padding:24px;margin-top:16px;">
+                            <h2 style="margin-bottom:16px;">Payment Method</h2>
+                            <div style="display:flex;flex-direction:column;gap:12px;">
+                                <label style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid #e07b39;border-radius:10px;cursor:pointer;">
+                                    <input type="radio" name="payMethod" value="Card" checked> <i class="far fa-credit-card"></i> Card Payment
+                                </label>
+                                <label style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid #ddd;border-radius:10px;cursor:pointer;">
+                                    <input type="radio" name="payMethod" value="EFT"> <i class="fas fa-university"></i> EFT / Bank Transfer
+                                </label>
+                                <label style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid #ddd;border-radius:10px;cursor:pointer;">
+                                    <input type="radio" name="payMethod" value="Cash"> <i class="fas fa-money-bill-wave"></i> Cash on Delivery
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Address -->
+                        <div class="cart-table-card" style="padding:24px;margin-top:16px;">
+                            <h2 style="margin-bottom:16px;">Delivery Address</h2>
+                            <input type="text" id="deliveryAddress" placeholder="Enter your delivery address" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;">
+                        </div>
+
+                        <div id="payError" style="color:red;padding:8px;display:none;"></div>
+
+                        <div class="cart-actions" style="margin-top:16px;">
+                            <a href="cart.html" class="cart-link-btn"><i class="fas fa-arrow-left"></i> Back</a>
+                            <button class="checkout-btn" id="confirmPayBtn" style="flex:1;">
+                                <i class="fas fa-lock"></i> Confirm Payment
+                            </button>
+                        </div>
+                    </div>
+
+                    <aside class="cart-sidebar">
+                        <div class="benefits-card">
+                            <div class="benefit-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <div><h3>Buyer Protection</h3><p>Your money is safe until you confirm delivery.</p></div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-truck"></i>
+                                <div><h3>Fast Delivery</h3><p>Get your items within 2-3 business days.</p></div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-rotate-left"></i>
+                                <div><h3>Easy Returns</h3><p>7-day return policy on all items.</p></div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        UTComponents.init({ type: 'customer', activePage: 'orders' });
+        const user = UTComponents.getUser();
+
+        // Load pending order from localStorage (set during checkout)
+        const pendingOrder = JSON.parse(localStorage.getItem('utPendingOrder') || 'null');
+
+        if (pendingOrder) {
+            const order = pendingOrder.order;
+            const items = pendingOrder.items || [];
+            document.getElementById('orderItems').innerHTML = items.map(i =>
+                `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f5f5;">
+                    <span>${i.productName} x${i.quantity}</span>
+                    <strong>R${Number(i.lineTotal).toLocaleString()}</strong>
+                </div>`
+            ).join('') || '<p style="color:#999;">No items.</p>';
+            document.getElementById('paySubtotal').textContent = 'R' + Number(order.subtotal || 0).toLocaleString();
+            document.getElementById('payDelivery').textContent = 'R' + Number(order.deliveryFee || 0).toLocaleString();
+            document.getElementById('payTotal').textContent = 'R' + Number(order.total || 0).toLocaleString();
+        } else {
+            document.getElementById('orderItems').innerHTML = '<p style="color:#999;">No order found. <a href="cart.html">Go back to cart.</a></p>';
+            document.getElementById('confirmPayBtn').disabled = true;
+        }
+
+        document.getElementById('confirmPayBtn').addEventListener('click', async function() {
+            if (!user || !pendingOrder) { alert('Session expired. Please checkout again.'); window.location.href = 'cart.html'; return; }
+            const method = document.querySelector('input[name="payMethod"]:checked').value;
+            const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+            const errEl = document.getElementById('payError');
+            errEl.style.display = 'none';
+            this.disabled = true; this.textContent = 'Processing...';
+            try {
+                const res = await fetch('/api/pay/checkout', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: pendingOrder.order.id, userId: user.id, amount: pendingOrder.order.total, method })
+                });
+                const data = await res.json();
+                if (!res.ok) { errEl.textContent = data.message || 'Payment failed.'; errEl.style.display = 'block'; this.disabled = false; this.innerHTML = '<i class="fas fa-lock"></i> Confirm Payment'; return; }
+                localStorage.removeItem('utPendingOrder');
+                window.location.href = 'success.html';
+            } catch (e) { errEl.textContent = 'Network error. Please try again.'; errEl.style.display = 'block'; this.disabled = false; this.innerHTML = '<i class="fas fa-lock"></i> Confirm Payment'; }
+        });
+    </script>
+</body>
+</html>

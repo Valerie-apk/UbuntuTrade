@@ -1,6 +1,7 @@
-const router  = require('express').Router();
-const User    = require('../models/User');
-const Product = require('../models/Product');
+const router       = require('express').Router();
+const User         = require('../models/User');
+const Product      = require('../models/Product');
+const WishlistItem = require('../models/WishlistItem');
 
 // GET /api/users
 router.get('/', async (req, res) => {
@@ -34,6 +35,16 @@ router.put('/:id', async (req, res) => {
         res.json({ success: true, data: updated });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// GET /api/users/:id/wishlist
+router.get('/:id/wishlist', async (req, res) => {
+    try {
+        const items = await WishlistItem.findByUser(req.params.id);
+        res.json(items);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

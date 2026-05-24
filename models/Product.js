@@ -26,7 +26,7 @@ function format(row) {
 }
 
 const Product = {
-    async findAll({ search, category, location, status = 'Active', minPrice, maxPrice, userId, sort = 'newest' } = {}) {
+    async findAll({ search, category, location, status = 'Active', minPrice, maxPrice, userId, sort = 'newest', limit, offset } = {}) {
         let sql = BASE_SQL + ' WHERE 1=1';
         const params = [];
         if (status && status !== 'all') { sql += ' AND p.status = ?';    params.push(status); }
@@ -38,8 +38,24 @@ const Product = {
         if (maxPrice)  { sql += ' AND p.price <= ?';                     params.push(Number(maxPrice)); }
         const orderMap = { newest: 'p.createdAt DESC', 'price-low': 'p.price ASC', 'price-high': 'p.price DESC', popular: 'p.views DESC' };
         sql += ` ORDER BY ${orderMap[sort] || 'p.createdAt DESC'}`;
+        if (limit)  { sql += ' LIMIT ?';  params.push(Number(limit)); }
+        if (offset) { sql += ' OFFSET ?'; params.push(Number(offset)); }
         const [rows] = await pool.query(sql, params);
         return rows.map(format);
+    },
+
+    async count({ search, category, location, status = 'Active', minPrice, maxPrice, userId } = {}) {
+        let sql = 'SELECT COUNT(*) AS total FROM products p WHERE 1=1';
+        const params = [];
+        if (status && status !== 'all') { sql += ' AND p.status = ?';    params.push(status); }
+        if (category)  { sql += ' AND p.category = ?';                   params.push(category); }
+        if (location)  { sql += ' AND p.location LIKE ?';                params.push(`%${location}%`); }
+        if (userId)    { sql += ' AND p.userId = ?';                     params.push(userId); }
+        if (search)    { sql += ' AND (p.name LIKE ? OR p.description LIKE ? OR p.category LIKE ?)'; params.push(`%${search}%`, `%${search}%`, `%${search}%`); }
+        if (minPrice)  { sql += ' AND p.price >= ?';                     params.push(Number(minPrice)); }
+        if (maxPrice)  { sql += ' AND p.price <= ?';                     params.push(Number(maxPrice)); }
+        const [[{ total }]] = await pool.query(sql, params);
+        return total;
     },
 
     async findById(id) {

@@ -6,7 +6,7 @@
     <title>Users - Admin | UbuntuTrade</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="/sidebar-init.js"></script>
+    <script src="/components.js"></script>
     <style>
         .page-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:24px; }
         .page-header h1 { font-size:22px;font-weight:700;margin:0; }
@@ -29,20 +29,7 @@
     </style>
 </head>
 <body class="admin-page">
-    <nav class="navbar">
-        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
-        <div class="nav-buttons">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" id="globalSearch" placeholder="Search users...">
-            </div>
-            <div class="admin-profile">
-                <i class="fas fa-bell"></i>
-                <div class="profile-avatar" id="adminInitial">A</div>
-                <span id="adminName">Admin</span>
-            </div>
-        </div>
-    </nav>
+    <div id="navbarContainer"></div>
 
     <div class="admin-wrapper">
         <div id="sidebarContainer"></div>
@@ -133,16 +120,12 @@
     </div>
 
     <script>
-        const API = 'http://localhost:3000';
+        UTComponents.init({ type: 'admin', activePage: 'admin-users' });
         let allUsers = [];
-
-        const admin = localStorage.getItem('username') || 'Admin';
-        document.getElementById('adminName').textContent = admin;
-        document.getElementById('adminInitial').textContent = admin.charAt(0).toUpperCase();
 
         async function loadUsers() {
             try {
-                const res = await fetch(`${API}/api/users`);
+                const res = await fetch('/api/admin/users');
                 allUsers = await res.json();
                 renderStats(allUsers);
                 renderTable(allUsers);
@@ -266,7 +249,7 @@
             document.getElementById('mForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const body = Object.fromEntries(new FormData(this).entries());
-                await submitForm(`${API}/api/users`, 'POST', body, 'Create User');
+                await submitForm('/api/admin/users', 'POST', body, 'Create User');
             });
         }
 
@@ -279,7 +262,7 @@
                 e.preventDefault();
                 const body = Object.fromEntries(new FormData(this).entries());
                 if ('isVerified' in body) body.isVerified = body.isVerified === 'true';
-                await submitForm(`${API}/api/users/${id}`, 'PUT', body, 'Save Changes');
+                await submitForm(`/api/admin/users/${id}`, 'PUT', body, 'Save Changes');
             });
         }
 
@@ -306,7 +289,7 @@
         async function deleteUser(id, name) {
             if (!confirm(`Delete user "${name}"?\nThis cannot be undone.`)) return;
             try {
-                const res = await fetch(`${API}/api/users/${id}`, { method: 'DELETE' });
+                const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error('Delete failed');
                 loadUsers();
             } catch (e) {
@@ -315,7 +298,6 @@
         }
 
         loadUsers();
-        loadSidebar('/admin/admin-sidebar.html');
     </script>
 </body>
 </html>

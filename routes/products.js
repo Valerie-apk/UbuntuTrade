@@ -15,9 +15,19 @@ router.post('/add', async (req, res) => {
     }
 });
 
-// GET /api/products
+// GET /api/products  — supports ?page=1&limit=8 for paginated response
 router.get('/', async (req, res) => {
     try {
+        const { page, limit: qLimit, ...filters } = req.query;
+        if (page !== undefined) {
+            const perPage = Math.min(Number(qLimit) || 8, 100);
+            const pg = Math.max(1, Number(page));
+            const [products, total] = await Promise.all([
+                Product.findAll({ ...filters, limit: perPage, offset: (pg - 1) * perPage }),
+                Product.count(filters)
+            ]);
+            return res.json({ products, total, page: pg, pages: Math.ceil(total / perPage) });
+        }
         const products = await Product.findAll(req.query);
         res.json(products);
     } catch (err) {

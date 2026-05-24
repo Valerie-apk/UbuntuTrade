@@ -2,76 +2,18 @@
 
 <aside class="cart-popup-panel" role="dialog" aria-modal="true" aria-labelledby="cartPopupTitle">
     <div class="cart-popup-header">
-        <h2 id="cartPopupTitle">Your Cart (3)</h2>
+        <h2 id="cartPopupTitle">Your Cart</h2>
         <button class="cart-popup-close" type="button" data-cart-popup-close aria-label="Close cart">
             <i class="fas fa-times"></i>
         </button>
     </div>
 
     <div class="cart-popup-delivery">
-        <span><i class="fas fa-check-circle"></i> You're R1,000 away from free delivery!</span>
-        <i class="fas fa-truck"></i>
+        <span id="popupDeliveryMsg"><i class="fas fa-truck"></i> Loading cart...</span>
     </div>
 
-    <div class="cart-popup-items">
-        <article class="cart-popup-item">
-            <img src="../index/sneaker.png" alt="Nike Air Force 1 '07">
-            <div class="cart-popup-product">
-                <h3>Nike Air Force 1 '07</h3>
-                <p>White, Size UK 8</p>
-                <strong>R950</strong>
-            </div>
-            <div class="cart-popup-actions">
-                <div class="cart-popup-quantity" aria-label="Quantity controls">
-                    <button type="button" aria-label="Decrease quantity"><i class="fas fa-minus"></i></button>
-                    <span>1</span>
-                    <button type="button" aria-label="Increase quantity"><i class="fas fa-plus"></i></button>
-                </div>
-                <button class="cart-popup-remove" type="button" aria-label="Remove Nike Air Force 1">
-                    <i class="far fa-trash-alt"></i>
-                </button>
-            </div>
-        </article>
-
-        <article class="cart-popup-item">
-            <div class="cart-popup-fallback headphones" aria-hidden="true">
-                <i class="fas fa-headphones"></i>
-            </div>
-            <div class="cart-popup-product">
-                <h3>Sony WH-1000XM4 Headphones</h3>
-                <p>Black</p>
-                <strong>R2,100</strong>
-            </div>
-            <div class="cart-popup-actions">
-                <div class="cart-popup-quantity" aria-label="Quantity controls">
-                    <button type="button" aria-label="Decrease quantity"><i class="fas fa-minus"></i></button>
-                    <span>1</span>
-                    <button type="button" aria-label="Increase quantity"><i class="fas fa-plus"></i></button>
-                </div>
-                <button class="cart-popup-remove" type="button" aria-label="Remove Sony headphones">
-                    <i class="far fa-trash-alt"></i>
-                </button>
-            </div>
-        </article>
-
-        <article class="cart-popup-item">
-            <img src="../index/phone.png" alt="iPhone 13 Pro">
-            <div class="cart-popup-product">
-                <h3>iPhone 13 Pro - 128GB</h3>
-                <p>Graphite</p>
-                <strong>R8,500</strong>
-            </div>
-            <div class="cart-popup-actions">
-                <div class="cart-popup-quantity" aria-label="Quantity controls">
-                    <button type="button" aria-label="Decrease quantity"><i class="fas fa-minus"></i></button>
-                    <span>1</span>
-                    <button type="button" aria-label="Increase quantity"><i class="fas fa-plus"></i></button>
-                </div>
-                <button class="cart-popup-remove" type="button" aria-label="Remove iPhone 13 Pro">
-                    <i class="far fa-trash-alt"></i>
-                </button>
-            </div>
-        </article>
+    <div class="cart-popup-items" id="popupCartItems">
+        <p style="padding:20px;color:#999;text-align:center;">Loading...</p>
     </div>
 
     <button class="cart-popup-promo" type="button">
@@ -81,23 +23,122 @@
 
     <div class="cart-popup-summary">
         <div>
-            <span>Subtotal (3 items)</span>
-            <strong>R11,550</strong>
+            <span id="popupSubtotalLabel">Subtotal (0 items)</span>
+            <strong id="popupSubtotal">R0</strong>
         </div>
         <div>
             <span>Delivery Fee</span>
-            <strong>R60</strong>
+            <strong id="popupDelivery">R0</strong>
         </div>
         <div class="cart-popup-total">
             <span>Total</span>
-            <strong>R11,610</strong>
+            <strong id="popupTotal">R0</strong>
         </div>
     </div>
 
     <div class="cart-popup-footer">
-        <a href="../cart/cart.html" class="cart-popup-view">View Cart</a>
-        <a href="../cart/payment.html" class="cart-popup-checkout">Checkout</a>
+        <a href="/cart/cart.html" class="cart-popup-view">View Cart</a>
+        <a href="/cart/cart.html" class="cart-popup-checkout">Checkout</a>
     </div>
 
     <p class="cart-popup-secure"><i class="fas fa-shield-alt"></i> Safe and secure payments. Easy returns.</p>
 </aside>
+
+<script>
+(function() {
+    var user = null;
+    try { user = JSON.parse(localStorage.getItem('utUser') || 'null'); } catch(e) {}
+    if (!user) {
+        document.getElementById('popupCartItems').innerHTML = '<p style="padding:20px;color:#999;text-align:center;">Please <a href="/index/login.html">log in</a> to view your cart.</p>';
+        document.getElementById('popupDeliveryMsg').innerHTML = '<i class="fas fa-lock"></i> Log in to shop';
+        return;
+    }
+
+    var popupItems = [];
+
+    function renderPopupCart(data) {
+        popupItems = data.items || [];
+        var summary = data.summary || {};
+        var count = summary.itemCount || 0;
+        var subtotal = Number(summary.subtotal || 0);
+        var delivery = Number(summary.deliveryFee || 0);
+        var total = Number(summary.total || 0);
+
+        document.getElementById('cartPopupTitle').textContent = 'Your Cart (' + count + ')';
+        document.getElementById('popupSubtotalLabel').textContent = 'Subtotal (' + count + ' item' + (count !== 1 ? 's' : '') + ')';
+        document.getElementById('popupSubtotal').textContent = 'R' + subtotal.toLocaleString();
+        document.getElementById('popupDelivery').textContent = 'R' + delivery.toLocaleString();
+        document.getElementById('popupTotal').textContent = 'R' + total.toLocaleString();
+
+        var threshold = 1000;
+        var remaining = threshold - subtotal;
+        if (remaining > 0) {
+            document.getElementById('popupDeliveryMsg').innerHTML = '<i class="fas fa-check-circle"></i> You\'re R' + remaining.toLocaleString() + ' away from free delivery! <i class="fas fa-truck"></i>';
+        } else {
+            document.getElementById('popupDeliveryMsg').innerHTML = '<i class="fas fa-truck"></i> You qualify for free delivery!';
+        }
+
+        var badge = document.getElementById('navCartCount');
+        if (badge) badge.textContent = count;
+
+        var itemsEl = document.getElementById('popupCartItems');
+        if (!popupItems.length) {
+            itemsEl.innerHTML = '<p style="padding:20px;color:#999;text-align:center;">Your cart is empty. <a href="/br-product/browse-products.html">Browse products</a></p>';
+            return;
+        }
+
+        itemsEl.innerHTML = popupItems.map(function(item) {
+            var p = item.product || {};
+            var hasImg = p.imageUrl && p.imageUrl !== 'default-product.png';
+            var imgHTML = hasImg
+                ? '<img src="' + p.imageUrl + '" alt="' + p.name + '" style="width:56px;height:56px;object-fit:cover;border-radius:8px;flex-shrink:0;" onerror="this.style.display=\'none\'">'
+                : '<div style="width:56px;height:56px;background:#f0f0f0;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-image" style="color:#ccc;font-size:20px;"></i></div>';
+            return '<article class="cart-popup-item" data-id="' + item.id + '">' +
+                imgHTML +
+                '<div class="cart-popup-product">' +
+                '<h3>' + p.name + '</h3>' +
+                '<strong>R' + Number(p.price).toLocaleString() + '</strong>' +
+                '</div>' +
+                '<div class="cart-popup-actions">' +
+                '<div class="cart-popup-quantity" aria-label="Quantity controls">' +
+                '<button type="button" class="popup-qty-dec" data-id="' + item.id + '" aria-label="Decrease"><i class="fas fa-minus"></i></button>' +
+                '<span>' + item.quantity + '</span>' +
+                '<button type="button" class="popup-qty-inc" data-id="' + item.id + '" aria-label="Increase"><i class="fas fa-plus"></i></button>' +
+                '</div>' +
+                '<button class="cart-popup-remove" type="button" data-id="' + item.id + '" aria-label="Remove"><i class="far fa-trash-alt"></i></button>' +
+                '</div>' +
+                '</article>';
+        }).join('');
+    }
+
+    function loadPopupCart() {
+        fetch('/api/cart/' + user.id)
+            .then(function(r) { return r.json(); })
+            .then(renderPopupCart)
+            .catch(function() {
+                document.getElementById('popupCartItems').innerHTML = '<p style="padding:20px;color:red;">Failed to load cart.</p>';
+            });
+    }
+
+    loadPopupCart();
+
+    document.getElementById('popupCartItems').addEventListener('click', function(e) {
+        var dec = e.target.closest('.popup-qty-dec');
+        var inc = e.target.closest('.popup-qty-inc');
+        var rem = e.target.closest('.cart-popup-remove');
+        if (dec || inc) {
+            var id = (dec || inc).dataset.id;
+            var item = popupItems.find(function(i) { return i.id == id; });
+            if (!item) return;
+            var newQty = dec ? item.quantity - 1 : item.quantity + 1;
+            var req = newQty < 1
+                ? fetch('/api/cart/' + id, { method: 'DELETE' })
+                : fetch('/api/cart/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quantity: newQty }) });
+            req.then(loadPopupCart);
+        }
+        if (rem) {
+            fetch('/api/cart/' + rem.dataset.id, { method: 'DELETE' }).then(loadPopupCart);
+        }
+    });
+})();
+</script>

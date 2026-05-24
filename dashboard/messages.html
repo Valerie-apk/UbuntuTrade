@@ -8,30 +8,10 @@
     <link rel="stylesheet" href="../cart/popup-cart.css">
     <link rel="stylesheet" href="messages.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/components.js"></script>
 </head>
 <body class="dashboard-page">
-    <!-- TOP NAVBAR -->
-    <nav class="navbar">
-        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
-
-        <div class="nav-buttons">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div>
-            <div class="admin-profile">
-                <i class="fas fa-bell"></i>
-                <a href="../cart/cart.html" class="navbar-cart-link" aria-label="Cart" title="Open cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="navbar-cart-count">3</span>
-                </a>
-                <div class="profile-avatar" id="userInitial">U</div>
-                <span id="username">User</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </div>
-    </nav>
-    <div id="cartPopupRoot" class="cart-popup-root" aria-hidden="true"></div>
+    <div id="navbarContainer"></div>
 
     <!-- Dashboard Wrapper -->
     <div class="dashboard-wrapper">
@@ -57,200 +37,34 @@
                         </button>
                     </div>
 
-                    <div class="conversations-list">
-                        <!-- Conversation 1 -->
-                        <div class="conversation-item active" data-id="1">
-                            <div class="conversation-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff9500'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3EJM%3C/text%3E%3C/svg%3E" alt="John Mokoena">
-                                <span class="online-indicator"></span>
-                            </div>
-                            <div class="conversation-info">
-                                <h3>John Mokoena</h3>
-                                <p class="last-message">Hi, is the iPhone 13 still available?</p>
-                            </div>
-                            <div class="conversation-meta">
-                                <span class="message-time">10:30 AM</span>
-                                <span class="unread-badge">2</span>
-                            </div>
-                        </div>
-
-                        <!-- Conversation 2 -->
-                        <div class="conversation-item" data-id="2">
-                            <div class="conversation-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%236b4423'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3END%3C/text%3E%3C/svg%3E" alt="Nomvula Dube">
-                            </div>
-                            <div class="conversation-info">
-                                <h3>Nomvula Dube</h3>
-                                <p class="last-message">Thanks, I'm interested. Can we meet...</p>
-                            </div>
-                            <div class="conversation-meta">
-                                <span class="message-time">Yesterday</span>
-                                <span class="unread-badge">1</span>
-                            </div>
-                        </div>
-
-                        <!-- Conversation 3 -->
-                        <div class="conversation-item" data-id="3">
-                            <div class="conversation-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%235a3a2a'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3ESK%3C/text%3E%3C/svg%3E" alt="Sipho Khumalo">
-                            </div>
-                            <div class="conversation-info">
-                                <h3>Sipho Khumalo</h3>
-                                <p class="last-message">Okay great, please send me your number.</p>
-                            </div>
-                            <div class="conversation-meta">
-                                <span class="message-time">Yesterday</span>
-                            </div>
-                        </div>
-
-                        <!-- Conversation 4 -->
-                        <div class="conversation-item" data-id="4">
-                            <div class="conversation-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234a2a1a'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3ELN%3C/text%3E%3C/svg%3E" alt="Lerato Ndlovu">
-                            </div>
-                            <div class="conversation-info">
-                                <h3>Lerato Ndlovu</h3>
-                                <p class="last-message">I'll take it. When can I collect?</p>
-                            </div>
-                            <div class="conversation-meta">
-                                <span class="message-time">2 days ago</span>
-                            </div>
-                        </div>
-
-                        <!-- Conversation 5 -->
-                        <div class="conversation-item" data-id="5">
-                            <div class="conversation-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%233a1a0a'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3ETM%3C/text%3E%3C/svg%3E" alt="Thabo Mthembu">
-                            </div>
-                            <div class="conversation-info">
-                                <h3>Thabo Mthembu</h3>
-                                <p class="last-message">Please confirm if the price is negotiable.</p>
-                            </div>
-                            <div class="conversation-meta">
-                                <span class="message-time">3 days ago</span>
-                            </div>
-                        </div>
-
-                        <!-- Conversation 6 -->
-                        <div class="conversation-item" data-id="6">
-                            <div class="conversation-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%238b6f47'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3EZM%3C/text%3E%3C/svg%3E" alt="Zola Mkhize">
-                            </div>
-                            <div class="conversation-info">
-                                <h3>Zola Mkhize</h3>
-                                <p class="last-message">Thank you!</p>
-                            </div>
-                            <div class="conversation-meta">
-                                <span class="message-time">3 days ago</span>
-                            </div>
-                        </div>
+                    <div class="conversations-list" id="conversationsList">
+                        <p style="color:#999;padding:16px;">Loading conversations...</p>
                     </div>
                 </div>
 
                 <!-- CHAT PANEL -->
                 <div class="chat-panel">
-                    <div class="chat-header">
+                    <div class="chat-header" id="chatHeader" style="display:none;">
                         <div class="chat-header-info">
-                            <div class="chat-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff9500'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3EJM%3C/text%3E%3C/svg%3E" alt="John Mokoena">
-                                <span class="online-indicator"></span>
-                            </div>
+                            <div class="chat-avatar" id="chatAvatar" style="width:40px;height:40px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:16px;">?</div>
                             <div class="chat-user-info">
-                                <h2>John Mokoena</h2>
-                                <p class="chat-product-info">About: iPhone 13 Pro - 128GB</p>
+                                <h2 id="chatUsername">-</h2>
+                                <p class="chat-product-info" id="chatProductInfo"></p>
                             </div>
                         </div>
-                        <button class="chat-menu-btn" title="More options">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
+                        <button class="chat-menu-btn" title="More options"><i class="fas fa-ellipsis-v"></i></button>
                     </div>
 
-                    <div class="chat-messages">
-                        <!-- Today Section -->
-                        <div class="message-date-divider">Today</div>
-
-                        <!-- Incoming Message -->
-                        <div class="message incoming">
-                            <div class="message-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff9500'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3EJM%3C/text%3E%3C/svg%3E" alt="John Mokoena">
-                            </div>
-                            <div class="message-content">
-                                <p class="message-text">Hi, is the iPhone 13 still available?</p>
-                                <span class="message-time">10:30 AM</span>
-                            </div>
-                        </div>
-
-                        <!-- Outgoing Message -->
-                        <div class="message outgoing">
-                            <div class="message-content">
-                                <p class="message-text">Yes, it is still available.</p>
-                                <span class="message-time">10:32 AM</span>
-                                <i class="fas fa-check-double read-receipt"></i>
-                            </div>
-                        </div>
-
-                        <!-- Incoming Message -->
-                        <div class="message incoming">
-                            <div class="message-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff9500'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3EJM%3C/text%3E%3C/svg%3E" alt="John Mokoena">
-                            </div>
-                            <div class="message-content">
-                                <p class="message-text">Great! What's the condition?</p>
-                                <span class="message-time">10:33 AM</span>
-                            </div>
-                        </div>
-
-                        <!-- Outgoing Message -->
-                        <div class="message outgoing">
-                            <div class="message-content">
-                                <p class="message-text">It's like new, no scratches and everything works perfectly.</p>
-                                <span class="message-time">10:34 AM</span>
-                                <i class="fas fa-check-double read-receipt"></i>
-                            </div>
-                        </div>
-
-                        <!-- Incoming Message -->
-                        <div class="message incoming">
-                            <div class="message-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff9500'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3EJM%3C/text%3E%3C/svg%3E" alt="John Mokoena">
-                            </div>
-                            <div class="message-content">
-                                <p class="message-text">Can I come and see it tomorrow?</p>
-                                <span class="message-time">10:35 AM</span>
-                            </div>
-                        </div>
-
-                        <!-- Outgoing Message -->
-                        <div class="message outgoing">
-                            <div class="message-content">
-                                <p class="message-text">Sure, we can meet in Sandton. What time works for you?</p>
-                                <span class="message-time">10:36 AM</span>
-                                <i class="fas fa-check-double read-receipt"></i>
-                            </div>
-                        </div>
-
-                        <!-- Incoming Message -->
-                        <div class="message incoming">
-                            <div class="message-avatar">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff9500'/%3E%3Ctext x='50' y='60' font-size='45' fill='white' text-anchor='middle'%3EJM%3C/text%3E%3C/svg%3E" alt="John Mokoena">
-                            </div>
-                            <div class="message-content">
-                                <p class="message-text">How about 2pm?</p>
-                                <span class="message-time">10:37 AM</span>
-                            </div>
-                        </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <p style="padding:40px;color:#999;text-align:center;">Select a conversation to start chatting.</p>
                     </div>
 
                     <!-- MESSAGE INPUT -->
-                    <div class="chat-input-area">
-                        <button class="attachment-btn" title="Attach file">
-                            <i class="fas fa-paperclip"></i>
-                        </button>
-                        <input type="text" class="message-input" placeholder="Type your message...">
-                        <button class="emoji-btn" title="Emoji">
-                            <i class="far fa-smile"></i>
-                        </button>
-                        <button class="send-btn">Send</button>
+                    <div class="chat-input-area" id="chatInputArea" style="display:none;">
+                        <button class="attachment-btn" title="Attach file"><i class="fas fa-paperclip"></i></button>
+                        <input type="text" class="message-input" id="messageInput" placeholder="Type your message...">
+                        <button class="emoji-btn" title="Emoji"><i class="far fa-smile"></i></button>
+                        <button class="send-btn" id="sendBtn">Send</button>
                     </div>
                 </div>
             </div>
@@ -258,140 +72,145 @@
     </div>
 
     <script>
-        const cartPopupRoot = document.getElementById('cartPopupRoot');
-        const cartButtons = document.querySelectorAll('.navbar-cart-link');
+        UTComponents.init({ type: 'customer', activePage: 'messages' });
+        const user = UTComponents.getUser();
 
-        function closeCartPopup() {
-            cartPopupRoot.classList.remove('active');
-            cartPopupRoot.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('cart-popup-open');
+        let activeConvId = null;
+        let allConversations = [];
+
+        function timeStr(dateStr) {
+            const d = new Date(dateStr);
+            const now = new Date();
+            const diffDays = Math.floor((now - d) / 86400000);
+            if (diffDays === 0) return d.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return diffDays + ' days ago';
+            return d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' });
         }
 
-        function openCartPopup(event) {
-            event.preventDefault();
-            if (!cartPopupRoot.dataset.loaded) {
-                fetch('../cart/popup-cart.html')
-                    .then(response => response.text())
-                    .then(html => {
-                        cartPopupRoot.innerHTML = html;
-                        cartPopupRoot.dataset.loaded = 'true';
-                        showCartPopup();
-                    })
-                    .catch(() => window.location.href = '../cart/cart.html');
-            } else {
-                showCartPopup();
+        function getOtherUser(conv) {
+            if (!user) return null;
+            return Number(conv.buyerId) === Number(user.id) ? conv.seller : conv.buyer;
+        }
+
+        function renderConversations(convs) {
+            const list = document.getElementById('conversationsList');
+            if (!convs || convs.length === 0) { list.innerHTML = '<p style="color:#999;padding:16px;">No conversations yet.</p>'; return; }
+            list.innerHTML = convs.map(c => {
+                const other = getOtherUser(c);
+                const name = other ? (other.username || other.fullName || 'User') : 'User';
+                const initials = name.substring(0, 2).toUpperCase();
+                const unread = Number(c.buyerId) === Number(user.id) ? (c.unreadForBuyer || 0) : (c.unreadForSeller || 0);
+                return `<div class="conversation-item${c.id === activeConvId ? ' active' : ''}" data-id="${c.id}">
+                    <div class="conversation-avatar">
+                        <div style="width:40px;height:40px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;">${initials}</div>
+                    </div>
+                    <div class="conversation-info">
+                        <h3>${name}</h3>
+                        <p class="last-message">${c.lastMessage || 'No messages yet'}</p>
+                    </div>
+                    <div class="conversation-meta">
+                        <span class="message-time">${c.updatedAt ? timeStr(c.updatedAt) : ''}</span>
+                        ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function loadConversations() {
+            if (!user) { document.getElementById('conversationsList').innerHTML = '<p style="color:#999;padding:16px;">Please log in.</p>'; return; }
+            try {
+                const res = await fetch('/api/messages/conversations/' + user.id);
+                allConversations = await res.json();
+                renderConversations(allConversations);
+            } catch (e) {
+                document.getElementById('conversationsList').innerHTML = '<p style="color:red;padding:16px;">Failed to load.</p>';
             }
         }
 
-        function showCartPopup() {
-            cartPopupRoot.classList.add('active');
-            cartPopupRoot.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('cart-popup-open');
+        async function openConversation(convId) {
+            activeConvId = convId;
+            const conv = allConversations.find(c => c.id === convId);
+            if (!conv) return;
+            const other = getOtherUser(conv);
+            const name = other ? (other.username || other.fullName) : 'User';
+            const initials = name.substring(0, 2).toUpperCase();
+            document.getElementById('chatHeader').style.display = 'flex';
+            document.getElementById('chatAvatar').textContent = initials;
+            document.getElementById('chatUsername').textContent = name;
+            document.getElementById('chatProductInfo').textContent = conv.product ? 'About: ' + conv.product.name : '';
+            document.getElementById('chatInputArea').style.display = 'flex';
+            renderConversations(allConversations);
+
+            // Mark read
+            if (user) {
+                await fetch('/api/messages/conversations/' + convId + '/read', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id }) }).catch(() => {});
+            }
+
+            // Load messages
+            try {
+                const res = await fetch('/api/messages/conversations/' + convId + '/messages');
+                const messages = await res.json();
+                const chatDiv = document.getElementById('chatMessages');
+                if (messages.length === 0) { chatDiv.innerHTML = '<p style="padding:20px;color:#999;text-align:center;">No messages yet. Say hello!</p>'; return; }
+                chatDiv.innerHTML = messages.map(m => {
+                    const isMe = Number(m.senderId) === Number(user.id);
+                    const senderName = m.sender ? (m.sender.username || m.sender.fullName) : 'User';
+                    const sInit = senderName.substring(0, 2).toUpperCase();
+                    return `<div class="message ${isMe ? 'outgoing' : 'incoming'}">
+                        ${!isMe ? `<div class="message-avatar" style="width:32px;height:32px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:bold;flex-shrink:0;">${sInit}</div>` : ''}
+                        <div class="message-content">
+                            <p class="message-text">${m.body}</p>
+                            <span class="message-time">${timeStr(m.createdAt)}</span>
+                            ${isMe ? '<i class="fas fa-check-double read-receipt"></i>' : ''}
+                        </div>
+                    </div>`;
+                }).join('');
+                chatDiv.scrollTop = chatDiv.scrollHeight;
+            } catch (e) { document.getElementById('chatMessages').innerHTML = '<p style="color:red;padding:20px;">Failed to load messages.</p>'; }
         }
 
-        cartButtons.forEach(button => button.addEventListener('click', openCartPopup));
-
-        cartPopupRoot.addEventListener('click', function(event) {
-            if (event.target.closest('[data-cart-popup-close]') || event.target.matches('[data-cart-popup-backdrop]')) {
-                closeCartPopup();
-            }
-        });
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && cartPopupRoot.classList.contains('active')) {
-                closeCartPopup();
-            }
-        });
-
-        // Load Sidebar Component
-        fetch('sidebar.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('sidebarContainer').innerHTML = html;
-                initializeSidebarFunctionality();
-                setActiveSidebarItem();
-            })
-            .catch(error => console.error('Error loading sidebar:', error));
-
-        // Set active sidebar item based on current page
-        function setActiveSidebarItem() {
-            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
-            sidebarLinks.forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Find and activate the Messages link
-            const messagesLink = Array.from(sidebarLinks).find(link => 
-                link.textContent.includes('Messages')
-            );
-            if (messagesLink) {
-                messagesLink.classList.add('active');
-            }
-        }
-
-        // Sidebar Toggle Functionality
-        function initializeSidebarFunctionality() {
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.querySelector('.sidebar');
-
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('collapsed');
-                    
-                    const icon = sidebarToggle.querySelector('i');
-                    if (sidebar.classList.contains('collapsed')) {
-                        icon.style.transform = 'rotate(180deg)';
-                    } else {
-                        icon.style.transform = 'rotate(0deg)';
-                    }
-                    
-                    const isCollapsed = sidebar.classList.contains('collapsed');
-                    localStorage.setItem('sidebarCollapsed', isCollapsed);
-                });
-
-                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (isCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    const icon = sidebarToggle.querySelector('i');
-                    icon.style.transform = 'rotate(180deg)';
-                }
-            }
-        }
-
-        // Conversation selection
-        document.querySelectorAll('.conversation-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.conversation-item').forEach(conv => {
-                    conv.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
+        // Conversation click
+        document.getElementById('conversationsList').addEventListener('click', function(e) {
+            const item = e.target.closest('.conversation-item');
+            if (item) openConversation(Number(item.dataset.id));
         });
 
         // Send message
-        document.querySelector('.send-btn').addEventListener('click', function() {
-            const input = document.querySelector('.message-input');
-            if (input.value.trim()) {
-                input.value = '';
-            }
-        });
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const body = input.value.trim();
+            if (!body || !activeConvId || !user) return;
+            input.value = '';
+            try {
+                const res = await fetch('/api/messages/conversations/' + activeConvId + '/messages', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ senderId: user.id, body })
+                });
+                if (res.ok) {
+                    await loadConversations();
+                    await openConversation(activeConvId);
+                }
+            } catch (e) { console.error('Send error:', e); }
+        }
 
-        // Enter to send
-        document.querySelector('.message-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                document.querySelector('.send-btn').click();
-            }
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
         });
 
         // Search conversations
         document.getElementById('searchConversations').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            document.querySelectorAll('.conversation-item').forEach(item => {
-                const name = item.querySelector('h3').textContent.toLowerCase();
-                item.style.display = name.includes(searchTerm) ? 'flex' : 'none';
+            const term = e.target.value.toLowerCase();
+            const filtered = allConversations.filter(c => {
+                const other = getOtherUser(c);
+                const name = other ? (other.username || other.fullName || '') : '';
+                return name.toLowerCase().includes(term);
             });
+            renderConversations(filtered);
         });
+
+        loadConversations();
     </script>
 </body>
 </html>

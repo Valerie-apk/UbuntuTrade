@@ -8,30 +8,10 @@
     <link rel="stylesheet" href="../cart/popup-cart.css">
     <link rel="stylesheet" href="product-detail.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/components.js"></script>
 </head>
 <body class="dashboard-page product-detail-page">
-    <!-- TOP NAVBAR - Same as market.html -->
-    <nav class="navbar">
-        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
-
-        <div class="nav-buttons">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div>
-            <div class="admin-profile">
-                <i class="fas fa-bell"></i>
-                <a href="../cart/cart.html" class="navbar-cart-link" aria-label="Cart" title="Open cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="navbar-cart-count">3</span>
-                </a>
-                <div class="profile-avatar" id="userInitial">U</div>
-                <span id="username">User</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </div>
-    </nav>
-    <div id="cartPopupRoot" class="cart-popup-root" aria-hidden="true"></div>
+    <div id="navbarContainer"></div>
 
     <div class="dashboard-wrapper">
         <div id="sidebarContainer"></div>
@@ -50,30 +30,13 @@
 
                 <div class="product-detail-grid">
                     <section class="product-gallery" aria-label="Product images">
-                        <div class="thumbnail-rail">
-                            <button class="thumbnail active" type="button" aria-label="View image 1">
-                                <img src="../index/phone.png" alt="iPhone back view">
-                            </button>
-                            <button class="thumbnail" type="button" aria-label="View image 2">
-                                <img src="../index/phone.png" alt="iPhone front view">
-                            </button>
-                            <button class="thumbnail" type="button" aria-label="View image 3">
-                                <img src="../index/phone.png" alt="iPhone angled view">
-                            </button>
-                            <button class="thumbnail" type="button" aria-label="View image 4">
-                                <img src="../index/phone.png" alt="iPhone side view">
-                            </button>
-                            <button class="thumbnail more" type="button" aria-label="View more images">
-                                <img src="../index/phone.png" alt="More iPhone photos">
-                                <span>+2</span>
-                            </button>
-                        </div>
-
                         <div class="main-product-image">
                             <button class="wishlist-btn" type="button" aria-label="Save item">
                                 <i class="far fa-heart"></i>
                             </button>
-                            <img src="../index/phone.png" alt="iPhone 13 Pro - 128GB">
+                            <div id="productMainImg" style="width:100%;height:320px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;border-radius:12px;">
+                                <i class="fas fa-image" style="font-size:64px;color:#ddd;"></i>
+                            </div>
                         </div>
                     </section>
 
@@ -192,38 +155,9 @@
                 <section class="recommendations" aria-label="Recommended products">
                     <div class="recommendation-header">
                         <h2>You may also like</h2>
-                        <button type="button" aria-label="Next recommendations">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
                     </div>
-
-                    <div class="recommendation-grid">
-                        <article class="recommendation-card">
-                            <img src="../index/phone.png" alt="Samsung Galaxy S22">
-                            <h3>Samsung Galaxy S22</h3>
-                            <strong>R7,299</strong>
-                            <span><i class="fas fa-star"></i> 4.6 (98)</span>
-                        </article>
-                        <article class="recommendation-card">
-                            <img src="../index/phone.png" alt="iPhone 12">
-                            <h3>iPhone 12 - 64GB</h3>
-                            <strong>R6,500</strong>
-                            <span><i class="fas fa-star"></i> 4.7 (76)</span>
-                        </article>
-                        <article class="recommendation-card">
-                            <img src="../index/phone.png" alt="Samsung Galaxy S21">
-                            <h3>Samsung Galaxy S21</h3>
-                            <strong>R6,999</strong>
-                            <span><i class="fas fa-star"></i> 4.5 (65)</span>
-                        </article>
-                        <article class="recommendation-card">
-                            <div class="asset-placeholder">
-                                <i class="fas fa-headphones-simple"></i>
-                            </div>
-                            <h3>AirPods Pro (2nd Gen)</h3>
-                            <strong>R3,199</strong>
-                            <span><i class="fas fa-star"></i> 4.8 (112)</span>
-                        </article>
+                    <div class="recommendation-grid" id="recommendationGrid">
+                        <p style="color:#999;padding:10px 0;">Loading...</p>
                     </div>
                 </section>
             </section>
@@ -231,116 +165,156 @@
     </div>
 
     <script>
-        const cartPopupRoot = document.getElementById('cartPopupRoot');
-        const cartButtons = document.querySelectorAll('.navbar-cart-link');
+        UTComponents.init({ type: 'customer', activePage: 'browse' });
+        const user = UTComponents.getUser();
 
-        function closeCartPopup() {
-            cartPopupRoot.classList.remove('active');
-            cartPopupRoot.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('cart-popup-open');
-        }
+        // Load product from URL
+        const productId = new URLSearchParams(window.location.search).get('id');
+        let currentProduct = null;
 
-        function openCartPopup(event) {
-            event.preventDefault();
-            if (!cartPopupRoot.dataset.loaded) {
-                fetch('../cart/popup-cart.html')
-                    .then(response => response.text())
-                    .then(html => {
-                        cartPopupRoot.innerHTML = html;
-                        cartPopupRoot.dataset.loaded = 'true';
-                        showCartPopup();
-                    })
-                    .catch(() => window.location.href = '../cart/cart.html');
-            } else {
-                showCartPopup();
+        async function loadProduct() {
+            if (!productId) { document.querySelector('.product-detail-grid').innerHTML = '<p style="padding:40px;color:#999;">No product specified.</p>'; return; }
+            try {
+                const res = await fetch('/api/products/' + productId);
+                if (!res.ok) throw new Error('Not found');
+                const p = await res.json();
+                currentProduct = p;
+                renderProduct(p);
+            } catch (e) {
+                document.querySelector('.product-detail-grid').innerHTML = '<p style="padding:40px;color:red;">Product not found.</p>';
             }
         }
 
-        function showCartPopup() {
-            cartPopupRoot.classList.add('active');
-            cartPopupRoot.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('cart-popup-open');
+        function timeAgo(dateStr) {
+            const diff = Date.now() - new Date(dateStr);
+            const d = Math.floor(diff / 86400000);
+            if (d === 0) return 'Today'; if (d === 1) return 'Yesterday';
+            if (d < 30) return d + ' days ago'; if (d < 365) return Math.floor(d/30) + ' months ago';
+            return Math.floor(d/365) + ' years ago';
         }
 
-        cartButtons.forEach(button => button.addEventListener('click', openCartPopup));
-
-        cartPopupRoot.addEventListener('click', function(event) {
-            if (event.target.closest('[data-cart-popup-close]') || event.target.matches('[data-cart-popup-backdrop]')) {
-                closeCartPopup();
+        function renderProduct(p) {
+            document.title = p.name + ' - UbuntuTrade';
+            document.querySelector('.product-breadcrumb span').textContent = p.name;
+            if (p.category) {
+                const catLinks = document.querySelectorAll('.product-breadcrumb a');
+                if (catLinks[1]) catLinks[1].textContent = p.category;
             }
-        });
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && cartPopupRoot.classList.contains('active')) {
-                closeCartPopup();
+            const imgContainer = document.getElementById('productMainImg');
+            if (p.imageUrl && p.imageUrl !== 'default-product.png') {
+                imgContainer.innerHTML = `<img src="${p.imageUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
             }
-        });
+            // else keep the grey icon placeholder
 
-        fetch('../dashboard/sidebar.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('sidebarContainer').innerHTML = html;
-                normalizeSidebarLinks();
-                initializeSidebarFunctionality();
-                setActiveSidebarItem();
-            })
-            .catch(error => console.error('Error loading sidebar:', error));
+            document.querySelector('.product-info-panel h1').textContent = p.name;
+            document.querySelector('.detail-price').textContent = 'R' + Number(p.price).toLocaleString();
 
-        function normalizeSidebarLinks() {
-            const linkMap = {
-                Dashboard: '../dashboard/market.html',
-                'Browse Products': 'browse-products.html',
-                'My Products': '../dashboard/my-products.html',
-                Messages: '../dashboard/messages.html'
-            };
+            const metaList = document.querySelector('.meta-list');
+            metaList.innerHTML = `
+                <div><span>Condition:</span><strong class="condition-pill">${p.condition || 'N/A'}</strong></div>
+                <div><span>Category:</span><strong>${p.category || 'N/A'}${p.subcategory ? ' <i class="fas fa-chevron-right"></i> ' + p.subcategory : ''}</strong></div>
+                <div><span>Location:</span><strong>${p.location || 'SA'}</strong></div>
+                <div><span>Listed:</span><strong>${timeAgo(p.createdAt)}</strong></div>
+            `;
 
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                const label = link.textContent.trim();
-                if (linkMap[label]) {
-                    link.setAttribute('href', linkMap[label]);
-                }
-            });
-        }
+            const descBlock = document.querySelector('.description-block p');
+            descBlock.textContent = p.description || 'No description provided.';
 
-        function setActiveSidebarItem() {
-            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
-            sidebarLinks.forEach(link => link.classList.remove('active'));
+            if (p.category) loadRecommendations(p.category, p.id);
 
-            const browseLink = Array.from(sidebarLinks).find(link =>
-                link.textContent.includes('Browse Products')
-            );
+            const ratingRow = document.querySelector('.rating-row');
+            ratingRow.innerHTML = `<span><i class="fas fa-star"></i> ${p.rating || '0'} (${p.reviewCount || 0} reviews)</span><span>${p.soldCount || 0} sold</span>`;
 
-            if (browseLink) {
-                browseLink.classList.add('active');
+            if (p.seller) {
+                const sellerCard = document.querySelector('.seller-card');
+                const initials = (p.seller.username || p.seller.fullName || '?').substring(0, 2).toUpperCase();
+                sellerCard.querySelector('.seller-profile').innerHTML = `
+                    <div style="width:50px;height:50px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:18px;">${initials}</div>
+                    <div><h3>${p.seller.username || p.seller.fullName}</h3><span>${p.seller.isVerified ? 'Verified Seller' : 'Seller'}</span></div>
+                `;
+                sellerCard.querySelector('ul.seller-stats').innerHTML = `
+                    <li><i class="fas fa-star"></i> <strong>${p.seller.rating || '0'}</strong> rating</li>
+                    <li><i class="fas fa-location-dot"></i> ${p.seller.location || 'SA'}</li>
+                    <li><i class="far fa-message"></i> Response rate: ${p.seller.responseRate || 'N/A'}%</li>
+                `;
+                sellerCard.querySelector('.seller-profile-link').href = 'seller-profile.html?id=' + p.seller.id;
             }
         }
 
-        function initializeSidebarFunctionality() {
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.querySelector('.sidebar');
+        loadProduct();
 
-            if (sidebarToggle && sidebar) {
-                sidebarToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('collapsed');
+        // Load recommendations (same category)
+        async function loadRecommendations(category, excludeId) {
+            try {
+                const res = await fetch('/api/products?category=' + encodeURIComponent(category));
+                const products = await res.json();
+                const filtered = products.filter(p => p.id != excludeId).slice(0, 4);
+                const grid = document.getElementById('recommendationGrid');
+                if (!filtered.length) { grid.innerHTML = ''; return; }
+                grid.innerHTML = filtered.map(p => {
+                    const img = p.imageUrl && p.imageUrl !== 'default-product.png'
+                        ? `<img src="${p.imageUrl}" alt="${p.name}" style="width:100%;height:140px;object-fit:cover;border-radius:8px 8px 0 0;" onerror="this.parentElement.innerHTML='<div style=\'height:140px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;border-radius:8px 8px 0 0;\'><i class=\'fas fa-image\' style=\'font-size:36px;color:#ddd;\'></i></div>'">`
+                        : `<div style="height:140px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;border-radius:8px 8px 0 0;"><i class="fas fa-image" style="font-size:36px;color:#ddd;"></i></div>`;
+                    return `<article class="recommendation-card" onclick="window.location.href='product-detail.html?id=${p.id}'" style="cursor:pointer;">
+                        ${img}
+                        <h3>${p.name}</h3>
+                        <strong>R${Number(p.price).toLocaleString()}</strong>
+                        <span>${p.condition || ''}</span>
+                    </article>`;
+                }).join('');
+            } catch (e) {
+                document.getElementById('recommendationGrid').innerHTML = '';
+            }
+        }
 
-                    const icon = sidebarToggle.querySelector('i');
-                    if (sidebar.classList.contains('collapsed')) {
-                        icon.style.transform = 'rotate(180deg)';
-                    } else {
-                        icon.style.transform = 'rotate(0deg)';
-                    }
-
-                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        // Add to cart
+        document.querySelector('.cart-btn').addEventListener('click', async function(e) {
+            e.preventDefault();
+            if (!user) { alert('Please log in to add items to cart.'); window.location.href = '../index/login.html'; return; }
+            if (!productId) return;
+            try {
+                const res = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user.id, productId: parseInt(productId), quantity: 1 })
                 });
-
-                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (isCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    const icon = sidebarToggle.querySelector('i');
-                    icon.style.transform = 'rotate(180deg)';
+                if (res.ok) {
+                    this.textContent = '✓ Added!';
+                    setTimeout(() => { this.innerHTML = '<i class="fas fa-cart-shopping"></i> Add to Cart'; }, 1500);
                 }
+            } catch (e) { alert('Failed to add to cart.'); }
+        });
+
+        // Buy now
+        document.querySelector('.buy-btn').addEventListener('click', async function() {
+            if (!user) { alert('Please log in to purchase.'); window.location.href = '../index/login.html'; return; }
+            if (!productId) return;
+            await fetch('/api/cart/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id, productId: parseInt(productId), quantity: 1 }) });
+            window.location.href = '../cart/cart.html';
+        });
+
+        // Wishlist
+        document.querySelector('.wishlist-btn').addEventListener('click', async function() {
+            if (!user) { alert('Please log in to save products.'); return; }
+            const icon = this.querySelector('i');
+            const isWished = icon.classList.contains('fas');
+            if (isWished) {
+                await fetch(`/api/products/${productId}/wishlist/${user.id}`, { method: 'DELETE' });
+                icon.classList.replace('fas', 'far');
+            } else {
+                await fetch(`/api/products/${productId}/wishlist`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id }) });
+                icon.classList.replace('far', 'fas');
             }
-        }
+        });
+
+        // Chat with seller
+        document.querySelector('.chat-btn').addEventListener('click', async function() {
+            if (!user) { alert('Please log in to chat.'); window.location.href = '../index/login.html'; return; }
+            if (!currentProduct || !currentProduct.seller) return;
+            const res = await fetch('/api/messages/conversations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productId: currentProduct.id, buyerId: user.id, sellerId: currentProduct.seller.id }) });
+            if (res.ok) window.location.href = '../dashboard/messages.html';
+        });
     </script>
 </body>
 </html>

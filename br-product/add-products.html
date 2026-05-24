@@ -8,30 +8,10 @@
     <link rel="stylesheet" href="../cart/popup-cart.css">
     <link rel="stylesheet" href="add-products.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/components.js"></script>
 </head>
 <body class="dashboard-page product-detail-page">
-    <!-- TOP NAVBAR - Same as market.html -->
-    <nav class="navbar">
-        <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
-
-        <div class="nav-buttons">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div>
-            <div class="admin-profile">
-                <i class="fas fa-bell"></i>
-                <a href="../cart/cart.html" class="navbar-cart-link" aria-label="Cart" title="Open cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="navbar-cart-count">3</span>
-                </a>
-                <div class="profile-avatar" id="userInitial">U</div>
-                <span id="username">User</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </div>
-    </nav>
-    <div id="cartPopupRoot" class="cart-popup-root" aria-hidden="true"></div>
+    <div id="navbarContainer"></div>
 
     <div class="dashboard-wrapper">
         <div id="sidebarContainer"></div>
@@ -52,55 +32,59 @@
                 </header>
 
                 <div class="product-detail-layout">
-                    <form class="product-form-card">
+                    <form class="product-form-card" id="addProductForm">
                         <div class="form-grid">
                             <label class="form-field">
                                 <span>Product Title <strong>*</strong></span>
-                                <input type="text" placeholder="e.g. Nike Air Force 1 '07">
+                                <input type="text" id="productName" placeholder="e.g. Nike Air Force 1 '07" required>
                             </label>
 
                             <label class="form-field">
                                 <span>Category <strong>*</strong></span>
-                                <select>
-                                    <option>Select a category</option>
-                                    <option>Shoes</option>
-                                    <option>Electronics</option>
-                                    <option>Clothing</option>
-                                    <option>Home & Living</option>
+                                <select id="productCategory" required>
+                                    <option value="">Select a category</option>
+                                    <option value="Shoes">Shoes</option>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Clothing">Clothing</option>
+                                    <option value="Home & Living">Home &amp; Living</option>
+                                    <option value="Accessories">Accessories</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Jewelry">Jewelry</option>
                                 </select>
                             </label>
 
                             <label class="form-field">
                                 <span>Price (R) <strong>*</strong></span>
-                                <input type="number" placeholder="e.g. 650">
+                                <input type="number" id="productPrice" placeholder="e.g. 650" min="0" required>
                             </label>
 
                             <label class="form-field">
                                 <span>Condition <strong>*</strong></span>
-                                <select>
-                                    <option>Select condition</option>
-                                    <option>Brand New</option>
-                                    <option>Like New</option>
-                                    <option>Good</option>
-                                    <option>Used</option>
+                                <select id="productCondition" required>
+                                    <option value="">Select condition</option>
+                                    <option value="Brand New">Brand New</option>
+                                    <option value="Like New">Like New</option>
+                                    <option value="Good">Good</option>
+                                    <option value="Used">Used</option>
                                 </select>
                             </label>
                         </div>
 
                         <label class="form-field full-width">
                             <span>Description <strong>*</strong></span>
-                            <textarea maxlength="500" placeholder="Describe your product, its condition, size, color, brand, etc."></textarea>
-                            <small>0 / 500</small>
+                            <textarea id="productDescription" maxlength="500" placeholder="Describe your product, its condition, size, color, brand, etc." required></textarea>
+                            <small id="descCount">0 / 500</small>
                         </label>
 
                         <label class="form-field full-width">
                             <span>Location <strong>*</strong></span>
                             <div class="input-with-icon">
                                 <i class="fas fa-location-dot"></i>
-                                <input type="text" value="Johannesburg, Gauteng">
+                                <input type="text" id="productLocation" value="Johannesburg, Gauteng" required>
                             </div>
                             <em>This helps buyers near you.</em>
                         </label>
+                        <div id="addProductError" style="color:red;margin-bottom:8px;display:none;"></div>
 
                         <div class="form-field full-width">
                             <span>Product Images <strong>*</strong></span>
@@ -114,18 +98,6 @@
                                 </label>
 
                                 <div class="uploaded-images">
-                                    <div class="uploaded-image">
-                                        <img src="../index/sneaker.png" alt="White sneaker preview">
-                                        <button type="button" aria-label="Remove image"><i class="fas fa-xmark"></i></button>
-                                    </div>
-                                    <div class="uploaded-image">
-                                        <img src="../index/sneaker.png" alt="White sneaker side preview">
-                                        <button type="button" aria-label="Remove image"><i class="fas fa-xmark"></i></button>
-                                    </div>
-                                    <div class="uploaded-image">
-                                        <img src="../pexels-kold-shots-61080370-33489786.jpg" alt="Sneaker lifestyle preview">
-                                        <button type="button" aria-label="Remove image"><i class="fas fa-xmark"></i></button>
-                                    </div>
                                     <button class="add-more-image" type="button">
                                         <i class="fas fa-plus"></i>
                                         <span>Add more</span>
@@ -145,26 +117,17 @@
                         <p>This is how your product will appear.</p>
 
                         <article class="preview-card">
-                            <img src="../index/sneaker.png" alt="Nike Air Force 1 preview">
+                            <div style="width:100%;height:160px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;border-radius:10px 10px 0 0;">
+                                <i class="fas fa-image" style="font-size:48px;color:#ccc;"></i>
+                            </div>
                             <div class="preview-body">
-                                <h3>Nike Air Force 1 '07</h3>
-                                <strong class="preview-price">R650</strong>
+                                <h3 id="previewName">Your product title</h3>
+                                <strong class="preview-price" id="previewPrice">R0</strong>
                                 <span class="preview-location">
                                     <i class="fas fa-location-dot"></i>
-                                    Johannesburg, Gauteng
+                                    <span id="previewLocation">Your location</span>
                                 </span>
-                                <span class="condition-badge">Like New</span>
-                                <p>Original Nike Air Force 1 in excellent condition. White colorway, size UK 8. Worn only a few times.</p>
-                                <dl>
-                                    <div>
-                                        <dt>Category:</dt>
-                                        <dd>Shoes</dd>
-                                    </div>
-                                    <div>
-                                        <dt>Condition:</dt>
-                                        <dd>Like New</dd>
-                                    </div>
-                                </dl>
+                                <span class="condition-badge" id="previewCondition">Condition</span>
                             </div>
                         </article>
                     </aside>
@@ -174,116 +137,58 @@
     </div>
 
     <script>
-        const cartPopupRoot = document.getElementById('cartPopupRoot');
-        const cartButtons = document.querySelectorAll('.navbar-cart-link');
+        UTComponents.init({ type: 'customer', activePage: 'my-products' });
+        const user = UTComponents.getUser();
 
-        function closeCartPopup() {
-            cartPopupRoot.classList.remove('active');
-            cartPopupRoot.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('cart-popup-open');
+        // Live preview
+        function updatePreview() {
+            const name = document.getElementById('productName').value || 'Your product title';
+            const price = document.getElementById('productPrice').value || '0';
+            const location = document.getElementById('productLocation').value || 'Your location';
+            const condition = document.getElementById('productCondition').value || 'Condition';
+            document.getElementById('previewName').textContent = name;
+            document.getElementById('previewPrice').textContent = 'R' + Number(price).toLocaleString();
+            document.getElementById('previewLocation').textContent = location;
+            document.getElementById('previewCondition').textContent = condition;
         }
-
-        function openCartPopup(event) {
-            event.preventDefault();
-            if (!cartPopupRoot.dataset.loaded) {
-                fetch('../cart/popup-cart.html')
-                    .then(response => response.text())
-                    .then(html => {
-                        cartPopupRoot.innerHTML = html;
-                        cartPopupRoot.dataset.loaded = 'true';
-                        showCartPopup();
-                    })
-                    .catch(() => window.location.href = '../cart/cart.html');
-            } else {
-                showCartPopup();
-            }
-        }
-
-        function showCartPopup() {
-            cartPopupRoot.classList.add('active');
-            cartPopupRoot.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('cart-popup-open');
-        }
-
-        cartButtons.forEach(button => button.addEventListener('click', openCartPopup));
-
-        cartPopupRoot.addEventListener('click', function(event) {
-            if (event.target.closest('[data-cart-popup-close]') || event.target.matches('[data-cart-popup-backdrop]')) {
-                closeCartPopup();
-            }
+        ['productName','productPrice','productLocation','productCondition'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updatePreview);
+            document.getElementById(id).addEventListener('change', updatePreview);
         });
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && cartPopupRoot.classList.contains('active')) {
-                closeCartPopup();
-            }
+        // Description char count
+        document.getElementById('productDescription').addEventListener('input', function() {
+            document.getElementById('descCount').textContent = this.value.length + ' / 500';
         });
 
-        fetch('../dashboard/sidebar.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('sidebarContainer').innerHTML = html;
-                normalizeSidebarLinks();
-                initializeSidebarFunctionality();
-                setActiveSidebarItem();
-            })
-            .catch(error => console.error('Error loading sidebar:', error));
-
-        function normalizeSidebarLinks() {
-            const linkMap = {
-                Dashboard: '../dashboard/market.html',
-                'Browse Products': 'browse-products.html',
-                'My Products': '../dashboard/my-products.html',
-                Messages: '../dashboard/messages.html'
-            };
-
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                const label = link.textContent.trim();
-                if (linkMap[label]) {
-                    link.setAttribute('href', linkMap[label]);
-                }
-            });
-        }
-
-        function setActiveSidebarItem() {
-            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
-            sidebarLinks.forEach(link => link.classList.remove('active'));
-
-            const myProductsLink = Array.from(sidebarLinks).find(link =>
-                link.textContent.includes('My Products')
-            );
-
-            if (myProductsLink) {
-                myProductsLink.classList.add('active');
-            }
-        }
-
-        function initializeSidebarFunctionality() {
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.querySelector('.sidebar');
-
-            if (sidebarToggle && sidebar) {
-                sidebarToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('collapsed');
-
-                    const icon = sidebarToggle.querySelector('i');
-                    if (sidebar.classList.contains('collapsed')) {
-                        icon.style.transform = 'rotate(180deg)';
-                    } else {
-                        icon.style.transform = 'rotate(0deg)';
-                    }
-
-                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        // Form submit
+        document.getElementById('addProductForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const errEl = document.getElementById('addProductError');
+            errEl.style.display = 'none';
+            if (!user) { errEl.textContent = 'Please log in to add products.'; errEl.style.display = 'block'; return; }
+            const name = document.getElementById('productName').value.trim();
+            const category = document.getElementById('productCategory').value;
+            const price = document.getElementById('productPrice').value;
+            const condition = document.getElementById('productCondition').value;
+            const description = document.getElementById('productDescription').value.trim();
+            const location = document.getElementById('productLocation').value.trim();
+            if (!name || !category || !price || !condition) { errEl.textContent = 'Please fill in all required fields.'; errEl.style.display = 'block'; return; }
+            const publishBtn = document.querySelector('.publish-btn');
+            publishBtn.disabled = true; publishBtn.textContent = 'Publishing...';
+            try {
+                const res = await fetch('/api/products/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, category, price: parseFloat(price), condition, description, location, userId: user.id })
                 });
+                const data = await res.json();
+                if (!res.ok) { errEl.textContent = data.message || 'Failed to publish product.'; errEl.style.display = 'block'; publishBtn.disabled = false; publishBtn.textContent = 'Publish Product'; return; }
+                window.location.href = '../dashboard/my-products.html';
+            } catch (err) { errEl.textContent = 'Network error. Please try again.'; errEl.style.display = 'block'; publishBtn.disabled = false; publishBtn.textContent = 'Publish Product'; }
+        });
 
-                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (isCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    const icon = sidebarToggle.querySelector('i');
-                    icon.style.transform = 'rotate(180deg)';
-                }
-            }
-        }
+        document.querySelector('.cancel-btn').addEventListener('click', function() { window.location.href = '../dashboard/my-products.html'; });
     </script>
 </body>
 </html>

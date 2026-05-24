@@ -1,23 +1,119 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UbuntuTrade</title>
-
-    <!-- CSS -->
     <link rel="stylesheet" href="../style.css">
-
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        .featured-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .featured-header h2 { margin: 0; }
+        .featured-filter {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .featured-filter button {
+            padding: 6px 14px;
+            border: 1.5px solid #e0e0e0;
+            background: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #555;
+            transition: all .15s;
+        }
+        .featured-filter button.active,
+        .featured-filter button:hover {
+            border-color: #e07b39;
+            background: #e07b39;
+            color: #fff;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin: 28px 0 8px;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            padding: 7px 14px;
+            border: 1.5px solid #e0e0e0;
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #333;
+            transition: all .15s;
+            min-width: 36px;
+        }
+        .pagination button:hover:not(:disabled) {
+            border-color: #e07b39;
+            color: #e07b39;
+        }
+        .pagination button.active {
+            background: #e07b39;
+            border-color: #e07b39;
+            color: #fff;
+            font-weight: 600;
+        }
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .product-count {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-top: 6px;
+        }
+        .product .product-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+            display: block;
+        }
+        .product-img-placeholder {
+            height: 180px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .product-condition {
+            font-size: 11px;
+            color: #888;
+            margin: 2px 0 0;
+        }
+        .product-location {
+            font-size: 11px;
+            color: #aaa;
+        }
+        .nav-user-greeting {
+            color: #fff;
+            font-size: 14px;
+            margin-right: 4px;
+            opacity: .85;
+        }
+    </style>
 </head>
 <body>
 
 <!-- NAVBAR -->
 <nav class="navbar">
     <div class="logo">Ubuntu <span class="color-logo">Trade</span></div>
-
-    <div class="nav-buttons">
+    <div class="nav-buttons" id="navButtons">
         <a class="btn-login" href="login.html">Login</a>
         <a class="btn-register" href="signup.html">Register</a>
     </div>
@@ -26,65 +122,44 @@
 <!-- HERO SECTION -->
 <section class="landing-page">
     <img src="my-img.jpeg" alt="Marketplace" class="my-img">
-
     <div class="inside-img">
-        <h2 class="landing-title">Buy & Sell in Your Community</h2>
-        <p class="subtitle">Affordable, Local & Trusted Marketplace</p>
-
+        <h2 class="landing-title">Buy &amp; Sell in Your Community</h2>
+        <p class="subtitle">Affordable, Local &amp; Trusted Marketplace</p>
         <div class="input-section">
-            <input type="text" placeholder="Search for products...">
-            <button>Search</button>
+            <input type="text" id="heroSearch" placeholder="Search for products...">
+            <button id="heroSearchBtn">Search</button>
         </div>
     </div>
-    
 </section>
 
 <!-- CATEGORIES -->
 <section class="categories">
     <div class="categories-inner">
-        <button class="category-button clothing">Clothing</button>
-        <button class="category-button electronics">Electronics</button>
-        <button class="category-button home">Home & Living</button>
-        <button class="category-button more">More ▾</button>
+        <button class="category-button clothing" data-cat="Clothing">Clothing</button>
+        <button class="category-button electronics" data-cat="Electronics">Electronics</button>
+        <button class="category-button home" data-cat="Home &amp; Living">Home &amp; Living</button>
+        <button class="category-button more" data-cat="">More ▾</button>
     </div>
 </section>
 
 <!-- FEATURED PRODUCTS -->
 <section class="featured-products">
-
-    <h2>Featured Products</h2>
-
-    <div class="product-grid">
-
-        <div class="product">
-            <img src="phone.png" class="product-img">
-            <h3>Smartphone</h3>
-            <p class="price">R1500</p>
-            <button>View Product</button>
+    <div class="featured-header">
+        <h2 id="featuredTitle">Featured Products</h2>
+        <div class="featured-filter">
+            <button class="active" data-sort="newest">Newest</button>
+            <button data-sort="popular">Popular</button>
+            <button data-sort="price-low">Price: Low</button>
+            <button data-sort="price-high">Price: High</button>
         </div>
-
-        <div class="product">
-            <img src="trad-Dress.png" class="product-img">
-            <h3>Traditional Dress</h3>
-            <p class="price">R300</p>
-            <button>View Product</button>
-        </div>
-
-        <div class="product">
-            <img src="pots.png" class="product-img">
-            <h3>Cooking Pot</h3>
-            <p class="price">R750</p>
-            <button>View Product</button>
-        </div>
-
-        <div class="product">
-            <img src="sneaker.png" class="product-img">
-            <h3>Sneakers</h3>
-            <p class="price">R400</p>
-            <button>View Product</button>
-        </div>
-
     </div>
+
+    <div class="product-grid" id="featuredGrid">
+        <p style="grid-column:1/-1;text-align:center;color:#999;padding:32px;">Loading products...</p>
+    </div>
+
+    <p class="product-count" id="productCount"></p>
+    <div class="pagination" id="featuredPagination"></div>
 </section>
 
 <!-- FOOTER -->
@@ -95,14 +170,147 @@
 <footer class="footer">
     <div>
         <h3>About UbuntuTrade</h3>
-        <p>Connecting local buyers & sellers</p>
+        <p>Connecting local buyers &amp; sellers</p>
     </div>
-
     <div>
         <h3>Contact</h3>
         <p>info@Ubuntutrade.co.za</p>
     </div>
 </footer>
+
+<script>
+(function () {
+    var PAGE_SIZE = 8;
+    var state = { page: 1, sort: 'newest', category: '', search: '' };
+
+    // Auth-aware navbar
+    var user = null;
+    try { user = JSON.parse(localStorage.getItem('utUser') || 'null'); } catch (e) {}
+    if (user) {
+        var dest = user.role === 'Admin' ? '/admin/admin.html' : '/dashboard/market.html';
+        document.getElementById('navButtons').innerHTML =
+            '<span class="nav-user-greeting">Hi, ' + (user.username || user.fullName || 'there') + '</span>' +
+            '<a class="btn-register" href="' + dest + '">Go to Dashboard</a>';
+    }
+
+    // Hero search
+    document.getElementById('heroSearchBtn').addEventListener('click', doHeroSearch);
+    document.getElementById('heroSearch').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') doHeroSearch();
+    });
+    function doHeroSearch() {
+        var q = document.getElementById('heroSearch').value.trim();
+        if (q) {
+            window.location.href = '/br-product/browse-products.html?search=' + encodeURIComponent(q);
+        }
+    }
+
+    // Category buttons in hero strip
+    document.querySelectorAll('.category-button[data-cat]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var cat = btn.getAttribute('data-cat');
+            if (!cat) {
+                window.location.href = '/br-product/browse-products.html';
+            } else {
+                window.location.href = '/br-product/browse-products.html?category=' + encodeURIComponent(cat);
+            }
+        });
+    });
+
+    // Sort filter buttons
+    document.querySelectorAll('.featured-filter button').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.featured-filter button').forEach(function (b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            state.sort = btn.getAttribute('data-sort');
+            state.page = 1;
+            loadProducts();
+        });
+    });
+
+    function loadProducts() {
+        var grid = document.getElementById('featuredGrid');
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;padding:32px;">Loading...</p>';
+        document.getElementById('featuredPagination').innerHTML = '';
+        document.getElementById('productCount').textContent = '';
+
+        var url = '/api/products?page=' + state.page + '&limit=' + PAGE_SIZE + '&sort=' + state.sort;
+        if (state.category) url += '&category=' + encodeURIComponent(state.category);
+        if (state.search)   url += '&search='   + encodeURIComponent(state.search);
+
+        fetch(url)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                var products = data.products || (Array.isArray(data) ? data : []);
+                var total    = data.total || products.length;
+                var pages    = data.pages || 1;
+                renderProducts(products, total);
+                renderPagination(pages, total);
+            })
+            .catch(function () {
+                grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#c00;padding:32px;">Could not load products.</p>';
+            });
+    }
+
+    function renderProducts(items, total) {
+        var grid = document.getElementById('featuredGrid');
+        if (!items.length) {
+            grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;padding:32px;">No products found.</p>';
+            document.getElementById('productCount').textContent = '';
+            return;
+        }
+
+        var start = (state.page - 1) * PAGE_SIZE + 1;
+        var end   = Math.min(state.page * PAGE_SIZE, total);
+        document.getElementById('productCount').textContent =
+            'Showing ' + start + '–' + end + ' of ' + total + ' products';
+
+        var viewLabel = user ? 'View Product' : 'View Product';
+        grid.innerHTML = items.map(function (p) {
+            var hasImg = p.imageUrl && p.imageUrl !== 'default-product.png';
+            var imgHTML = hasImg
+                ? '<img src="' + p.imageUrl + '" class="product-img" alt="' + escHtml(p.name) + '" onerror="this.outerHTML=\'<div class=&quot;product-img-placeholder&quot;><svg width=&quot;40&quot; height=&quot;40&quot; fill=&quot;#ccc&quot; viewBox=&quot;0 0 24 24&quot;><path d=&quot;M21 19V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2zM8.5 13.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z&quot;/></svg></div>\'">'
+                : '<div class="product-img-placeholder"><svg width="40" height="40" fill="#ccc" viewBox="0 0 24 24"><path d="M21 19V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2zM8.5 13.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z"/></svg></div>';
+            return '<div class="product">' +
+                imgHTML +
+                '<h3>' + escHtml(p.name) + '</h3>' +
+                (p.condition ? '<p class="product-condition">' + escHtml(p.condition) + '</p>' : '') +
+                '<p class="price">R' + Number(p.price).toLocaleString() + '</p>' +
+                (p.location ? '<p class="product-location">' + escHtml(p.location) + '</p>' : '') +
+                '<button onclick="window.location.href=\'/br-product/product-detail.html?id=' + p.id + '\'">' + viewLabel + '</button>' +
+                '</div>';
+        }).join('');
+    }
+
+    function renderPagination(pages, total) {
+        var pag = document.getElementById('featuredPagination');
+        if (pages <= 1) { pag.innerHTML = ''; return; }
+
+        var html = '<button onclick="goPage(' + (state.page - 1) + ')"' + (state.page === 1 ? ' disabled' : '') + '>&#8592; Prev</button>';
+        var start = Math.max(1, state.page - 2);
+        var end   = Math.min(pages, state.page + 2);
+        if (start > 1) html += '<button onclick="goPage(1)">1</button>' + (start > 2 ? '<span style="padding:0 4px;color:#aaa;">…</span>' : '');
+        for (var i = start; i <= end; i++) {
+            html += '<button onclick="goPage(' + i + ')"' + (i === state.page ? ' class="active"' : '') + '>' + i + '</button>';
+        }
+        if (end < pages) html += (end < pages - 1 ? '<span style="padding:0 4px;color:#aaa;">…</span>' : '') + '<button onclick="goPage(' + pages + ')">' + pages + '</button>';
+        html += '<button onclick="goPage(' + (state.page + 1) + ')"' + (state.page === pages ? ' disabled' : '') + '>Next &#8594;</button>';
+        pag.innerHTML = html;
+    }
+
+    window.goPage = function (n) {
+        state.page = n;
+        loadProducts();
+        document.querySelector('.featured-products').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    loadProducts();
+})();
+</script>
 
 </body>
 </html>

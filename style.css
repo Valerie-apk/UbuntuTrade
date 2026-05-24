@@ -535,7 +535,7 @@ body.dashboard-page .dashboard-wrapper {
 }
 
 .sidebar.collapsed .sidebar-footer {
-    padding: 10px 0;
+    display: none;
 }
 
 .sidebar.collapsed .logout-link {
