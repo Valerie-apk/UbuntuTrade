@@ -11,12 +11,12 @@
     ];
 
     var ADMIN_LINKS = [
-        { href: '/admin/admin.html',          icon: 'fa-home',          label: 'Dashboard', page: 'admin' },
-        { href: '/admin/admin-users.html',    icon: 'fa-users',         label: 'Users',     page: 'admin-users' },
-        { href: '/admin/admin-products.html', icon: 'fa-box',           label: 'Products',  page: 'admin-products' },
-        { href: '/admin/admin-orders.html',   icon: 'fa-shopping-cart', label: 'Orders',    page: 'admin-orders' },
-        { href: '#',                          icon: 'fa-chart-bar',     label: 'Reports',   page: 'admin-reports' },
-        { href: '#',                          icon: 'fa-cog',           label: 'Settings',  page: 'admin-settings' }
+        { href: '/admin/admin.html#dashboard', icon: 'fa-home',          label: 'Dashboard', page: 'admin' },
+        { href: '/admin/admin.html#users',     icon: 'fa-users',         label: 'Users',     page: 'admin' },
+        { href: '/admin/admin.html#products',  icon: 'fa-box',           label: 'Products',  page: 'admin' },
+        { href: '/admin/admin.html#orders',    icon: 'fa-shopping-cart', label: 'Orders',    page: 'admin' },
+        { href: '#',                           icon: 'fa-chart-bar',     label: 'Reports',   page: 'admin' },
+        { href: '#',                           icon: 'fa-cog',           label: 'Settings',  page: 'admin' }
     ];
 
     function getUser() {
@@ -96,10 +96,10 @@
             }
         } else {
             menuItems +=
-                '<a href="/admin/admin.html" class="nav-dropdown-item"><i class="fas fa-home"></i> Admin Dashboard</a>' +
-                '<a href="/admin/admin-users.html" class="nav-dropdown-item"><i class="fas fa-users"></i> Manage Users</a>' +
-                '<a href="/admin/admin-products.html" class="nav-dropdown-item"><i class="fas fa-box"></i> Manage Products</a>' +
-                '<a href="/admin/admin-orders.html" class="nav-dropdown-item"><i class="fas fa-shopping-cart"></i> Manage Orders</a>' +
+                '<a href="/admin/admin.html#dashboard" class="nav-dropdown-item"><i class="fas fa-home"></i> Admin Dashboard</a>' +
+                '<a href="/admin/admin.html#users" class="nav-dropdown-item"><i class="fas fa-users"></i> Manage Users</a>' +
+                '<a href="/admin/admin.html#products" class="nav-dropdown-item"><i class="fas fa-box"></i> Manage Products</a>' +
+                '<a href="/admin/admin.html#orders" class="nav-dropdown-item"><i class="fas fa-shopping-cart"></i> Manage Orders</a>' +
                 '<div class="nav-dropdown-divider"></div>' +
                 '<a href="/dashboard/market.html" class="nav-dropdown-item"><i class="fas fa-eye"></i> Customer View</a>' +
                 '<div class="nav-dropdown-divider"></div>';
