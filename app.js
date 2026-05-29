@@ -11,6 +11,7 @@ const upload = multer({
     fileFilter(req, file, cb) {
         cb(null, /^image\/(jpeg|png|webp|gif)$/.test(file.mimetype));
     }
+    
 });
 
 const app  = express();
