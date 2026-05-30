@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - UbuntuTrade</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../cart/popup-cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/components.js"></script>
+    <style>
+        .settings-page {
+            padding: 28px;
+            max-width: 760px;
+        }
+
+        .settings-header {
+            margin-bottom: 18px;
+        }
+
+        .settings-header h1 {
+            margin: 0 0 6px;
+            font-size: 28px;
+            color: #1f2933;
+        }
+
+        .settings-header p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .settings-panel {
+            background: #fff;
+            border: 1px solid #eef0f3;
+            border-radius: 8px;
+            padding: 22px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, .05);
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .settings-field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .settings-field input {
+            height: 42px;
+            border: 1px solid #d8dde5;
+            border-radius: 6px;
+            padding: 0 12px;
+            font: inherit;
+            font-weight: 400;
+            color: #111827;
+        }
+
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .settings-row {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid #eef0f3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .settings-row strong {
+            display: block;
+            color: #1f2933;
+            margin-bottom: 3px;
+        }
+
+        .settings-row span {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .settings-actions {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-save {
+            border: 0;
+            border-radius: 6px;
+            background: #e07b39;
+            color: #fff;
+            height: 42px;
+            padding: 0 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .settings-status {
+            color: #168c34;
+            font-size: 13px;
+            min-height: 18px;
+        }
+
+        @media (max-width: 700px) {
+            .settings-page {
+                padding: 18px;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <div id="navbarContainer"></div>
+
+    <div class="dashboard-wrapper">
+        <div id="sidebarContainer"></div>
+
+        <main class="main-content">
+            <section class="settings-page">
+                <div class="settings-header">
+                    <h1>Settings</h1>
+                    <p>Keep your account details up to date.</p>
+                </div>
+
+                <form class="settings-panel" id="settingsForm">
+                    <div class="settings-grid">
+                        <label class="settings-field">
+                            Username
+                            <input id="username" name="username" autocomplete="username">
+                        </label>
+                        <label class="settings-field">
+                            Full name
+                            <input id="fullName" name="fullName" autocomplete="name">
+                        </label>
+                        <label class="settings-field">
+                            Phone
+                            <input id="phone" name="phone" autocomplete="tel">
+                        </label>
+                        <label class="settings-field">
+                            Location
+                            <input id="location" name="location" autocomplete="address-level2">
+                        </label>
+                        <label class="settings-field full">
+                            Email
+                            <input id="email" name="email" type="email" disabled>
+                        </label>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <strong>Email updates</strong>
+                            <span>Receive order and message notifications.</span>
+                        </div>
+                        <input id="emailUpdates" type="checkbox">
+                    </div>
+
+                    <div class="settings-actions">
+                        <button class="settings-save" type="submit">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <span class="settings-status" id="settingsStatus"></span>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        UTComponents.init({ type: 'customer', activePage: 'settings' });
+
+        const user = UTComponents.getUser();
+        const statusEl = document.getElementById('settingsStatus');
+
+        if (!user) {
+            window.location.href = '/index/login.html';
+        } else {
+            fetch('/api/users/' + user.id)
+                .then(res => res.ok ? res.json() : user)
+                .then(profile => {
+                    document.getElementById('username').value = profile.username || '';
+                    document.getElementById('fullName').value = profile.fullName || '';
+                    document.getElementById('phone').value = profile.phone || '';
+                    document.getElementById('location').value = profile.location || '';
+                    document.getElementById('email').value = profile.email || user.email || '';
+                })
+                .catch(() => {
+                    document.getElementById('username').value = user.username || '';
+                    document.getElementById('fullName').value = user.fullName || '';
+                    document.getElementById('email').value = user.email || '';
+                });
+
+            document.getElementById('emailUpdates').checked = localStorage.getItem('utEmailUpdates') !== 'false';
+        }
+
+        document.getElementById('settingsForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (!user) return;
+
+            statusEl.textContent = '';
+            const body = {
+                username: document.getElementById('username').value.trim(),
+                fullName: document.getElementById('fullName').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                location: document.getElementById('location').value.trim()
+            };
+
+            try {
+                statusEl.style.color = '#168c34';
+                const res = await fetch('/api/users/' + user.id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Failed to save settings');
+
+                localStorage.setItem('utUser', JSON.stringify(data.data));
+                localStorage.setItem('utEmailUpdates', document.getElementById('emailUpdates').checked ? 'true' : 'false');
+                statusEl.textContent = 'Saved';
+                setTimeout(() => { statusEl.textContent = ''; }, 1800);
+            } catch (err) {
+                statusEl.style.color = '#d33';
+                statusEl.textContent = err.message || 'Failed to save';
+            }
+        });
+    </script>
+</body>
+</html>

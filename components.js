@@ -7,7 +7,7 @@
         { href: '/dashboard/my-products.html',      icon: 'fa-box',           label: 'My Products',      page: 'my-products' },
         { href: '/dashboard/messages.html',         icon: 'fa-envelope',      label: 'Messages',         page: 'messages' },
         { href: '#',                                icon: 'fa-shopping-cart', label: 'Orders',           page: 'orders' },
-        { href: '#',                                icon: 'fa-cog',           label: 'Settings',         page: 'settings' }
+        { href: '/dashboard/settings.html',         icon: 'fa-cog',           label: 'Settings',         page: 'settings' }
     ];
 
     var ADMIN_LINKS = [
@@ -34,17 +34,19 @@
             '.nav-user-trigger:hover{background:rgba(255,255,255,.1);}',
             '.nav-user-trigger .fa-chevron-down{font-size:11px;transition:transform .2s;color:rgba(255,255,255,.7);}',
             '.nav-user-dropdown.open .nav-user-trigger .fa-chevron-down{transform:rotate(180deg);}',
-            '.nav-dropdown-menu{position:absolute;top:calc(100% + 10px);right:0;width:240px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.16);z-index:9999;overflow:hidden;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .18s,transform .18s;}',
+            '.nav-dropdown-menu{position:absolute;top:calc(100% + 10px);right:0;width:260px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.16);z-index:9999;overflow:hidden;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .18s,transform .18s;}',
             '.nav-user-dropdown.open .nav-dropdown-menu{opacity:1;transform:translateY(0);pointer-events:auto;}',
             '.nav-dropdown-header{padding:16px;background:#fafafa;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:12px;}',
             '.nav-dropdown-avatar{width:42px;height:42px;border-radius:50%;background:#e07b39;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0;}',
             '.nav-dropdown-avatar img{width:42px;height:42px;border-radius:50%;object-fit:cover;}',
+            '.nav-dropdown-user-info{min-width:0;display:flex;flex-direction:column;align-items:flex-start;}',
             '.nav-dropdown-name{font-weight:600;font-size:14px;color:#1a1a1a;line-height:1.2;}',
-            '.nav-dropdown-email{font-size:12px;color:#888;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;}',
+            '.nav-dropdown-email{font-size:12px;color:#888;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px;}',
             '.nav-dropdown-role{display:inline-block;margin-top:5px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}',
             '.nav-dropdown-role.role-admin{background:#fef3eb;color:#e07b39;}',
             '.nav-dropdown-role.role-seller{background:#eaf4fb;color:#2980b9;}',
             '.nav-dropdown-role.role-buyer{background:#eafbea;color:#27ae60;}',
+            '.nav-dropdown-role.role-buyer-seller{background:#eafbea;color:#247a3a;}',
             '.nav-dropdown-divider{height:1px;background:#f0f0f0;margin:4px 0;}',
             '.nav-dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:14px;color:#333;text-decoration:none;transition:background .12s;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;}',
             '.nav-dropdown-item:hover{background:#f7f7f7;color:#e07b39;}',
@@ -73,6 +75,8 @@
         var name    = user ? (user.username || user.email || 'User') : 'User';
         var email   = user ? (user.email || '') : '';
         var role    = user ? (user.role || 'Buyer') : 'Buyer';
+        var displayRole = type === 'customer' && role !== 'Admin' ? 'Buyer/Seller' : role;
+        var roleClass = displayRole.toLowerCase().replace('/', '-').replace(/\s+/g, '-');
         var initial = name[0].toUpperCase();
 
         var cartHTML = type === 'customer'
@@ -128,10 +132,10 @@
             '<div class="nav-dropdown-menu" id="navDropdownMenu">' +
             '<div class="nav-dropdown-header">' +
             '<div class="nav-dropdown-avatar">' + avatarHTML + '</div>' +
-            '<div>' +
+            '<div class="nav-dropdown-user-info">' +
             '<div class="nav-dropdown-name">' + name + '</div>' +
             '<div class="nav-dropdown-email">' + email + '</div>' +
-            '<span class="nav-dropdown-role role-' + role.toLowerCase() + '">' + role + '</span>' +
+            '<span class="nav-dropdown-role role-' + roleClass + '">' + displayRole + '</span>' +
             '</div></div>' +
             '<div class="nav-dropdown-divider"></div>' +
             menuItems +

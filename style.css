@@ -1610,3 +1610,327 @@ body.admin-page {
     }
 }
 
+/* ==================== SITE-WIDE RESPONSIVE FIXES ==================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img,
+video {
+    max-width: 100%;
+    height: auto;
+}
+
+.main-content,
+.dashboard-content,
+.admin-content {
+    min-width: 0;
+}
+
+table {
+    min-width: 680px;
+}
+
+.products-section,
+.messages-section,
+.admin-card,
+.products-table-container,
+.cart-table-card {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 1024px) {
+    .navbar {
+        gap: 14px;
+        padding: 12px 18px;
+    }
+
+    .nav-buttons {
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .search-bar {
+        min-width: 190px;
+    }
+
+    .dashboard-content,
+    .admin-content {
+        padding: 22px;
+    }
+
+    .welcome-section {
+        margin: -22px -22px 24px;
+        padding: 46px 24px;
+        background-attachment: scroll;
+    }
+
+    .dashboard-cards,
+    .stats-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    body.dashboard-page,
+    body.admin-page {
+        min-height: 100vh;
+        height: auto;
+        overflow: visible;
+    }
+
+    body.dashboard-page .dashboard-wrapper,
+    .admin-wrapper {
+        flex-direction: column;
+        overflow: visible;
+    }
+
+    .navbar {
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 12px 14px;
+    }
+
+    .navbar .logo {
+        font-size: 1.25rem;
+    }
+
+    .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .search-bar {
+        min-width: 0;
+        flex: 1 1 100%;
+        order: 3;
+    }
+
+    .admin-profile {
+        margin-left: auto;
+    }
+
+    .nav-user-trigger {
+        padding: 4px 0;
+    }
+
+    #navUsername,
+    .nav-user-trigger .fa-chevron-down {
+        display: none;
+    }
+
+    .nav-dropdown-menu {
+        right: 0;
+        width: min(92vw, 260px);
+    }
+
+    .sidebar,
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        max-height: none;
+        flex-direction: row;
+        align-items: center;
+        padding: 8px 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        position: sticky;
+        top: 0;
+        z-index: 90;
+    }
+
+    .sidebar.collapsed,
+    .admin-sidebar.collapsed {
+        width: 100%;
+    }
+
+    .sidebar-toggle-container,
+    .sidebar-title-container,
+    .sidebar-footer {
+        display: none;
+    }
+
+    .add-product-btn {
+        flex: 0 0 auto;
+        margin: 0 8px 0 0;
+        padding: 10px 12px;
+        white-space: nowrap;
+    }
+
+    .sidebar-menu {
+        flex: 1 0 auto;
+        flex-direction: row;
+        margin: 0;
+        gap: 4px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .sidebar-menu a,
+    .sidebar.collapsed .sidebar-menu a,
+    .admin-sidebar.collapsed .sidebar-menu a {
+        flex: 0 0 auto;
+        justify-content: center;
+        padding: 10px 12px;
+        border-left: 0;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+    }
+
+    .sidebar-menu a.active {
+        border-bottom-color: #ff8a00;
+    }
+
+    .sidebar.collapsed .sidebar-menu a span,
+    .admin-sidebar.collapsed .sidebar-menu a span {
+        display: inline;
+    }
+
+    .sidebar.collapsed .add-product-btn span,
+    .sidebar.collapsed .logout-link span,
+    .admin-sidebar.collapsed .logout-link span {
+        display: inline;
+    }
+
+    .logout-link,
+    .sidebar.collapsed .logout-link,
+    .admin-sidebar.collapsed .logout-link {
+        flex: 0 0 auto;
+        margin: 0 0 0 8px;
+        padding: 10px 12px;
+        border-top: 0;
+        border-left: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .main-content {
+        overflow: visible;
+    }
+
+    .dashboard-content,
+    .admin-content {
+        overflow: visible;
+        padding: 16px;
+    }
+
+    .welcome-section {
+        margin: -16px -16px 20px;
+        padding: 36px 18px;
+    }
+
+    .welcome-section h2 {
+        font-size: 1.65rem;
+    }
+
+    .dashboard-cards,
+    .stats-container,
+    .admin-stats {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .card-box,
+    .stat-card,
+    .products-section,
+    .messages-section {
+        border-radius: 8px;
+        padding: 18px;
+    }
+
+    .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: 18px;
+        text-align: center;
+    }
+
+    .login-page,
+    .signup-page {
+        padding: 26px 14px;
+    }
+
+    .login-card,
+    .signup-card {
+        border-radius: 14px;
+        padding: 26px 18px;
+    }
+}
+
+@media (max-width: 520px) {
+    .navbar {
+        padding: 10px 12px;
+    }
+
+    .nav-buttons {
+        gap: 8px;
+    }
+
+    .admin-profile {
+        gap: 8px;
+    }
+
+    .search-bar {
+        padding: 8px 12px;
+    }
+
+    .sidebar,
+    .admin-sidebar {
+        padding: 8px;
+    }
+
+    .add-product-btn span,
+    .logout-link span {
+        display: none;
+    }
+
+    .sidebar-menu a span {
+        font-size: 0.88rem;
+    }
+
+    .dashboard-content,
+    .admin-content {
+        padding: 12px;
+    }
+
+    .welcome-section {
+        margin: -12px -12px 18px;
+    }
+
+    .landing-title {
+        font-size: 30px;
+    }
+
+    .inside-img {
+        width: min(92vw, 420px);
+    }
+
+    .input-section {
+        display: grid;
+        gap: 8px;
+    }
+
+    .input-section input,
+    .input-section button {
+        width: 100%;
+    }
+
+    .my-img {
+        height: 360px;
+    }
+}
+

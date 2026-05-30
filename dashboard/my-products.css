@@ -151,13 +151,16 @@
 .products-table-container {
     background: white;
     border-radius: 8px;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin-bottom: 20px;
 }
 
 .products-table {
     width: 100%;
+    min-width: 760px;
     border-collapse: collapse;
 }
 

@@ -27,7 +27,7 @@ function format(row) {
 
 const CartItem = {
     async findByUser(userId) {
-        const [rows] = await pool.query(CART_SQL + ' WHERE ci.userId = ? ORDER BY ci.createdAt DESC', [userId]);
+        const [rows] = await pool.query(CART_SQL + " WHERE ci.userId = ? AND p.status = 'Active' ORDER BY ci.createdAt DESC", [userId]);
         return rows.map(format);
     },
 

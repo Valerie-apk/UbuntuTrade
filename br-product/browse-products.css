@@ -618,6 +618,28 @@
         font-size: 1.5rem;
     }
 
+    .browse-header {
+        gap: 14px;
+    }
+
+    .sort-section {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .sort-dropdown {
+        width: 100%;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-card-image {
+        height: 220px;
+    }
+
     .results-info {
         font-size: 0.85rem;
     }

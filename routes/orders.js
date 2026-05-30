@@ -35,13 +35,21 @@ router.post('/checkout', async (req, res) => {
         if (!userId) return res.status(400).json({ message: 'userId is required' });
 
         const [cartRows] = await conn.query(
-            `SELECT ci.*, p.price, p.name AS productName, p.userId AS sellerId
+            `SELECT ci.*, p.price, p.name AS productName, p.userId AS sellerId, p.status
              FROM cart_items ci
              JOIN products p ON ci.productId = p.id
              WHERE ci.userId = ?`,
             [userId]
         );
         if (cartRows.length === 0) return res.status(400).json({ message: 'Cart is empty' });
+        const unavailable = cartRows.filter(item => item.status !== 'Active');
+        if (unavailable.length > 0) {
+            return res.status(409).json({
+                success: false,
+                message: 'Some items in your cart are no longer available',
+                items: unavailable.map(item => item.productName)
+            });
+        }
 
         const subtotal    = cartRows.reduce((sum, i) => sum + Number(i.price) * i.quantity, 0);
         const deliveryFee = deliveryFeeFor(subtotal);

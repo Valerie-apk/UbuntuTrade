@@ -20,6 +20,9 @@ async function addToCart(req, res) {
         }
         const product = await Product.findById(productId);
         if (!product) return res.status(404).json({ message: 'Product not found' });
+        if (product.status !== 'Active') {
+            return res.status(409).json({ message: 'This product is no longer available' });
+        }
 
         const { item, created } = await CartItem.upsert(userId, productId, quantity);
         res.status(created ? 201 : 200).json({ success: true, message: 'Added to cart', item });
