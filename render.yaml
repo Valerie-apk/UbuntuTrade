@@ -2,7 +2,7 @@ services:
   - type: web
     name: ubuntutrade
     runtime: node
-    buildCommand: apt-get install -y php-cli || true && npm install
+    buildCommand: apt-get update -qq && apt-get install -y php-cli && npm install
     startCommand: npm start
     envVars:
       - key: DB_SSL
