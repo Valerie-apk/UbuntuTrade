@@ -157,10 +157,21 @@ $effective_date = '1 June 2026';
     </div>
 </div>
 
-<div class="pp-footer">
-    &copy; <?php echo $year; ?> UbuntuTrade &mdash;
-    <a href="/index/index.html">Home</a>
-</div>
+<footer class="footer">
+    <div>
+        <h3>About UbuntuTrade</h3>
+        <p>Connecting local buyers &amp; sellers</p>
+    </div>
+    <div>
+        <h3>Contact</h3>
+        <p>info@Ubuntutrade.co.za</p>
+    </div>
+    <div>
+        <h3>Legal</h3>
+        <a href="/privacy-policy">View Privacy Policy</a>
+        <a href="/faqs">FAQs</a>
+    </div>
+</footer>
 
 </body>
 </html>

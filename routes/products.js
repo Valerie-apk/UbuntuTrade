@@ -1,4 +1,5 @@
 const router      = require('express').Router();
+const pool        = require('../config/db');
 const Product     = require('../models/Product');
 const WishlistItem = require('../models/WishlistItem');
 
@@ -7,6 +8,20 @@ router.post('/add', async (req, res) => {
     try {
         if (!req.body.name || req.body.price === undefined) {
             return res.status(400).json({ message: 'name and price are required' });
+        }
+        if (req.body.userId) {
+            const [[seller]] = await pool.query(
+                'SELECT role, sellerStatus, isSuspended, idDocumentUrl FROM users WHERE id = ?',
+                [req.body.userId]
+            );
+            if (!seller) return res.status(404).json({ message: 'Seller account not found' });
+            if (seller.isSuspended) return res.status(403).json({ message: 'Your seller account is suspended. Please contact support.' });
+            if (!seller.idDocumentUrl || seller.sellerStatus !== 'Approved') {
+                return res.status(403).json({
+                    code: 'SELLER_VERIFICATION_REQUIRED',
+                    message: 'Before selling for the first time, upload your ID and wait for admin approval.'
+                });
+            }
         }
         const product = await Product.create(req.body);
         res.status(201).json({ success: true, message: 'Product created successfully!', data: product });

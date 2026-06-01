@@ -21,7 +21,7 @@ async function seed() {
 
         // Drop & recreate all tables
         await conn.query('SET FOREIGN_KEY_CHECKS = 0');
-        for (const t of ['messages','conversations','payments','order_items','orders','wishlist_items','cart_items','products','users']) {
+        for (const t of ['messages','conversations','payments','order_items','orders','wishlist_items','cart_items','seller_reports','seller_verifications','products','users']) {
             await conn.query(`DROP TABLE IF EXISTS ${t}`);
         }
         await conn.query('SET FOREIGN_KEY_CHECKS = 1');
@@ -38,10 +38,41 @@ async function seed() {
                 location      VARCHAR(255),
                 role          ENUM('Buyer','Seller','Admin') DEFAULT 'Buyer',
                 isVerified    BOOLEAN DEFAULT false,
+                sellerStatus  ENUM('Pending','Approved','Flagged') DEFAULT 'Pending',
+                isSuspended   BOOLEAN DEFAULT false,
+                idDocumentUrl VARCHAR(500),
                 rating        DECIMAL(3,2) DEFAULT 0,
                 responseRate  INT DEFAULT 0,
                 createdAt     DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+        await conn.query(`
+            CREATE TABLE IF NOT EXISTS seller_verifications (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                userId INT NOT NULL,
+                idDocumentUrl VARCHAR(500) NOT NULL,
+                notes TEXT,
+                status ENUM('Pending','Approved','Flagged') DEFAULT 'Pending',
+                reviewedBy INT,
+                reviewedAt DATETIME,
+                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+            )
+        `);
+        await conn.query(`
+            CREATE TABLE IF NOT EXISTS seller_reports (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                sellerId INT NOT NULL,
+                reporterId INT,
+                reason VARCHAR(255) NOT NULL,
+                details TEXT,
+                status ENUM('Open','Reviewed','Dismissed') DEFAULT 'Open',
+                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (sellerId) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (reporterId) REFERENCES users(id) ON DELETE SET NULL
             )
         `);
         await conn.query(`
@@ -186,8 +217,8 @@ async function seed() {
         const userIds = {};
         for (const u of users) {
             const [r] = await conn.query(
-                'INSERT INTO users (username, fullName, email, password, location, role, isVerified, rating, responseRate, avatarUrl) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [u.username, u.fullName, u.email, u.password, u.location, u.role, u.isVerified, u.rating, u.responseRate, u.avatarUrl]
+                'INSERT INTO users (username, fullName, email, password, location, role, isVerified, sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, avatarUrl) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [u.username, u.fullName, u.email, u.password, u.location, u.role, u.isVerified, u.role === 'Seller' ? 'Approved' : 'Pending', false, u.role === 'Seller' ? '/uploads/sample-id-document.pdf' : null, u.rating, u.responseRate, u.avatarUrl]
             );
             userIds[u.email] = r.insertId;
         }

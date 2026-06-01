@@ -3,7 +3,9 @@ const pool = require('../config/db');
 const User = {
     async findById(id) {
         const [rows] = await pool.query(
-            'SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified, rating, responseRate, createdAt FROM users WHERE id = ?',
+            `SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified,
+                sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, createdAt
+             FROM users WHERE id = ?`,
             [id]
         );
         return rows[0] || null;
@@ -21,7 +23,9 @@ const User = {
 
     async findAll() {
         const [rows] = await pool.query(
-            'SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified, rating, responseRate, createdAt FROM users ORDER BY createdAt DESC'
+            `SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified,
+                sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, createdAt
+             FROM users ORDER BY createdAt DESC`
         );
         return rows;
     },
@@ -35,7 +39,7 @@ const User = {
     },
 
     async update(id, fields) {
-        const allowed = ['username', 'fullName', 'phone', 'avatarUrl', 'location', 'role', 'isVerified', 'rating', 'responseRate'];
+        const allowed = ['username', 'fullName', 'phone', 'avatarUrl', 'location', 'role', 'isVerified', 'sellerStatus', 'isSuspended', 'idDocumentUrl', 'rating', 'responseRate'];
         const cols = [], vals = [];
         allowed.forEach(f => {
             if (Object.prototype.hasOwnProperty.call(fields, f)) {

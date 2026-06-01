@@ -60,6 +60,20 @@ app.get('/privacy-policy', (req, res) => {
     });
 });
 
+app.get('/faqs', (req, res) => {
+    const rendered = path.join(__dirname, 'index', 'faqs.rendered.html');
+    const fallback = path.join(__dirname, 'index', 'faqs.php');
+    const fs = require('fs');
+    if (fs.existsSync(rendered)) {
+        return res.sendFile(rendered);
+    }
+    execFile('php', [fallback], (err, stdout) => {
+        if (err) return res.status(500).send('<h2>FAQs unavailable.</h2><p>Please try again later.</p><p><a href="/">Back to Home</a></p>');
+        res.setHeader('Content-Type', 'text/html');
+        res.send(stdout);
+    });
+});
+
 app.get('/', (req, res) => res.redirect('/index/index.html'));
 app.get('/admin', (req, res) => res.redirect('/admin/login.html'));
 

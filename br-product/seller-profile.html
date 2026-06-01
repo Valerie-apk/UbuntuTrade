@@ -31,6 +31,7 @@
                         <div class="seller-title-row">
                             <h1 id="sellerName">Loading...</h1>
                             <span class="verified-pill" id="verifiedBadge" style="display:none;"><i class="fas fa-check-circle"></i> Verified Seller</span>
+                            <span class="seller-status-pill pending" id="sellerStatusBadge" style="display:none;">Pending</span>
                         </div>
 
                         <div class="seller-rating">
@@ -83,6 +84,10 @@
                                 <dt>Member Since</dt><dd id="siSince">—</dd>
                                 <dt>Response Rate</dt><dd id="siResponse">—</dd>
                             </dl>
+                            <button class="report-user-btn" type="button" id="reportSellerBtn">
+                                <i class="fas fa-flag"></i>
+                                Report User
+                            </button>
                         </section>
                     </aside>
 
@@ -101,6 +106,46 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <footer class="footer">
+        <div>
+            <h3>About UbuntuTrade</h3>
+            <p>Connecting local buyers &amp; sellers</p>
+        </div>
+        <div>
+            <h3>Contact</h3>
+            <p>info@Ubuntutrade.co.za</p>
+        </div>
+        <div>
+            <h3>Legal</h3>
+            <a href="/privacy-policy">View Privacy Policy</a>
+            <a href="/faqs">FAQs</a>
+        </div>
+    </footer>
+
+    <div class="report-modal" id="reportModal" style="display:none;">
+        <form class="report-dialog" id="reportForm">
+            <button type="button" class="report-close" id="reportClose" aria-label="Close report">&times;</button>
+            <h2>Report Seller</h2>
+            <label>
+                Reason
+                <select id="reportReason" required>
+                    <option value="">Select a reason</option>
+                    <option>Suspicious account</option>
+                    <option>Misleading listing</option>
+                    <option>Harassment or abuse</option>
+                    <option>Fraud or scam concern</option>
+                    <option>Other</option>
+                </select>
+            </label>
+            <label>
+                Details
+                <textarea id="reportDetails" rows="4" placeholder="Explain what happened"></textarea>
+            </label>
+            <div id="reportStatus" class="report-status"></div>
+            <button class="message-seller-btn" type="submit">Submit Report</button>
+        </form>
     </div>
 
     <script>
@@ -124,7 +169,12 @@
                 document.title = name + ' - UbuntuTrade';
                 document.getElementById('sellerAvatar').textContent = initials;
                 document.getElementById('sellerName').textContent = name;
-                if (s.isVerified) document.getElementById('verifiedBadge').style.display = 'inline-flex';
+                if (s.isVerified || s.sellerStatus === 'Approved') document.getElementById('verifiedBadge').style.display = 'inline-flex';
+                const statusBadge = document.getElementById('sellerStatusBadge');
+                const sellerStatus = s.sellerStatus || (s.isVerified ? 'Approved' : 'Pending');
+                statusBadge.textContent = sellerStatus;
+                statusBadge.className = 'seller-status-pill ' + sellerStatus.toLowerCase();
+                statusBadge.style.display = 'inline-flex';
                 document.getElementById('sellerRating').textContent = s.rating || '—';
                 document.getElementById('sellerSoldCount').textContent = (products.filter(p => p.status === 'Sold').length) + ' sales';
                 document.getElementById('sellerLocation').textContent = s.location || '—';
@@ -164,12 +214,53 @@
                     if (res2.ok) window.location.href = '../dashboard/messages.html';
                 });
 
+                document.getElementById('reportSellerBtn').addEventListener('click', function() {
+                    if (!user) { alert('Please log in to report a seller.'); window.location.href = '../index/login.html'; return; }
+                    document.getElementById('reportModal').style.display = 'flex';
+                });
+
             } catch (e) {
                 document.getElementById('sellerName').textContent = 'Seller not found';
             }
         }
 
         loadSeller();
+
+        document.getElementById('reportClose').addEventListener('click', function() {
+            document.getElementById('reportModal').style.display = 'none';
+        });
+        document.getElementById('reportModal').addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+        document.getElementById('reportForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const status = document.getElementById('reportStatus');
+            const btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+            status.textContent = '';
+            try {
+                const res = await fetch('/api/users/' + sellerId + '/reports', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        reporterId: user && user.id,
+                        reason: document.getElementById('reportReason').value,
+                        details: document.getElementById('reportDetails').value.trim()
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error || 'Report failed');
+                status.textContent = 'Report submitted. Thank you.';
+                setTimeout(() => { document.getElementById('reportModal').style.display = 'none'; }, 900);
+                this.reset();
+            } catch (err) {
+                status.textContent = err.message;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Submit Report';
+            }
+        });
     </script>
 </body>
 </html>

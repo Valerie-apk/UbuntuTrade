@@ -95,9 +95,23 @@
         .product-price { font-size:13px; font-weight:700; margin-right:8px; }
         .view-all { font-size:12px; color:#e04a2f; text-decoration:none; font-weight:600; }
         .view-all:hover { text-decoration:underline; }
+        .seller-status { display:inline-flex; align-items:center; gap:6px; padding:4px 9px; border-radius:999px; font-size:11px; font-weight:800; }
+        .seller-status.pending { background:#fff7df; color:#a16207; }
+        .seller-status.approved { background:#ddf8e3; color:#15803d; }
+        .seller-status.flagged { background:#fee2e2; color:#b91c1c; }
+        .seller-status.suspended { background:#f3f4f6; color:#374151; }
+        .seller-detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0; }
+        .seller-detail-card { background:#fafafa; border:1px solid #eee; border-radius:8px; padding:12px; }
+        .seller-detail-card h3 { font-size:13px; margin:0 0 10px; }
+        .seller-detail-card p { color:#666; font-size:12px; line-height:1.5; margin:0 0 8px; }
+        .seller-activity-list { display:grid; gap:8px; max-height:220px; overflow:auto; }
+        .seller-activity-item { border-bottom:1px solid #eee; padding-bottom:8px; font-size:12px; }
+        .seller-activity-item:last-child { border-bottom:0; }
+        .id-link { color:#e04a2f; font-weight:700; text-decoration:none; }
 
         @media(max-width:900px) {
             .admin-grid, .admin-grid-bottom { grid-template-columns:1fr; }
+            .seller-detail-grid { grid-template-columns:1fr; }
             .settings-grid { grid-template-columns:1fr; }
         }
     </style>
@@ -112,6 +126,7 @@
             <div class="admin-tab-nav">
                 <button class="admin-tab-btn" data-tab="dashboard"><i class="fas fa-home"></i> Dashboard</button>
                 <button class="admin-tab-btn" data-tab="users"><i class="fas fa-users"></i> Users</button>
+                <button class="admin-tab-btn" data-tab="sellers"><i class="fas fa-store"></i> Sellers</button>
                 <button class="admin-tab-btn" data-tab="products"><i class="fas fa-box"></i> Products</button>
                 <button class="admin-tab-btn" data-tab="orders"><i class="fas fa-shopping-cart"></i> Orders</button>
                 <button class="admin-tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
@@ -230,6 +245,35 @@
                     </table>
                 </div>
             </div><!-- /users -->
+
+            <!-- ═══════════════════════════════════ SELLERS TAB ═══════════════════════════════════ -->
+            <div id="tab-sellers" class="admin-tab-section">
+                <div class="page-header">
+                    <div><h1>Sellers</h1><p>Review seller verification, reports, activity, and marketplace stats</p></div>
+                </div>
+                <div class="admin-stats">
+                    <div class="stat-box"><div class="stat-icon total-products"><i class="fas fa-store"></i></div><div class="stat-info"><div class="stat-label">Sellers</div><div class="stat-value" id="sTotal">—</div></div></div>
+                    <div class="stat-box"><div class="stat-icon total-orders"><i class="fas fa-clock"></i></div><div class="stat-info"><div class="stat-label">Pending</div><div class="stat-value" id="sPending">—</div></div></div>
+                    <div class="stat-box"><div class="stat-icon total-users"><i class="fas fa-check-circle"></i></div><div class="stat-info"><div class="stat-label">Approved</div><div class="stat-value" id="sApproved">—</div></div></div>
+                    <div class="stat-box"><div class="stat-icon total-sales"><i class="fas fa-flag"></i></div><div class="stat-info"><div class="stat-label">Open Reports</div><div class="stat-value" id="sReports">—</div></div></div>
+                </div>
+                <div class="controls">
+                    <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="sellerSearch" placeholder="Search sellers..." oninput="filterSellers()"></div>
+                    <select id="sellerStatusFilter" class="ctrl-select" onchange="filterSellers()">
+                        <option value="">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Flagged">Flagged</option>
+                    </select>
+                </div>
+                <div class="admin-card">
+                    <div class="card-header"><h3>Seller Accounts</h3><span id="sellerCount" style="color:#888;font-size:13px;"></span></div>
+                    <table class="admin-table">
+                        <thead><tr><th>Seller</th><th>Status</th><th>ID</th><th>Products</th><th>Sales</th><th>Views</th><th>Reports</th><th>Actions</th></tr></thead>
+                        <tbody id="sellersBody"><tr><td colspan="8" style="padding:24px;text-align:center;color:#888;">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div><!-- /sellers -->
 
             <!-- ══════════════════════════════════ PRODUCTS TAB ═══════════════════════════════════ -->
             <div id="tab-products" class="admin-tab-section">
@@ -361,8 +405,8 @@
         UTComponents.init({ type: 'admin', activePage: 'admin' });
 
         /* ── Tab switching ── */
-        const TABS = ['dashboard','users','products','orders','settings'];
-        const tabData = { users: false, products: false, orders: false };
+        const TABS = ['dashboard','users','sellers','products','orders','settings'];
+        const tabData = { users: false, sellers: false, products: false, orders: false };
 
         function switchTab(name) {
             if (!TABS.includes(name)) name = 'dashboard';
@@ -372,6 +416,7 @@
             });
             history.replaceState(null, '', '#' + name);
             if (name === 'users'    && !tabData.users)    { loadUsers();    tabData.users    = true; }
+            if (name === 'sellers'  && !tabData.sellers)  { loadSellers();  tabData.sellers  = true; }
             if (name === 'products' && !tabData.products) { loadProducts(); tabData.products = true; }
             if (name === 'orders'   && !tabData.orders)   { loadOrders();   tabData.orders   = true; }
             if (name === 'settings') { loadAdminSettings(); }
@@ -397,9 +442,10 @@
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || data.message || 'Request failed');
                 closeModal();
-                tabData.users = false; tabData.products = false; tabData.orders = false;
+                tabData.users = false; tabData.sellers = false; tabData.products = false; tabData.orders = false;
                 const active = document.querySelector('.admin-tab-btn.active')?.dataset.tab || 'dashboard';
                 if (active === 'users')    { loadUsers(); }
+                if (active === 'sellers')  { loadSellers(); }
                 if (active === 'products') { loadProducts(); }
                 if (active === 'orders')   { loadOrders(); }
                 loadStats();
@@ -574,6 +620,163 @@
                 if (!res.ok) throw new Error('Delete failed');
                 tabData.users = false; loadUsers(); loadStats();
             } catch(e) { alert('Failed to delete: '+e.message); }
+        }
+
+        /* ══════════════ SELLERS ══════════════ */
+        let allSellers = [];
+
+        function sellerBadge(status, suspended) {
+            if (suspended) return '<span class="seller-status suspended"><i class="fas fa-ban"></i> Suspended</span>';
+            const s = status || 'Pending';
+            const icon = s === 'Approved' ? 'fa-check-circle' : (s === 'Flagged' ? 'fa-flag' : 'fa-clock');
+            return `<span class="seller-status ${s.toLowerCase()}"><i class="fas ${icon}"></i> ${s}</span>`;
+        }
+
+        async function loadSellers() {
+            try {
+                const res = await fetch('/api/admin/sellers');
+                allSellers = await res.json();
+                renderSellerStats(allSellers);
+                renderSellersTable(allSellers);
+            } catch {
+                document.getElementById('sellersBody').innerHTML =
+                    '<tr><td colspan="8" style="padding:24px;text-align:center;color:red;">Failed to load sellers.</td></tr>';
+            }
+        }
+
+        function renderSellerStats(sellers) {
+            document.getElementById('sTotal').textContent = sellers.length;
+            document.getElementById('sPending').textContent = sellers.filter(s => (s.sellerStatus || 'Pending') === 'Pending').length;
+            document.getElementById('sApproved').textContent = sellers.filter(s => s.sellerStatus === 'Approved').length;
+            document.getElementById('sReports').textContent = sellers.reduce((sum, s) => sum + Number(s.openReportCount || 0), 0);
+        }
+
+        function renderSellersTable(sellers) {
+            document.getElementById('sellerCount').textContent = `${sellers.length} seller${sellers.length !== 1 ? 's' : ''}`;
+            const tbody = document.getElementById('sellersBody');
+            if (!sellers.length) {
+                tbody.innerHTML = '<tr><td colspan="8" style="padding:24px;text-align:center;color:#888;">No sellers found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = sellers.map(s => `
+                <tr>
+                    <td><div class="user-cell">
+                        ${s.avatarUrl ? `<img src="${s.avatarUrl}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">` : `<div class="avatar">${(s.username||'S')[0].toUpperCase()}</div>`}
+                        <div><div style="font-weight:600;font-size:13px;">${s.username || s.fullName || '—'}</div><div style="font-size:11px;color:#888;">${s.email || ''}</div></div>
+                    </div></td>
+                    <td>${sellerBadge(s.sellerStatus, s.isSuspended)}</td>
+                    <td>${s.idDocumentUrl ? `<a class="id-link" href="${s.idDocumentUrl}" target="_blank">View ID</a>` : '<span style="color:#999;">Missing</span>'}</td>
+                    <td>${Number(s.productCount || 0)}</td>
+                    <td>${Number(s.soldCount || 0)}</td>
+                    <td>${Number(s.totalViews || 0)}</td>
+                    <td>${Number(s.openReportCount || 0)} open / ${Number(s.reportCount || 0)} total</td>
+                    <td><div class="action-btns">
+                        <button class="btn-blue" onclick="openSellerViewModal(${s.id})"><i class="fas fa-eye"></i> View</button>
+                        <button class="btn-green" onclick="saveSellerStatus(${s.id}, 'Approved', false)"><i class="fas fa-check"></i></button>
+                        <button class="btn-red" onclick="saveSellerStatus(${s.id}, 'Flagged', false)"><i class="fas fa-flag"></i></button>
+                    </div></td>
+                </tr>`).join('');
+        }
+
+        function filterSellers() {
+            const q = document.getElementById('sellerSearch').value.toLowerCase();
+            const status = document.getElementById('sellerStatusFilter').value;
+            let list = allSellers;
+            if (q) list = list.filter(s => (s.username||'').toLowerCase().includes(q) || (s.email||'').toLowerCase().includes(q) || (s.fullName||'').toLowerCase().includes(q));
+            if (status) list = list.filter(s => (s.sellerStatus || 'Pending') === status);
+            renderSellersTable(list);
+        }
+
+        async function openSellerViewModal(id) {
+            try {
+                const res = await fetch('/api/admin/sellers/' + id);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error || 'Failed to load seller');
+                const s = data.seller;
+                const reports = data.reports || [];
+                const products = data.products || [];
+                const orders = data.orders || [];
+                const verifications = data.verifications || [];
+                document.getElementById('modalContent').innerHTML = `
+                    <h2 style="margin:0 0 6px;font-size:18px;font-weight:700;">${s.username || s.fullName || 'Seller'}</h2>
+                    <p style="margin:0 0 12px;color:#888;font-size:13px;">${s.email || ''} · ${s.location || 'No location'}</p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+                        ${sellerBadge(s.sellerStatus, s.isSuspended)}
+                        ${s.idDocumentUrl ? `<a class="id-link" href="${s.idDocumentUrl}" target="_blank">Open ID Document</a>` : '<span class="seller-status flagged">No ID Submitted</span>'}
+                    </div>
+                    <div class="seller-detail-grid">
+                        <div class="seller-detail-card">
+                            <h3>Statistics</h3>
+                            <p><strong>${data.stats.productCount || 0}</strong> products listed</p>
+                            <p><strong>${data.stats.soldCount || 0}</strong> products sold</p>
+                            <p><strong>${data.stats.totalViews || 0}</strong> total product views</p>
+                            <p><strong>${Number(data.stats.averageProductRating || 0).toFixed(1)}</strong> average product rating</p>
+                        </div>
+                        <div class="seller-detail-card">
+                            <h3>Verification History</h3>
+                            <div class="seller-activity-list">
+                                ${verifications.length ? verifications.map(v => `<div class="seller-activity-item">${sellerBadge(v.status, false)}<br><a class="id-link" href="${v.idDocumentUrl}" target="_blank">ID document</a><br><span style="color:#888;">${new Date(v.createdAt).toLocaleString('en-ZA')}</span></div>`).join('') : '<p>No verification submissions.</p>'}
+                            </div>
+                        </div>
+                        <div class="seller-detail-card">
+                            <h3>Reports</h3>
+                            <div class="seller-activity-list">
+                                ${reports.length ? reports.map(r => `<div class="seller-activity-item"><strong>${r.reason}</strong> · ${r.status}<br><span>${r.details || 'No details'}</span><br><span style="color:#888;">By ${r.reporterUsername || 'Unknown'} on ${new Date(r.createdAt).toLocaleString('en-ZA')}</span><br><button class="btn-green" onclick="updateSellerReport(${r.id}, 'Reviewed')">Mark Reviewed</button> <button class="btn-cancel" onclick="updateSellerReport(${r.id}, 'Dismissed')">Dismiss</button></div>`).join('') : '<p>No reports.</p>'}
+                            </div>
+                        </div>
+                        <div class="seller-detail-card">
+                            <h3>Activity</h3>
+                            <div class="seller-activity-list">
+                                ${products.length ? products.map(p => `<div class="seller-activity-item"><strong>${p.name}</strong><br>${p.status} · R${Number(p.price || 0).toLocaleString()} · ${p.views || 0} views</div>`).join('') : '<p>No products.</p>'}
+                                ${orders.length ? orders.map(o => `<div class="seller-activity-item"><strong>Order #${o.orderId}</strong><br>${o.productName} · ${o.status} · R${Number(o.lineTotal || 0).toLocaleString()}</div>`).join('') : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="closeModal()">Close</button>
+                        <button class="btn-green" onclick="saveSellerStatus(${s.id}, 'Approved', false)">Approve Seller</button>
+                        <button class="btn-red" onclick="saveSellerStatus(${s.id}, 'Flagged', false)">Flag Seller</button>
+                        <button class="btn-red" onclick="saveSellerStatus(${s.id}, 'Flagged', true)">Suspend</button>
+                        <button class="btn-blue" onclick="saveSellerStatus(${s.id}, 'Pending', false)">Set Pending</button>
+                    </div>`;
+                openModal();
+            } catch (e) {
+                alert(e.message);
+            }
+        }
+
+        async function saveSellerStatus(id, sellerStatus, isSuspended) {
+            try {
+                const admin = UTComponents.getUser() || {};
+                const res = await fetch(`/api/admin/sellers/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sellerStatus, isSuspended, adminId: admin.id })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error || 'Update failed');
+                closeModal();
+                tabData.sellers = false;
+                loadSellers();
+                loadStats();
+            } catch (e) {
+                alert('Failed to update seller: ' + e.message);
+            }
+        }
+
+        async function updateSellerReport(id, status) {
+            try {
+                const res = await fetch(`/api/admin/seller-reports/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                if (!res.ok) throw new Error('Report update failed');
+                closeModal();
+                loadSellers();
+            } catch (e) {
+                alert(e.message);
+            }
         }
 
         /* ══════════════ PRODUCTS ══════════════ */

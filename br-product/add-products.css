@@ -50,6 +50,50 @@
     align-items: stretch;
 }
 
+.seller-verification-card {
+    background: #fff;
+    border: 1px solid #e5e9f0;
+    border-left: 5px solid #f59e0b;
+    border-radius: 8px;
+    box-shadow: 0 16px 36px rgba(20, 27, 37, 0.06);
+    margin-bottom: 22px;
+    padding: 24px;
+}
+
+.seller-verification-card.approved {
+    border-left-color: #22c55e;
+}
+
+.seller-verification-card.flagged {
+    border-left-color: #ef4444;
+}
+
+.seller-verification-card h2 {
+    font-size: 1.1rem;
+    margin: 0 0 8px;
+}
+
+.seller-verification-card p {
+    color: #5f6673;
+    line-height: 1.55;
+    margin: 0 0 18px;
+}
+
+.seller-verification-form {
+    display: grid;
+    gap: 16px;
+}
+
+.seller-verification-form .full-width {
+    margin: 0;
+}
+
+.seller-verification-status {
+    color: #5f6673;
+    font-size: 0.95rem;
+    min-height: 20px;
+}
+
 .product-form-card,
 .preview-panel {
     background: white;

@@ -4,7 +4,8 @@ const BASE_SQL = `
     SELECT p.*,
         u.id AS seller_id, u.username AS seller_username, u.fullName AS seller_fullName,
         u.email AS seller_email, u.location AS seller_location, u.avatarUrl AS seller_avatarUrl,
-        u.isVerified AS seller_isVerified, u.rating AS seller_rating, u.responseRate AS seller_responseRate
+        u.isVerified AS seller_isVerified, u.sellerStatus AS seller_status,
+        u.isSuspended AS seller_isSuspended, u.rating AS seller_rating, u.responseRate AS seller_responseRate
     FROM products p
     LEFT JOIN users u ON p.userId = u.id
 `;
@@ -20,7 +21,8 @@ function format(row) {
         seller: row.seller_id ? {
             id: row.seller_id, username: row.seller_username, fullName: row.seller_fullName,
             email: row.seller_email, location: row.seller_location, avatarUrl: row.seller_avatarUrl,
-            isVerified: !!row.seller_isVerified, rating: row.seller_rating, responseRate: row.seller_responseRate
+            isVerified: !!row.seller_isVerified, sellerStatus: row.seller_status,
+            isSuspended: !!row.seller_isSuspended, rating: row.seller_rating, responseRate: row.seller_responseRate
         } : null
     };
 }

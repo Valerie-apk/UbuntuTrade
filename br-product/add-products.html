@@ -31,7 +31,30 @@
                     <p>Fill in the details below to list your product.</p>
                 </header>
 
-                <div class="product-detail-layout">
+                <section class="seller-verification-card" id="sellerVerificationCard" style="display:none;">
+                    <div>
+                        <h2 id="sellerVerificationTitle">Seller verification required</h2>
+                        <p id="sellerVerificationText">Before selling for the first time, upload a clear image of your ID for admin review.</p>
+                    </div>
+                    <form id="sellerVerificationForm" class="seller-verification-form">
+                        <label class="form-field">
+                            <span>ID Document Image <strong>*</strong></span>
+                            <input type="file" id="sellerIdFile" accept="image/png,image/jpeg,image/webp">
+                        </label>
+                        <label class="form-field">
+                            <span>Or ID Image URL</span>
+                            <input type="url" id="sellerIdUrl" placeholder="https://example.com/id-image.jpg">
+                        </label>
+                        <label class="form-field full-width">
+                            <span>Notes for Admin</span>
+                            <textarea id="sellerVerificationNotes" rows="3" placeholder="Optional notes for the admin team"></textarea>
+                        </label>
+                        <div id="sellerVerificationStatus" class="seller-verification-status"></div>
+                        <button class="publish-btn" type="submit">Submit ID for Review</button>
+                    </form>
+                </section>
+
+                <div class="product-detail-layout" id="productFormLayout">
                     <form class="product-form-card" id="addProductForm">
                         <div class="form-grid">
                             <label class="form-field">
@@ -167,9 +190,114 @@
         </main>
     </div>
 
+    <footer class="footer">
+        <div>
+            <h3>About UbuntuTrade</h3>
+            <p>Connecting local buyers &amp; sellers</p>
+        </div>
+        <div>
+            <h3>Contact</h3>
+            <p>info@Ubuntutrade.co.za</p>
+        </div>
+        <div>
+            <h3>Legal</h3>
+            <a href="/privacy-policy">View Privacy Policy</a>
+            <a href="/faqs">FAQs</a>
+        </div>
+    </footer>
+
     <script>
         UTComponents.init({ type: 'customer', activePage: 'my-products' });
         const user = UTComponents.getUser();
+        let currentUser = user;
+
+        async function uploadIdDocument(file) {
+            const form = new FormData();
+            form.append('image', file);
+            const res = await fetch('/api/upload', { method: 'POST', body: form });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'ID upload failed.');
+            return data.url;
+        }
+
+        function setSellerGate(account) {
+            currentUser = account || user;
+            const card = document.getElementById('sellerVerificationCard');
+            const layout = document.getElementById('productFormLayout');
+            const title = document.getElementById('sellerVerificationTitle');
+            const text = document.getElementById('sellerVerificationText');
+            const form = document.getElementById('sellerVerificationForm');
+            if (!currentUser || currentUser.role === 'Admin' || currentUser.sellerStatus === 'Approved') {
+                card.style.display = 'none';
+                layout.style.display = '';
+                return;
+            }
+            card.style.display = 'block';
+            layout.style.display = 'none';
+            card.classList.toggle('flagged', currentUser.sellerStatus === 'Flagged');
+            card.classList.toggle('approved', currentUser.sellerStatus === 'Approved');
+            form.style.display = currentUser.sellerStatus === 'Pending' && currentUser.idDocumentUrl ? 'none' : 'grid';
+            if (currentUser.sellerStatus === 'Flagged') {
+                title.textContent = 'Seller account flagged';
+                text.textContent = 'Your seller verification needs attention. Contact support or submit a clearer ID image for admin review.';
+                form.style.display = 'grid';
+            } else if (currentUser.idDocumentUrl) {
+                title.textContent = 'Seller verification pending';
+                text.textContent = 'Your ID has been sent to admin. You can publish products after your seller account is approved.';
+            } else {
+                title.textContent = 'Seller verification required';
+                text.textContent = 'Before selling for the first time, upload a clear image of your ID for admin review.';
+            }
+        }
+
+        async function loadSellerGate() {
+            if (!user) { setSellerGate(null); return; }
+            try {
+                const res = await fetch('/api/users/' + user.id);
+                if (!res.ok) throw new Error('Could not load account status');
+                const account = await res.json();
+                localStorage.setItem('utUser', JSON.stringify({ ...user, ...account, products: undefined }));
+                setSellerGate(account);
+            } catch (e) {
+                setSellerGate(user);
+            }
+        }
+
+        document.getElementById('sellerVerificationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const status = document.getElementById('sellerVerificationStatus');
+            const btn = this.querySelector('button[type="submit"]');
+            const file = document.getElementById('sellerIdFile').files[0];
+            let idDocumentUrl = document.getElementById('sellerIdUrl').value.trim();
+            if (!user) { status.textContent = 'Please log in first.'; return; }
+            if (!file && !idDocumentUrl) { status.textContent = 'Please upload an ID image or paste an ID image URL.'; return; }
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+            status.textContent = file ? 'Uploading ID...' : 'Submitting ID...';
+            try {
+                if (file) idDocumentUrl = await uploadIdDocument(file);
+                const res = await fetch('/api/users/' + user.id + '/seller-verification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        idDocumentUrl,
+                        notes: document.getElementById('sellerVerificationNotes').value.trim()
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error || 'Submission failed');
+                localStorage.setItem('utUser', JSON.stringify(data.user));
+                status.textContent = 'Submitted. Admin will review your seller account.';
+                setSellerGate(data.user);
+            } catch (err) {
+                status.textContent = err.message;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Submit ID for Review';
+            }
+        });
+
+        loadSellerGate();
 
         // ── Image upload ───────────────────────────────────────────────────────
         let resolvedImageUrl = '';
@@ -278,6 +406,10 @@
             const errEl = document.getElementById('addProductError');
             errEl.style.display = 'none';
             if (!user) { errEl.textContent = 'Please log in to add products.'; errEl.style.display = 'block'; return; }
+            if (currentUser && currentUser.role !== 'Admin' && currentUser.sellerStatus !== 'Approved') {
+                errEl.textContent = 'Your seller account must be approved before publishing products.';
+                errEl.style.display = 'block'; return;
+            }
             const name        = document.getElementById('productName').value.trim();
             const category    = document.getElementById('productCategory').value;
             const price       = document.getElementById('productPrice').value;
