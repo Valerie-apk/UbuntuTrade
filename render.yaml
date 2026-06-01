@@ -2,7 +2,7 @@ services:
   - type: web
     name: ubuntutrade
     runtime: node
-    buildCommand: apt-get update -qq && apt-get install -y php-cli && npm install
+    buildCommand: apt-get update -qq && apt-get install -y php-cli && php index/privacy-policy.php > index/privacy-policy.rendered.html && npm install
     startCommand: npm start
     envVars:
       - key: DB_SSL

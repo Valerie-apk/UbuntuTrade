@@ -44,14 +44,17 @@ app.use('/api/users',    require('./routes/users'));
 app.use('/api/admin',    require('./routes/admin'));
 app.use('/info',         require('./routes/info'));
 
-// Serve the PHP privacy policy by executing it with the PHP CLI
+// Serve the privacy policy — pre-rendered from PHP at build time
 app.get('/privacy-policy', (req, res) => {
-    const phpFile = path.join(__dirname, 'index', 'privacy-policy.php');
-    execFile('php', [phpFile], (err, stdout, stderr) => {
-        if (err) {
-            console.error('PHP error:', stderr);
-            return res.status(500).send('<h2>Privacy Policy unavailable — PHP is not installed on this server.</h2><p><a href="/">Back to Home</a></p>');
-        }
+    const rendered = path.join(__dirname, 'index', 'privacy-policy.rendered.html');
+    const fallback = path.join(__dirname, 'index', 'privacy-policy.php');
+    const fs = require('fs');
+    if (fs.existsSync(rendered)) {
+        return res.sendFile(rendered);
+    }
+    // Dev fallback: execute PHP directly if rendered file not yet built
+    execFile('php', [fallback], (err, stdout) => {
+        if (err) return res.status(500).send('<h2>Privacy Policy unavailable.</h2><p>Run the build step to pre-render it.</p><p><a href="/">Back to Home</a></p>');
         res.setHeader('Content-Type', 'text/html');
         res.send(stdout);
     });
