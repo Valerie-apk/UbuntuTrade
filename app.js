@@ -3,6 +3,7 @@ const express = require('express');
 const cors    = require('cors');
 const path    = require('path');
 const multer  = require('multer');
+const { execFile } = require('child_process');
 const pool    = require('./config/db');
 
 const upload = multer({
@@ -42,6 +43,19 @@ app.use('/api/messages', require('./routes/messages'));
 app.use('/api/users',    require('./routes/users'));
 app.use('/api/admin',    require('./routes/admin'));
 app.use('/info',         require('./routes/info'));
+
+// Serve the PHP privacy policy by executing it with the PHP CLI
+app.get('/privacy-policy', (req, res) => {
+    const phpFile = path.join(__dirname, 'index', 'privacy-policy.php');
+    execFile('php', [phpFile], (err, stdout, stderr) => {
+        if (err) {
+            console.error('PHP error:', stderr);
+            return res.status(500).send('<h2>Privacy Policy unavailable — PHP is not installed on this server.</h2><p><a href="/">Back to Home</a></p>');
+        }
+        res.setHeader('Content-Type', 'text/html');
+        res.send(stdout);
+    });
+});
 
 app.get('/', (req, res) => res.redirect('/index/index.html'));
 app.get('/admin', (req, res) => res.redirect('/admin/login.html'));
