@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const User   = require('../models/User');
+const pool   = require('../config/db');
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
@@ -33,6 +34,19 @@ router.post('/login', async (req, res) => {
         }
         const { password: _pw, ...safeUser } = user;
         res.json({ message: 'Login successful', token: 'sample_jwt_token', user: safeUser });
+    } catch (err) {
+        res.status(500).json({ message: 'Database error', error: err.message });
+    }
+});
+
+// POST /api/auth/set-password
+router.post('/set-password', async (req, res) => {
+    const { userId, newPassword } = req.body;
+    try {
+        if (!userId || !newPassword) return res.status(400).json({ message: 'userId and newPassword are required' });
+        await pool.query('UPDATE users SET password = ?, mustChangePassword = 0 WHERE id = ?', [newPassword, userId]);
+        const [[user]] = await pool.query('SELECT id, username, email, role, adminLevel, mustChangePassword FROM users WHERE id = ?', [userId]);
+        res.json({ success: true, user });
     } catch (err) {
         res.status(500).json({ message: 'Database error', error: err.message });
     }

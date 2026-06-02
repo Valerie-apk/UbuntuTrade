@@ -4,16 +4,12 @@ const User = {
     async findById(id) {
         const [rows] = await pool.query(
             `SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified,
-                sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, createdAt
+                sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, adminLevel, mustChangePassword, createdAt
              FROM users WHERE id = ?`,
             [id]
         );
         return rows[0] || null;
     },
-            `SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified,
-                sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, adminLevel, createdAt
-             FROM users WHERE id = ?`,
-            [id]
 
     async findByEmail(email) {
         const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
@@ -28,27 +24,22 @@ const User = {
     async findAll() {
         const [rows] = await pool.query(
             `SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified,
-                sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, createdAt
+                sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, adminLevel, mustChangePassword, createdAt
              FROM users ORDER BY createdAt DESC`
         );
         return rows;
-                `SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified,
-                    sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, adminLevel, createdAt
-                 FROM users ORDER BY createdAt DESC`
-            );
     },
 
-    async create({ username, fullName, email, password, location }) {
+    async create({ username, fullName, email, password, location, role, adminLevel, mustChangePassword }) {
         const [result] = await pool.query(
-            'INSERT INTO users (username, fullName, email, password, location) VALUES (?, ?, ?, ?, ?)',
-            [username, fullName || username, email, password, location || null]
+            'INSERT INTO users (username, fullName, email, password, location, role, adminLevel, mustChangePassword) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [username, fullName || username, email, password, location || null, role || 'Buyer', adminLevel || 0, mustChangePassword ? 1 : 0]
         );
         return this.findById(result.insertId);
     },
 
     async update(id, fields) {
-        const allowed = ['username', 'fullName', 'phone', 'avatarUrl', 'location', 'role', 'isVerified', 'sellerStatus', 'isSuspended', 'idDocumentUrl', 'rating', 'responseRate'];
-            const allowed = ['username', 'fullName', 'phone', 'avatarUrl', 'location', 'role', 'isVerified', 'sellerStatus', 'isSuspended', 'idDocumentUrl', 'rating', 'responseRate', 'adminLevel'];
+        const allowed = ['username', 'fullName', 'phone', 'avatarUrl', 'location', 'role', 'isVerified', 'sellerStatus', 'isSuspended', 'idDocumentUrl', 'rating', 'responseRate', 'adminLevel', 'mustChangePassword'];
         const cols = [], vals = [];
         allowed.forEach(f => {
             if (Object.prototype.hasOwnProperty.call(fields, f)) {

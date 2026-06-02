@@ -53,14 +53,14 @@
     </div>
 </section>
 
-<footer class="footer">
+    <footer class="footer">
     <div>
         <h3>About UbuntuTrade</h3>
         <p>Connecting local buyers &amp; sellers</p>
     </div>
     <div>
         <h3>Contact</h3>
-        <p>info@Ubuntutrade.co.za</p>
+            <p>info@Ubuntutrade.co.za<br><a href="/contact-admin.php">Contact admin/support</a></p>
     </div>
     <div>
         <h3>Legal</h3>
@@ -88,10 +88,15 @@
                 errEl.style.display = 'block';
                 return;
             }
+            // If the account requires a password change, redirect user to the change-password page
             localStorage.setItem('utUser', JSON.stringify(data.user));
+            if (data.user && data.user.mustChangePassword) {
+                window.location.href = '/index/change-password.html';
+                return;
+            }
             window.location.href = data.user.role === 'Admin'
                 ? '/admin/admin.html'
-                : '../dashboard/market.html';
+                : '/dashboard/market.html';
         } catch (err) {
             errEl.textContent = 'Network error. Please try again.';
             errEl.style.display = 'block';

@@ -130,8 +130,8 @@
                 <button class="admin-tab-btn" data-tab="products"><i class="fas fa-box"></i> Products</button>
                 <button class="admin-tab-btn" data-tab="orders"><i class="fas fa-shopping-cart"></i> Orders</button>
                 <button class="admin-tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
-            </div>
                 <button class="admin-tab-btn" data-tab="admin-roles"><i class="fas fa-user-shield"></i> Admin Roles</button>
+            </div>
 
             <!-- ═══════════════════════════════════ DASHBOARD TAB ══════════════════════════════════ -->
             <div id="tab-dashboard" class="admin-tab-section">
@@ -1159,6 +1159,9 @@
                         e.preventDefault();
                         const body = Object.fromEntries(new FormData(this));
                         body.role = 'Admin';
+                        // Mark new admin to require password change on first login
+                        body.mustChangePassword = true;
+                        body.adminLevel = Number(body.adminLevel || 0);
                         await submitForm('/api/admin/users','POST',body,'Create Admin');
                     });
                 }

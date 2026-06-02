@@ -104,11 +104,11 @@
                 '<a href="/admin/admin.html#users" class="nav-dropdown-item"><i class="fas fa-users"></i> Manage Users</a>' +
                 '<a href="/admin/admin.html#products" class="nav-dropdown-item"><i class="fas fa-box"></i> Manage Products</a>' +
                 '<a href="/admin/admin.html#orders" class="nav-dropdown-item"><i class="fas fa-shopping-cart"></i> Manage Orders</a>' +
+                '<a href="/admin/admin.html#admin-roles" class="nav-dropdown-item"><i class="fas fa-user-shield"></i> Admin Roles</a>' +
                 '<div class="nav-dropdown-divider"></div>' +
                 '<a href="/dashboard/market.html" class="nav-dropdown-item"><i class="fas fa-eye"></i> Customer View</a>' +
                                 '<a href="/dashboard/market.html" class="nav-dropdown-item"><i class="fas fa-users"></i> User Panel</a>' +
                                 '<div class="nav-dropdown-divider"></div>';
-                '<div class="nav-dropdown-divider"></div>';
         }
         menuItems += '<button class="nav-dropdown-item danger" id="navDropdownLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>';
 

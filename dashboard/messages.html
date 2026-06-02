@@ -78,7 +78,7 @@
         </div>
         <div>
             <h3>Contact</h3>
-            <p>info@Ubuntutrade.co.za</p>
+            <p>info@Ubuntutrade.co.za<br><a href="/contact-admin.php">Contact admin/support</a></p>
         </div>
         <div>
             <h3>Legal</h3>
@@ -227,6 +227,36 @@
         });
 
         loadConversations();
+
+        // If redirected via /contact-admin.php?with=admin, create/open a conversation with an Admin
+        async function startChatWithAdminParam() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('with') !== 'admin') return;
+                if (!user) return; // not logged in
+                // find an admin user
+                const res = await fetch('/api/admin/users');
+                if (!res.ok) return;
+                const users = await res.json();
+                const admin = users.find(u => u.role === 'Admin');
+                if (!admin) return;
+                // create or fetch conversation (buyerId -> current user, sellerId -> admin)
+                const convRes = await fetch('/api/messages/conversations', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ buyerId: user.id, sellerId: admin.id })
+                });
+                if (!convRes.ok) return;
+                const convData = await convRes.json();
+                const conv = convData.data || convData;
+                if (conv && conv.id) {
+                    await loadConversations();
+                    openConversation(conv.id);
+                    history.replaceState(null, '', location.pathname);
+                }
+            } catch (e) { console.error('startChatWithAdmin error', e); }
+        }
+
+        startChatWithAdminParam();
     </script>
 </body>
 </html>
