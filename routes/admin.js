@@ -83,7 +83,13 @@ router.get('/stats', async (req, res) => {
 
         const [recentUsers]    = await pool.query('SELECT id, username, email, role, createdAt FROM users ORDER BY createdAt DESC LIMIT 5');
         const [recentProducts] = await pool.query('SELECT * FROM products ORDER BY createdAt DESC LIMIT 5');
-        const [recentOrders]   = await pool.query('SELECT * FROM orders ORDER BY createdAt DESC LIMIT 5');
+        const [recentOrders]   = await pool.query(`
+            SELECT o.*, u.username, u.email
+            FROM orders o
+            LEFT JOIN users u ON o.userId = u.id
+            ORDER BY o.createdAt DESC
+            LIMIT 5
+        `);
 
         res.json({ totalUsers, totalProducts, totalOrders, totalSales, sellerStats, recentUsers, recentProducts, recentOrders });
     } catch (err) {
@@ -167,10 +173,52 @@ router.delete('/products/:id', async (req, res) => {
 // GET /api/admin/orders
 router.get('/orders', async (req, res) => {
     try {
-        const [orders] = await pool.query(
-            `SELECT o.*, u.username, u.email FROM orders o LEFT JOIN users u ON o.userId = u.id ORDER BY o.createdAt DESC`
-        );
-        res.json(orders);
+        const [orders] = await pool.query(`
+            SELECT o.*, u.id AS buyerId, u.username AS buyerUsername, u.fullName AS buyerFullName, u.email AS buyerEmail
+            FROM orders o
+            LEFT JOIN users u ON o.userId = u.id
+            ORDER BY o.createdAt DESC
+        `);
+
+        const enriched = await Promise.all(orders.map(async order => {
+            const [items] = await pool.query(`
+                SELECT oi.*, p.imageUrl, p.category,
+                    s.id AS sellerId, s.username AS sellerUsername, s.fullName AS sellerFullName, s.email AS sellerEmail
+                FROM order_items oi
+                LEFT JOIN products p ON oi.productId = p.id
+                LEFT JOIN users s ON oi.sellerId = s.id
+                WHERE oi.orderId = ?
+                ORDER BY oi.id ASC
+            `, [order.id]);
+            const [payments] = await pool.query('SELECT * FROM payments WHERE orderId = ? ORDER BY createdAt DESC LIMIT 1', [order.id]);
+            const sellersById = {};
+            items.forEach(item => {
+                if (!item.sellerId) return;
+                sellersById[item.sellerId] = {
+                    id: item.sellerId,
+                    username: item.sellerUsername,
+                    fullName: item.sellerFullName,
+                    email: item.sellerEmail
+                };
+            });
+
+            return {
+                ...order,
+                username: order.buyerUsername,
+                email: order.buyerEmail,
+                buyer: {
+                    id: order.buyerId,
+                    username: order.buyerUsername,
+                    fullName: order.buyerFullName,
+                    email: order.buyerEmail
+                },
+                sellers: Object.values(sellersById),
+                items,
+                payment: payments[0] || null
+            };
+        }));
+
+        res.json(enriched);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

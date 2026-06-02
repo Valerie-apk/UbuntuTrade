@@ -334,7 +334,7 @@
                     <div class="stat-box"><div class="stat-icon total-sales"><i class="fas fa-rand-sign"></i></div><div class="stat-info"><div class="stat-label">Revenue</div><div class="stat-value" id="oRevenue">—</div></div></div>
                 </div>
                 <div class="controls">
-                    <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="orderSearch" placeholder="Search by order ID or buyer..." oninput="filterOrders()"></div>
+                    <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="orderSearch" placeholder="Search by order ID, buyer, or seller..." oninput="filterOrders()"></div>
                     <select id="orderStatusFilter" class="ctrl-select" onchange="filterOrders()">
                         <option value="">All Status</option>
                         <option value="Pending">Pending</option><option value="Paid">Paid</option>
@@ -344,8 +344,8 @@
                 <div class="admin-card">
                     <div class="card-header"><h3>All Orders</h3><span id="orderCount" style="color:#888;font-size:13px;"></span></div>
                     <table class="admin-table">
-                        <thead><tr><th>Order ID</th><th>Buyer</th><th>Items</th><th>Subtotal</th><th>Delivery</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-                        <tbody id="ordersBody"><tr><td colspan="9" style="padding:24px;text-align:center;color:#888;">Loading...</td></tr></tbody>
+                        <thead><tr><th>Order ID</th><th>Buyer</th><th>Seller(s)</th><th>Items</th><th>Subtotal</th><th>Delivery</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                        <tbody id="ordersBody"><tr><td colspan="10" style="padding:24px;text-align:center;color:#888;">Loading...</td></tr></tbody>
                     </table>
                 </div>
             </div><!-- /orders -->
@@ -956,7 +956,7 @@
                 renderOrdersTable(allOrders);
             } catch {
                 document.getElementById('ordersBody').innerHTML =
-                    '<tr><td colspan="9" style="padding:24px;text-align:center;color:red;">Failed to load orders.</td></tr>';
+                    '<tr><td colspan="10" style="padding:24px;text-align:center;color:red;">Failed to load orders.</td></tr>';
             }
         }
 
@@ -971,12 +971,16 @@
         function renderOrdersTable(orders) {
             document.getElementById('orderCount').textContent = `${orders.length} order${orders.length!==1?'s':''}`;
             const tbody = document.getElementById('ordersBody');
-            if (!orders.length) { tbody.innerHTML = '<tr><td colspan="9" style="padding:24px;text-align:center;color:#888;">No orders found.</td></tr>'; return; }
+            if (!orders.length) { tbody.innerHTML = '<tr><td colspan="10" style="padding:24px;text-align:center;color:#888;">No orders found.</td></tr>'; return; }
             tbody.innerHTML = orders.map(o => {
                 const itemCount = Array.isArray(o.items) ? o.items.length : 0;
+                const sellerNames = Array.isArray(o.sellers) && o.sellers.length
+                    ? o.sellers.map(s => s.username || s.fullName || s.email || 'Seller').join(', ')
+                    : (Array.isArray(o.items) ? [...new Set(o.items.map(i => i.sellerUsername || i.seller_fullName || '').filter(Boolean))].join(', ') : '');
                 return `<tr>
                     <td><strong>#${o.id}</strong></td>
                     <td>${o.buyer ? o.buyer.username : '—'}</td>
+                    <td>${sellerNames || '—'}</td>
                     <td>${itemCount} item${itemCount!==1?'s':''}</td>
                     <td>R${Number(o.subtotal||0).toLocaleString()}</td>
                     <td>R${Number(o.deliveryFee||0).toLocaleString()}</td>
@@ -996,7 +1000,14 @@
             const q = document.getElementById('orderSearch').value.toLowerCase();
             const status = document.getElementById('orderStatusFilter').value;
             let list = allOrders;
-            if (q) list = list.filter(o => String(o.id).includes(q) || (o.buyer&&o.buyer.username||'').toLowerCase().includes(q));
+            if (q) list = list.filter(o => {
+                const buyerText = [o.buyer?.username, o.buyer?.fullName, o.buyer?.email, o.username, o.email].filter(Boolean).join(' ').toLowerCase();
+                const sellerText = [
+                    ...(Array.isArray(o.sellers) ? o.sellers.map(s => [s.username, s.fullName, s.email].filter(Boolean).join(' ')) : []),
+                    ...(Array.isArray(o.items) ? o.items.map(i => [i.sellerUsername, i.sellerFullName, i.sellerEmail].filter(Boolean).join(' ')) : [])
+                ].join(' ').toLowerCase();
+                return String(o.id).includes(q) || buyerText.includes(q) || sellerText.includes(q);
+            });
             if (status) list = list.filter(o => o.status === status);
             renderOrdersTable(list);
         }
@@ -1008,9 +1019,10 @@
                 ? o.items.map(i => {
                     const prod = i.product || {};
                     const img = prod.imageUrl && prod.imageUrl !== 'default-product.png' ? prod.imageUrl : '';
+                    const seller = i.sellerUsername || i.sellerFullName || i.sellerEmail || 'Seller unavailable';
                     return `<div class="order-item-row">
                         <img class="order-thumb" src="${img}" alt="${i.productName}" onerror="this.src=''">
-                        <div style="flex:1;"><div style="font-size:13px;font-weight:600;">${i.productName}</div><div style="font-size:11px;color:#888;">×${i.quantity} @ R${Number(i.unitPrice).toLocaleString()}</div></div>
+                        <div style="flex:1;"><div style="font-size:13px;font-weight:600;">${i.productName}</div><div style="font-size:11px;color:#888;">Seller: ${seller} · ×${i.quantity} @ R${Number(i.unitPrice).toLocaleString()}</div></div>
                         <div style="font-size:13px;font-weight:700;">R${Number(i.lineTotal).toLocaleString()}</div></div>`;
                 }).join('')
                 : '<p style="color:#888;font-size:13px;">No items found.</p>';
