@@ -131,6 +131,7 @@
                 <button class="admin-tab-btn" data-tab="orders"><i class="fas fa-shopping-cart"></i> Orders</button>
                 <button class="admin-tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
             </div>
+                <button class="admin-tab-btn" data-tab="admin-roles"><i class="fas fa-user-shield"></i> Admin Roles</button>
 
             <!-- ═══════════════════════════════════ DASHBOARD TAB ══════════════════════════════════ -->
             <div id="tab-dashboard" class="admin-tab-section">
@@ -304,7 +305,10 @@
                     <div class="card-header"><h3>All Products</h3><span id="prodCount" style="color:#888;font-size:13px;"></span></div>
                     <table class="admin-table">
                         <thead><tr><th>ID</th><th>Product</th><th>Seller</th><th>Category</th><th>Condition</th><th>Price</th><th>Status</th><th>Views</th><th>Actions</th></tr></thead>
-                        <tbody id="prodsBody"><tr><td colspan="9" style="padding:24px;text-align:center;color:#888;">Loading...</td></tr></tbody>
+                        <thead><tr><th>ID</th><th>Product</th><th>Seller</th><th>Category</th><th>Condition</th><th>Price</th><th>Status</th><th>Date Added</th><th>Views</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Product</th><th>Seller</th><th>Category</th><th>Condition</th><th>Price</th><th>Status</th><th>Date Added</th><th>Views</th><th>Actions</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Product</th><th>Seller</th><th>Category</th><th>Condition</th><th>Price</th><th>Status</th><th>Date Added</th><th>Views</th><th>Actions</th></tr></thead>
+                    <tbody id="prodsBody"><tr><td colspan="10" style="padding:24px;text-align:center;color:#888;">Loading...</td></tr></tbody>
                     </table>
                 </div>
             </div><!-- /products -->
@@ -339,6 +343,38 @@
 
             <!-- ══════════════════════════════════ SETTINGS TAB ═══════════════════════════════════ -->
             <div id="tab-settings" class="admin-tab-section">
+                            <!-- ════════════════════════════════ ADMIN ROLES TAB ════════════════════════════════ -->
+                            <div id="tab-admin-roles" class="admin-tab-section">
+                                <div class="page-header">
+                                    <div><h1>Admin Roles</h1><p>Manage admin role levels and permissions (RBAC)</p></div>
+                                    <button class="btn-primary" onclick="openAdminRoleModal()"><i class="fas fa-plus"></i> New Admin</button>
+                                </div>
+                                <div class="admin-stats">
+                                    <div class="stat-box"><div class="stat-icon total-users"><i class="fas fa-shield-halved"></i></div><div class="stat-info"><div class="stat-label">Total Admins</div><div class="stat-value" id="arTotal">—</div></div></div>
+                                    <div class="stat-box"><div class="stat-icon total-orders"><i class="fas fa-star"></i></div><div class="stat-info"><div class="stat-label">Super Admins</div><div class="stat-value" id="arSuper">—</div></div></div>
+                                    <div class="stat-box"><div class="stat-icon total-products"><i class="fas fa-user-check"></i></div><div class="stat-info"><div class="stat-label">Moderators</div><div class="stat-value" id="arMods">—</div></div></div>
+                                    <div class="stat-box"><div class="stat-icon total-sales"><i class="fas fa-user-tag"></i></div><div class="stat-info"><div class="stat-label">Support</div><div class="stat-value" id="arSupport">—</div></div></div>
+                                </div>
+                                <div class="controls">
+                                    <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="adminRoleSearch" placeholder="Search admins..." oninput="filterAdminRoles()"></div>
+                                    <select id="adminLevelFilter" class="ctrl-select" onchange="filterAdminRoles()">
+                                        <option value="">All Levels</option>
+                                        <option value="3">Super Admin (Level 3)</option>
+                                        <option value="2">Moderator (Level 2)</option>
+                                        <option value="1">Support (Level 1)</option>
+                                    </select>
+                                </div>
+                                <div class="admin-card">
+                                    <div class="card-header"><h3>Admin Accounts</h3><span id="adminRoleCount" style="color:#888;font-size:13px;"></span></div>
+                                    <table class="admin-table">
+                                        <thead><tr><th>Admin</th><th>Email</th><th>Role Level</th><th>Permissions</th><th>Added</th><th>Actions</th></tr></thead>
+                                        <tbody id="adminRolesBody"><tr><td colspan="6" style="padding:24px;text-align:center;color:#888;">Loading...</td></tr></tbody>
+                                    </table>
+                                </div>
+                            </div><!-- /admin-roles -->
+
+                            <!-- ══════════════════════════════════ SETTINGS TAB ═══════════════════════════════════ -->
+                            <div id="tab-settings" class="admin-tab-section">
                 <div class="page-header">
                     <div><h1>Settings</h1><p>Configure basic admin panel preferences</p></div>
                 </div>
@@ -405,8 +441,8 @@
         UTComponents.init({ type: 'admin', activePage: 'admin' });
 
         /* ── Tab switching ── */
-        const TABS = ['dashboard','users','sellers','products','orders','settings'];
-        const tabData = { users: false, sellers: false, products: false, orders: false };
+        const TABS = ['dashboard','users','sellers','products','orders','admin-roles','settings'];
+        const tabData = { users: false, sellers: false, products: false, orders: false, adminRoles: false };
 
         function switchTab(name) {
             if (!TABS.includes(name)) name = 'dashboard';
@@ -419,6 +455,7 @@
             if (name === 'sellers'  && !tabData.sellers)  { loadSellers();  tabData.sellers  = true; }
             if (name === 'products' && !tabData.products) { loadProducts(); tabData.products = true; }
             if (name === 'orders'   && !tabData.orders)   { loadOrders();   tabData.orders   = true; }
+            if (name === 'admin-roles' && !tabData.adminRoles) { loadAdminRoles(); tabData.adminRoles = true; }
             if (name === 'settings') { loadAdminSettings(); }
         }
 
@@ -809,6 +846,7 @@
             document.getElementById('prodCount').textContent = `${products.length} product${products.length!==1?'s':''}`;
             const tbody = document.getElementById('prodsBody');
             if (!products.length) { tbody.innerHTML = '<tr><td colspan="9" style="padding:24px;text-align:center;color:#888;">No products found.</td></tr>'; return; }
+                        if (!products.length) { tbody.innerHTML = '<tr><td colspan="10" style="padding:24px;text-align:center;color:#888;">No products found.</td></tr>'; return; }
             tbody.innerHTML = products.map(p => {
                 const imgSrc = p.imageUrl && p.imageUrl !== 'default-product.png' ? p.imageUrl : '';
                 return `<tr>
@@ -822,6 +860,8 @@
                     <td>${p.condition||'—'}</td>
                     <td>R${Number(p.price).toLocaleString()}</td>
                     <td><span class="status-badge ${(p.status||'').toLowerCase()}">${p.status||'—'}</span></td>
+                    <td>${p.views||0}</td>
+                    <td>${new Date(p.createdAt).toLocaleDateString('en-ZA')}</td>
                     <td>${p.views||0}</td>
                     <td><div class="action-btns">
                         <button class="btn-blue" onclick="openProductEditModal(${p.id})"><i class="fas fa-edit"></i> Edit</button>
@@ -1035,6 +1075,131 @@
         }
 
         /* ══════════════ SETTINGS ══════════════ */
+                /* ══════════════ ADMIN ROLES ══════════════ */
+                let allAdminRoles = [];
+                const ADMIN_ROLES = [
+                    { level: 3, name: 'Super Admin', desc: 'Full access to all features', perms: 'All' },
+                    { level: 2, name: 'Moderator', desc: 'Can manage users, sellers, and products', perms: 'Users, Sellers, Products, Reports' },
+                    { level: 1, name: 'Support', desc: 'Can manage orders and handle customer support', perms: 'Orders, Messages' }
+                ];
+
+                async function loadAdminRoles() {
+                    try {
+                        const res = await fetch('/api/admin/users?role=Admin');
+                        const users = await res.json();
+                        allAdminRoles = users.filter(u => u.role === 'Admin');
+                        renderAdminRoleStats(allAdminRoles);
+                        renderAdminRolesTable(allAdminRoles);
+                    } catch {
+                        document.getElementById('adminRolesBody').innerHTML =
+                            '<tr><td colspan="6" style="padding:24px;text-align:center;color:red;">Failed to load admin roles.</td></tr>';
+                    }
+                }
+
+                function renderAdminRoleStats(admins) {
+                    document.getElementById('arTotal').textContent  = admins.length;
+                    document.getElementById('arSuper').textContent  = admins.filter(a => a.adminLevel === 3).length;
+                    document.getElementById('arMods').textContent   = admins.filter(a => a.adminLevel === 2).length;
+                    document.getElementById('arSupport').textContent = admins.filter(a => a.adminLevel === 1).length;
+                }
+
+                function renderAdminRolesTable(admins) {
+                    document.getElementById('adminRoleCount').textContent = `${admins.length} admin${admins.length !== 1 ? 's' : ''}`;
+                    const tbody = document.getElementById('adminRolesBody');
+                    if (!admins.length) { tbody.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:#888;">No admins found.</td></tr>'; return; }
+                    tbody.innerHTML = admins.map(a => {
+                        const levelInfo = ADMIN_ROLES.find(r => r.level === (a.adminLevel || 0));
+                        const levelName = levelInfo ? levelInfo.name : 'User';
+                        const perms = levelInfo ? levelInfo.perms : 'None';
+                        return `<tr>
+                            <td><div style="font-weight:600;">${a.fullName || a.username}</div><div style="font-size:11px;color:#888;">${a.email}</div></td>
+                            <td>${a.email}</td>
+                            <td><span class="status-badge approved" style="background:#ddf8e3;color:#15803d;">${levelName}</span></td>
+                            <td><span style="font-size:12px;color:#666;">${perms}</span></td>
+                            <td>${new Date(a.createdAt).toLocaleDateString('en-ZA')}</td>
+                            <td><div class="action-btns">
+                                <button class="btn-blue" onclick="openAdminRoleEditModal(${a.id})"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn-red" onclick="deleteAdmin(${a.id},'${a.username.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+                            </div></td>
+                        </tr>`;
+                    }).join('');
+                }
+
+                function filterAdminRoles() {
+                    const q = document.getElementById('adminRoleSearch').value.toLowerCase();
+                    const level = document.getElementById('adminLevelFilter').value;
+                    let list = allAdminRoles;
+                    if (q) list = list.filter(a => (a.username||'').toLowerCase().includes(q) || (a.email||'').toLowerCase().includes(q) || (a.fullName||'').toLowerCase().includes(q));
+                    if (level) list = list.filter(a => String(a.adminLevel || 0) === level);
+                    renderAdminRolesTable(list);
+                }
+
+                function openAdminRoleModal() {
+                    document.getElementById('modalContent').innerHTML = `<h2 style="margin:0 0 20px;font-size:18px;font-weight:700;">Add Admin User</h2>
+                        <form id="mForm"><div class="form-grid">
+                            <label class="form-label">Username *<input class="form-input" name="username" required placeholder="admin_user"></label>
+                            <label class="form-label">Full Name<input class="form-input" name="fullName" placeholder="Full Name"></label>
+                            <label class="form-label">Email *<input class="form-input" name="email" type="email" required placeholder="admin@example.com"></label>
+                            <label class="form-label">Password *<input class="form-input" name="password" type="password" required placeholder="••••••••"></label>
+                            <label class="form-label">Admin Level *<select class="form-input" name="adminLevel" required>
+                                <option value="">Select Level</option>
+                                <option value="3">Super Admin (Level 3) - Full Access</option>
+                                <option value="2">Moderator (Level 2) - Users, Sellers, Products</option>
+                                <option value="1">Support (Level 1) - Orders & Messages</option>
+                            </select></label>
+                            <label class="form-label">Location<input class="form-input" name="location" placeholder="City, Province"></label>
+                        </div>
+                        <div id="formErr" style="color:red;font-size:13px;margin-top:8px;display:none;"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                            <button type="submit" class="btn-save">Create Admin</button>
+                        </div></form>`;
+                    openModal();
+                    document.getElementById('mForm').addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                        const body = Object.fromEntries(new FormData(this));
+                        body.role = 'Admin';
+                        await submitForm('/api/admin/users','POST',body,'Create Admin');
+                    });
+                }
+
+                function openAdminRoleEditModal(id) {
+                    const a = allAdminRoles.find(x => x.id === id); if (!a) return;
+                    document.getElementById('modalContent').innerHTML = `<h2 style="margin:0 0 20px;font-size:18px;font-weight:700;">Edit Admin Role</h2>
+                        <form id="mForm"><div class="form-grid">
+                            <label class="form-label">Username<input class="form-input" name="username" value="${a.username||''}" placeholder="admin_user"></label>
+                            <label class="form-label">Full Name<input class="form-input" name="fullName" value="${a.fullName||''}" placeholder="Full Name"></label>
+                            <label class="form-label">Email<input class="form-input" name="email" type="email" value="${a.email||''}" placeholder="admin@example.com"></label>
+                            <label class="form-label">Admin Level *<select class="form-input" name="adminLevel" required>
+                                <option value="3" ${(a.adminLevel||0)===3?'selected':''}>Super Admin (Level 3) - Full Access</option>
+                                <option value="2" ${(a.adminLevel||0)===2?'selected':''}>Moderator (Level 2) - Users, Sellers, Products</option>
+                                <option value="1" ${(a.adminLevel||0)===1?'selected':''}>Support (Level 1) - Orders & Messages</option>
+                            </select></label>
+                            <label class="form-label">Location<input class="form-input" name="location" value="${a.location||''}" placeholder="City, Province"></label>
+                        </div>
+                        <div id="formErr" style="color:red;font-size:13px;margin-top:8px;display:none;"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                            <button type="submit" class="btn-save">Save Changes</button>
+                        </div></form>`;
+                    openModal();
+                    document.getElementById('mForm').addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                        const body = Object.fromEntries(new FormData(this));
+                        await submitForm(`/api/admin/users/${id}`,'PUT',body,'Save Changes');
+                    });
+                }
+
+                async function deleteAdmin(id, name) {
+                    if (!confirm(`Delete admin "${name}"?\nThis cannot be undone.`)) return;
+                    try {
+                        const res = await fetch(`/api/admin/users/${id}`,{method:'DELETE'});
+                        if (!res.ok) throw new Error('Delete failed');
+                        tabData.adminRoles = false; loadAdminRoles(); loadStats();
+                    } catch(e) { alert('Failed to delete: '+e.message); }
+                }
+
+                /* ══════════════ SETTINGS ══════════════ */
         function loadAdminSettings() {
             const user = UTComponents.getUser() || {};
             const saved = JSON.parse(localStorage.getItem('utAdminSettings') || '{}');

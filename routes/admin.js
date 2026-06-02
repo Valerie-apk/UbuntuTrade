@@ -87,6 +87,7 @@ router.get('/stats', async (req, res) => {
 // POST /api/admin/users
 router.post('/users', async (req, res) => {
     const { username, fullName, email, password, phone, location, role } = req.body;
+        const { username, fullName, email, password, phone, location, role, adminLevel } = req.body;
     try {
         if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });
         const [[existing]] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
@@ -95,6 +96,8 @@ router.post('/users', async (req, res) => {
         const [result] = await pool.query(
             'INSERT INTO users (username, fullName, email, password, phone, location, role) VALUES (?, ?, ?, ?, ?, ?, ?)',
             [displayName, fullName || displayName, email, password, phone || null, location || null, role || 'Buyer']
+                    'INSERT INTO users (username, fullName, email, password, phone, location, role, adminLevel) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    [displayName, fullName || displayName, email, password, phone || null, location || null, role || 'Buyer', adminLevel || 0]
         );
         const [[newUser]] = await pool.query('SELECT id, username, email, role FROM users WHERE id = ?', [result.insertId]);
         res.status(201).json({ success: true, data: newUser });
@@ -174,6 +177,7 @@ router.put('/users/:id', async (req, res) => {
     try {
         await requireSellerSchema();
         const { username, fullName, email, phone, location, role, isVerified, sellerStatus, isSuspended, idDocumentUrl } = req.body;
+            const { username, fullName, email, phone, location, role, isVerified, sellerStatus, isSuspended, idDocumentUrl, adminLevel } = req.body;
         const fields = [];
         const values = [];
         if (username !== undefined) { fields.push('username = ?'); values.push(username); }
@@ -186,6 +190,7 @@ router.put('/users/:id', async (req, res) => {
         if (sellerStatus !== undefined) { fields.push('sellerStatus = ?'); values.push(sellerStatus); }
         if (isSuspended !== undefined) { fields.push('isSuspended = ?'); values.push(isSuspended ? 1 : 0); }
         if (idDocumentUrl !== undefined) { fields.push('idDocumentUrl = ?'); values.push(idDocumentUrl || null); }
+        if (adminLevel !== undefined) { fields.push('adminLevel = ?'); values.push(adminLevel || 0); }
         if (!fields.length) return res.status(400).json({ message: 'No fields to update' });
         values.push(req.params.id);
         await pool.query('UPDATE users SET ' + fields.join(', ') + ' WHERE id = ?', values);

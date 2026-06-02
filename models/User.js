@@ -10,6 +10,10 @@ const User = {
         );
         return rows[0] || null;
     },
+            `SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified,
+                sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, adminLevel, createdAt
+             FROM users WHERE id = ?`,
+            [id]
 
     async findByEmail(email) {
         const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
@@ -28,6 +32,10 @@ const User = {
              FROM users ORDER BY createdAt DESC`
         );
         return rows;
+                `SELECT id, username, fullName, email, phone, avatarUrl, location, role, isVerified,
+                    sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, adminLevel, createdAt
+                 FROM users ORDER BY createdAt DESC`
+            );
     },
 
     async create({ username, fullName, email, password, location }) {
@@ -40,6 +48,7 @@ const User = {
 
     async update(id, fields) {
         const allowed = ['username', 'fullName', 'phone', 'avatarUrl', 'location', 'role', 'isVerified', 'sellerStatus', 'isSuspended', 'idDocumentUrl', 'rating', 'responseRate'];
+            const allowed = ['username', 'fullName', 'phone', 'avatarUrl', 'location', 'role', 'isVerified', 'sellerStatus', 'isSuspended', 'idDocumentUrl', 'rating', 'responseRate', 'adminLevel'];
         const cols = [], vals = [];
         allowed.forEach(f => {
             if (Object.prototype.hasOwnProperty.call(fields, f)) {

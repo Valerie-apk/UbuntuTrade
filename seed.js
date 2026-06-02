@@ -45,6 +45,9 @@ async function seed() {
                 responseRate  INT DEFAULT 0,
                 createdAt     DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                adminLevel    INT DEFAULT 0,
+                createdAt     DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updatedAt     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
         `);
         await conn.query(`
@@ -219,6 +222,10 @@ async function seed() {
             const [r] = await conn.query(
                 'INSERT INTO users (username, fullName, email, password, location, role, isVerified, sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, avatarUrl) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [u.username, u.fullName, u.email, u.password, u.location, u.role, u.isVerified, u.role === 'Seller' ? 'Approved' : 'Pending', false, u.role === 'Seller' ? '/uploads/sample-id-document.pdf' : null, u.rating, u.responseRate, u.avatarUrl]
+                        const adminLevel = u.role === 'Admin' ? 3 : 0;
+                        const [r] = await conn.query(
+                            'INSERT INTO users (username, fullName, email, password, location, role, isVerified, sellerStatus, isSuspended, idDocumentUrl, rating, responseRate, avatarUrl, adminLevel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                            [u.username, u.fullName, u.email, u.password, u.location, u.role, u.isVerified, u.role === 'Seller' ? 'Approved' : 'Pending', false, u.role === 'Seller' ? '/uploads/sample-id-document.pdf' : null, u.rating, u.responseRate, u.avatarUrl, adminLevel]
             );
             userIds[u.email] = r.insertId;
         }
