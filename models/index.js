@@ -7,5 +7,6 @@ const Payment      = require('./Payment');
 const Conversation = require('./Conversation');
 const Message      = require('./Message');
 const WishlistItem = require('./WishlistItem');
+const Notification = require('./Notification');
 
-module.exports = { User, Product, CartItem, Order, OrderItem, Payment, Conversation, Message, WishlistItem };
+module.exports = { User, Product, CartItem, Order, OrderItem, Payment, Conversation, Message, WishlistItem, Notification };

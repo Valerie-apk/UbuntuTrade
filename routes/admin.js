@@ -1,7 +1,8 @@
-const router  = require('express').Router();
-const pool    = require('../config/db');
-const User    = require('../models/User');
-const Product = require('../models/Product');
+const router    = require('express').Router();
+const pool      = require('../config/db');
+const User      = require('../models/User');
+const Product   = require('../models/Product');
+const Notification = require('../models/Notification');
 
 async function columnExists(table, column) {
     const [rows] = await pool.query(
@@ -288,6 +289,34 @@ router.put('/sellers/:id/status', async (req, res) => {
              ORDER BY createdAt DESC LIMIT 1`,
             [sellerStatus, adminId || null, req.params.id]
         );
+
+        // Create notification for seller if approved
+        if (sellerStatus === 'Approved') {
+            try {
+                await Notification.create({
+                    userId: req.params.id,
+                    type: 'seller_approved',
+                    title: '🎉 Seller Account Approved!',
+                    message: 'Congratulations! Your seller account has been approved by the admin. You can now start selling on UbuntuTrade!',
+                    actionUrl: '/dashboard/my-products.html'
+                });
+            } catch (notifErr) {
+                console.error('Failed to create notification:', notifErr.message);
+            }
+        } else if (sellerStatus === 'Flagged') {
+            try {
+                await Notification.create({
+                    userId: req.params.id,
+                    type: 'seller_flagged',
+                    title: '⚠️ Account Flagged',
+                    message: 'Your seller account has been flagged by admin. Please review your account and contact support if you need assistance.',
+                    actionUrl: '/dashboard/settings.html'
+                });
+            } catch (notifErr) {
+                console.error('Failed to create notification:', notifErr.message);
+            }
+        }
+
         res.json({ success: true, message: 'Seller status updated' });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });

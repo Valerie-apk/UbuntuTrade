@@ -59,6 +59,29 @@
             '.nav-dropdown-item.highlight i{color:#e07b39;}',
             /* ── Navbar search ── */
             '.search-bar input{background:none;border:none;outline:none;font-size:14px;width:180px;}',
+            /* ── Notifications dropdown ── */
+            '.nav-notifications-dropdown{position:relative;display:flex;align-items:center;}',
+            '.navbar-bell-btn:hover{transform:scale(1.1);}',
+            '.nav-notif-menu{position:absolute;top:calc(100% + 10px);right:0;width:320px;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.16);z-index:9999;overflow:hidden;opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .18s,transform .18s;}',
+            '.nav-notifications-dropdown.open .nav-notif-menu{opacity:1;transform:translateY(0);pointer-events:auto;}',
+            '.nav-notif-header{padding:12px 16px;background:#fafafa;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;}',
+            '.nav-notif-header h3{margin:0;font-size:14px;font-weight:700;color:#1a1a1a;}',
+            '.nav-notif-header button{background:none;border:none;color:#999;cursor:pointer;font-size:12px;padding:4px 8px;}',
+            '.nav-notif-header button:hover{color:#333;}',
+            '.nav-notif-list{max-height:400px;overflow-y:auto;}',
+            '.nav-notif-item{padding:12px 16px;border-bottom:1px solid #f5f5f5;cursor:pointer;transition:background .2s;display:flex;gap:12px;align-items:flex-start;}',
+            '.nav-notif-item:hover{background:#fafafa;}',
+            '.nav-notif-item.unread{background:#f0f7ff;border-left:3px solid #e04a2f;}',
+            '.nav-notif-item.unread{padding-left:13px;}',
+            '.nav-notif-icon{font-size:16px;margin-top:2px;}',
+            '.nav-notif-content{flex:1;min-width:0;}',
+            '.nav-notif-title{font-weight:600;font-size:12px;color:#1a1a1a;margin:0;}',
+            '.nav-notif-message{font-size:11px;color:#666;margin:4px 0 0;line-height:1.4;}',
+            '.nav-notif-time{font-size:10px;color:#999;margin-top:4px;}',
+            '.nav-notif-empty{padding:24px 16px;text-align:center;color:#999;font-size:13px;}',
+            '.nav-notif-footer{padding:12px 16px;text-align:center;border-top:1px solid #f0f0f0;}',
+            '.nav-notif-footer a{color:#e04a2f;text-decoration:none;font-size:12px;font-weight:600;}',
+            '.nav-notif-footer a:hover{text-decoration:underline;}',
         ].join('');
         document.head.appendChild(s);
     }
@@ -117,13 +140,18 @@
             : initial;
 
         var logoHref = type === 'admin' ? '/admin/admin.html' : '/dashboard/market.html';
+        var bellHTML = user ? '<button class="navbar-bell-btn" id="navBellBtn" aria-label="Notifications" title="Notifications" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;position:relative;">' +
+              '<i class="fas fa-bell"></i>' +
+              '<span class="navbar-notif-count" id="navNotifCount" style="position:absolute;top:-5px;right:-5px;background:#e04a2f;color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;display:none;"></span>' +
+              '</button>' : '';
+
         el.innerHTML =
             '<nav class="navbar">' +
             '<a href="' + logoHref + '" class="logo" style="text-decoration:none;color:inherit;">Ubuntu <span class="color-logo">Trade</span></a>' +
             '<div class="nav-buttons">' +
             '<div class="search-bar"><i class="fas fa-search"></i><input type="text" id="navSearchInput" placeholder="Search products..."></div>' +
             '<div class="admin-profile">' +
-            '<i class="fas fa-bell"></i>' +
+            bellHTML +
             cartHTML +
             '<div class="nav-user-dropdown" id="navUserDropdown">' +
             '<div class="nav-user-trigger" id="navUserTrigger">' +
@@ -238,6 +266,108 @@
                         if (badge) badge.textContent = (data.summary && data.summary.itemCount) || 0;
                     })
                     .catch(function () {});
+
+                // Load notifications
+                function loadNotifications() {
+                    fetch('/api/notifications/unread/' + user.id)
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            var count = data.count || 0;
+                            var badge = document.getElementById('navNotifCount');
+                            if (badge) {
+                                if (count > 0) {
+                                    badge.textContent = count;
+                                    badge.style.display = 'flex';
+                                } else {
+                                    badge.style.display = 'none';
+                                }
+                            }
+                        })
+                        .catch(function () {});
+                }
+
+                loadNotifications();
+                setInterval(loadNotifications, 30000); // Reload every 30 seconds
+
+                // Bell click handler
+                var bellBtn = document.getElementById('navBellBtn');
+                if (bellBtn) {
+                    var notifDropdown = null;
+                    
+                    bellBtn.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        
+                        // Create dropdown if it doesn't exist
+                        if (!notifDropdown) {
+                            notifDropdown = document.createElement('div');
+                            notifDropdown.className = 'nav-notif-menu';
+                            notifDropdown.innerHTML = '<div style="padding:20px;text-align:center;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+                            bellBtn.insertAdjacentElement('afterend', notifDropdown);
+
+                            var notifContainer = document.createElement('div');
+                            notifContainer.className = 'nav-notifications-dropdown';
+                            notifContainer.appendChild(bellBtn);
+                            notifContainer.appendChild(notifDropdown);
+                            bellBtn.parentNode.replaceChild(notifContainer, bellBtn);
+                            bellBtn = notifContainer.querySelector('#navBellBtn');
+                        }
+
+                        // Toggle dropdown
+                        var parent = bellBtn.parentNode;
+                        parent.classList.toggle('open');
+
+                        if (parent.classList.contains('open')) {
+                            // Load notifications
+                            fetch('/api/notifications/unread/' + user.id)
+                                .then(function (r) { return r.json(); })
+                                .then(function (data) {
+                                    var notifications = data.notifications || [];
+                                    var html = '<div class="nav-notif-header">' +
+                                        '<h3>Notifications (' + notifications.length + ')</h3>' +
+                                        (notifications.length > 0 ? '<button onclick="fetch(\'/api/notifications/markAll/' + user.id + '/read\', {method:\'PUT\'}).then(() => location.reload())">Mark all as read</button>' : '') +
+                                        '</div>' +
+                                        '<div class="nav-notif-list">';
+
+                                    if (notifications.length === 0) {
+                                        html += '<div class="nav-notif-empty">No new notifications</div>';
+                                    } else {
+                                        notifications.forEach(function (notif) {
+                                            var icon = notif.type === 'seller_approved' ? '🎉' : 
+                                                      notif.type === 'new_order' ? '📦' :
+                                                      notif.type === 'seller_flagged' ? '⚠️' : '📢';
+                                            var time = new Date(notif.createdAt).toLocaleDateString();
+                                            html += '<div class="nav-notif-item ' + (notif.isRead ? '' : 'unread') + '" onclick="' +
+                                                (notif.actionUrl ? 'window.location.href=\'' + notif.actionUrl + '\'' : '') +
+                                                '"; fetch(\'/api/notifications/' + notif.id + '/read\', {method:\'PUT\'});">' +
+                                                '<div class="nav-notif-icon">' + icon + '</div>' +
+                                                '<div class="nav-notif-content">' +
+                                                '<p class="nav-notif-title">' + notif.title + '</p>' +
+                                                '<p class="nav-notif-message">' + notif.message + '</p>' +
+                                                '<div class="nav-notif-time">' + time + '</div>' +
+                                                '</div></div>';
+                                        });
+                                    }
+
+                                    html += '</div>' +
+                                        '<div class="nav-notif-footer">' +
+                                        '<a href="javascript:void(0)">View All Notifications</a>' +
+                                        '</div>';
+
+                                    notifDropdown.innerHTML = html;
+                                })
+                                .catch(function () {
+                                    notifDropdown.innerHTML = '<div class="nav-notif-empty">Failed to load notifications</div>';
+                                });
+                        }
+                    });
+
+                    // Close on outside click
+                    document.addEventListener('click', function () {
+                        if (notifDropdown && bellBtn && bellBtn.parentNode) {
+                            bellBtn.parentNode.classList.remove('open');
+                        }
+                    });
+                }
             }
         }
     }

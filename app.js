@@ -42,6 +42,7 @@ app.use('/api/pay',      require('./routes/payments'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/users',    require('./routes/users'));
 app.use('/api/admin',    require('./routes/admin'));
+app.use('/api/notifications', require('./routes/notifications'));
 app.use('/info',         require('./routes/info'));
 
 // Serve the privacy policy — pre-rendered from PHP at build time

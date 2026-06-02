@@ -2,6 +2,7 @@ const router    = require('express').Router();
 const Order     = require('../models/Order');
 const OrderItem = require('../models/OrderItem');
 const CartItem  = require('../models/CartItem');
+const Notification = require('../models/Notification');
 const pool      = require('../config/db');
 
 const deliveryFeeFor = subtotal => (subtotal > 0 && subtotal < 1000 ? 60 : 0);
@@ -69,6 +70,37 @@ router.post('/checkout', async (req, res) => {
 
         await CartItem.clearByUser(userId);
         await conn.commit();
+
+        // Create notifications for each seller with items in the order
+        const sellerGroups = {};
+        cartRows.forEach(item => {
+            if (!sellerGroups[item.sellerId]) {
+                sellerGroups[item.sellerId] = [];
+            }
+            sellerGroups[item.sellerId].push({
+                productName: item.productName,
+                quantity: item.quantity,
+                price: item.price
+            });
+        });
+
+        // Send notifications to each seller
+        Object.keys(sellerGroups).forEach(sellerId => {
+            const items = sellerGroups[sellerId];
+            const itemsList = items.map(i => `${i.productName} (x${i.quantity})`).join(', ');
+            try {
+                Notification.create({
+                    userId: parseInt(sellerId),
+                    type: 'new_order',
+                    title: '📦 New Order Received!',
+                    message: `You have a new order #${orderId} with items: ${itemsList}. Total: R${subtotal.toLocaleString()}. Check your orders for details.`,
+                    relatedId: orderId,
+                    actionUrl: `/admin/admin-orders.html`
+                }).catch(err => console.error('Failed to create seller notification:', err.message));
+            } catch (err) {
+                console.error('Failed to create seller notification:', err.message);
+            }
+        });
 
         res.status(201).json({
             success: true,
