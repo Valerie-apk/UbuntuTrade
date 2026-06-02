@@ -1,7 +1,25 @@
-* {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    min-width: 0;
+    width: 100%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-width: 0;
+    width: 100%;
+    overflow-x: hidden;
     font-family: "Roboto", sans-serif;
+    background: #fff;
+    color: #111;
 }
 
 /* NAVBAR */
@@ -1953,6 +1971,106 @@ table {
 
     .my-img {
         height: 360px;
+    }
+}
+
+/* GLOBAL MOBILE-FRIENDLY FIXES */
+img,
+video,
+svg,
+iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+button,
+input,
+select,
+textarea,
+a,
+label,
+fieldset {
+    max-width: 100%;
+}
+
+table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+}
+
+.container,
+.page-wrapper,
+.login-card,
+.signup-card,
+.main-content,
+.dashboard-content,
+.admin-content,
+.product-detail-content,
+.browse-header,
+.sort-filter-section,
+.product-detail-grid,
+.product-gallery,
+.product-info-panel,
+.seller-column,
+.product-item,
+.recommendation-grid,
+.conversations-panel,
+.chat-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+@media (max-width: 1024px) {
+    .navbar {
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .nav-buttons {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .nav-buttons a,
+    .nav-buttons button {
+        flex: 1 1 auto;
+        min-width: 120px;
+    }
+
+    .sort-dropdown,
+    .filter-btn,
+    .sort-section,
+    .filter-section {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 12px 14px;
+    }
+
+    .login-card,
+    .signup-card {
+        padding: 28px 20px;
+    }
+
+    .product-detail-grid,
+    .recommendation-grid,
+    .browse-header,
+    .sort-filter-section {
+        grid-template-columns: 1fr !important;
+        flex-direction: column !important;
+        gap: 18px;
+    }
+
+    .sort-filter-section {
+        align-items: stretch;
     }
 }
 
