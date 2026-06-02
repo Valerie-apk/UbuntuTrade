@@ -15,6 +15,24 @@ async function seedAdmins() {
         const admins = [
             { username: 'admin', fullName: 'Admin User', email: 'admin@ubuntutrade.co.za', password: 'admin123', adminLevel: 3, mustChangePassword: 1, location: 'Johannesburg' }
         ];
+        // Ensure admin columns exist (safe to run repeatedly)
+        const [colAdmin] = await conn.query(`
+            SELECT COUNT(*) AS c FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'adminLevel'
+        `);
+        if (colAdmin[0].c === 0) {
+            await conn.query("ALTER TABLE users ADD COLUMN adminLevel INT DEFAULT 0");
+            console.log('Added column adminLevel to users');
+        }
+        const [colMust] = await conn.query(`
+            SELECT COUNT(*) AS c FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'mustChangePassword'
+        `);
+        if (colMust[0].c === 0) {
+            await conn.query("ALTER TABLE users ADD COLUMN mustChangePassword BOOLEAN DEFAULT false");
+            console.log('Added column mustChangePassword to users');
+        }
+
         for (const a of admins) {
             const [[existing]] = await conn.query('SELECT id FROM users WHERE email = ?', [a.email]);
             if (existing) {
