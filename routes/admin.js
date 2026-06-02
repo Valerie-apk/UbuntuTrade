@@ -386,12 +386,21 @@ router.put('/seller-reports/:id/status', async (req, res) => {
 
 // DELETE /api/admin/orders/:id
 router.delete('/orders/:id', async (req, res) => {
+    const conn = await pool.getConnection();
     try {
-        const [result] = await pool.query('DELETE FROM orders WHERE id = ?', [req.params.id]);
+        await conn.beginTransaction();
+        await conn.query('DELETE FROM notifications WHERE relatedId = ? AND type IN (?, ?)', [req.params.id, 'payment_success', 'new_paid_order']);
+        await conn.query('DELETE FROM payments WHERE orderId = ?', [req.params.id]);
+        await conn.query('DELETE FROM order_items WHERE orderId = ?', [req.params.id]);
+        const [result] = await conn.query('DELETE FROM orders WHERE id = ?', [req.params.id]);
         if (result.affectedRows === 0) return res.status(404).json({ message: 'Order not found' });
+        await conn.commit();
         res.json({ success: true, message: 'Order deleted' });
     } catch (err) {
+        await conn.rollback();
         res.status(500).json({ success: false, error: err.message });
+    } finally {
+        conn.release();
     }
 });
 

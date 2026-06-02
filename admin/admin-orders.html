@@ -7,12 +7,33 @@
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .orders-section {
-            display: none;
+        body.admin-page {
+            background: #f5f5f5;
         }
 
-        .orders-section.active {
+        .orders-section {
             display: block;
+            width: 100%;
+        }
+
+        .orders-page-header {
+            align-items: flex-start;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .orders-page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+
+        .orders-page-header p {
+            color: #888;
+            font-size: 13px;
+            margin: 0;
         }
 
         .orders-controls {
@@ -73,9 +94,10 @@
 
         .orders-table {
             width: 100%;
+            min-width: 920px;
             border-collapse: collapse;
             background: #fff;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
@@ -219,6 +241,12 @@
 
         .action-btn.danger:hover {
             background: #ffebeb;
+        }
+
+        .orders-table-wrap {
+            margin-top: 20px;
+            overflow-x: auto;
+            width: 100%;
         }
 
         .empty-state {
@@ -375,6 +403,31 @@
         }
 
         @media (max-width: 768px) {
+            .dashboard-wrapper {
+                display: block;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+
+            .orders-page-header {
+                display: block;
+            }
+
+            .orders-controls {
+                display: block;
+            }
+
+            .orders-search {
+                min-width: 0;
+            }
+
+            .orders-search button {
+                margin-top: 8px;
+                width: 100%;
+            }
+
             .orders-table {
                 font-size: 11px;
             }
@@ -395,17 +448,19 @@
         }
     </style>
 </head>
-<body>
+<body class="admin-page">
     <div id="navbarContainer"></div>
 
-    <div class="dashboard-wrapper" style="display: flex;">
+    <div class="dashboard-wrapper">
         <div id="sidebarContainer"></div>
 
-        <main class="main-content" style="flex: 1; padding: 20px;">
+        <main class="main-content">
             <div class="orders-section active" id="ordersSection">
-                <div style="margin-bottom: 24px;">
-                    <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 4px;">Orders Management</h1>
-                    <p style="color: #888; margin: 0; font-size: 13px;">Manage all customer orders and track shipments</p>
+                <div class="orders-page-header">
+                    <div>
+                        <h1>Orders Management</h1>
+                        <p>Manage all customer orders and track shipments</p>
+                    </div>
                 </div>
 
                 <div class="orders-controls">
@@ -423,7 +478,7 @@
                     <button class="filter-btn" data-status="Cancelled">Cancelled</button>
                 </div>
 
-                <div style="margin-top: 20px; overflow-x: auto;">
+                <div class="orders-table-wrap">
                     <div id="ordersTableContainer">
                         <div class="loading">
                             <i class="fas fa-spinner fa-spin"></i> Loading orders...
@@ -447,7 +502,7 @@
 
     <script src="/components.js"></script>
     <script>
-        UTComponents.init({ type: 'admin', activePage: 'admin' });
+        UTComponents.init({ type: 'admin', activePage: 'admin-orders' });
         let allOrders = [];
         let currentFilter = 'all';
         let searchTerm = '';
@@ -458,15 +513,7 @@
                 if (!response.ok) throw new Error('Failed to load orders');
                 const data = await response.json();
                 
-                // Fetch complete order details with items for each order
-                allOrders = await Promise.all(data.map(async (order) => {
-                    const detailResponse = await fetch(`/api/orders/detail/${order.id}`);
-                    if (detailResponse.ok) {
-                        const details = await detailResponse.json();
-                        return { ...order, items: details.items || [] };
-                    }
-                    return order;
-                }));
+                allOrders = data;
                 
                 renderOrders();
             } catch (err) {
@@ -493,7 +540,9 @@
                 filtered = filtered.filter(o =>
                     String(o.id).includes(term) ||
                     (o.username && o.username.toLowerCase().includes(term)) ||
-                    (o.email && o.email.toLowerCase().includes(term))
+                    (o.email && o.email.toLowerCase().includes(term)) ||
+                    (o.buyer && [o.buyer.username, o.buyer.email, o.buyer.fullName].filter(Boolean).join(' ').toLowerCase().includes(term)) ||
+                    ((o.sellers || []).some(s => [s.username, s.email, s.fullName].filter(Boolean).join(' ').toLowerCase().includes(term)))
                 );
             }
 
@@ -512,7 +561,9 @@
                         <tr>
                             <th>Order ID</th>
                             <th>Customer</th>
+                            <th>Seller(s)</th>
                             <th>Items</th>
+                            <th>Delivery</th>
                             <th>Amount</th>
                             <th>Status</th>
                             <th>Date</th>
@@ -525,19 +576,26 @@
                             const statusClass = (order.status || 'Pending').toLowerCase();
                             const orderDate = new Date(order.createdAt).toLocaleDateString('en-ZA');
                             const itemsText = items.length > 0 ? items.slice(0, 2).map(i => i.productName).join(', ') + (items.length > 2 ? ` (+${items.length - 2} more)` : '') : 'No items';
+                            const sellerText = (order.sellers || []).map(s => s.username || s.fullName || s.email).filter(Boolean).join(', ') || 'N/A';
 
                             return `
                                 <tr>
                                     <td><span class="order-id">#${order.id}</span></td>
                                     <td>
                                         <div class="buyer-info">
-                                            <span class="buyer-name">${order.username || 'N/A'}</span>
-                                            <span class="buyer-email">${order.email || 'N/A'}</span>
+                                            <span class="buyer-name">${order.buyer?.username || order.username || 'N/A'}</span>
+                                            <span class="buyer-email">${order.buyer?.email || order.email || 'N/A'}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="seller-cell">
+                                            <span class="seller-name">${sellerText}</span>
                                         </div>
                                     </td>
                                     <td class="order-items-cell">
                                         <span title="${itemsText}">${itemsText}</span>
                                     </td>
+                                    <td>R${Number(order.deliveryFee || 0).toLocaleString()}</td>
                                     <td><span class="order-amount">R${Number(order.total || 0).toLocaleString()}</span></td>
                                     <td><span class="status-badge ${statusClass}"><i class="fas fa-circle"></i>${order.status || 'Pending'}</span></td>
                                     <td>${orderDate}</td>
@@ -548,6 +606,9 @@
                                             </button>
                                             <button class="action-btn" onclick="updateOrderStatus(${order.id})">
                                                 <i class="fas fa-edit"></i> Update
+                                            </button>
+                                            <button class="action-btn danger" onclick="deleteOrder(${order.id})">
+                                                <i class="fas fa-trash"></i> Delete
                                             </button>
                                         </div>
                                     </td>
@@ -584,7 +645,7 @@
                         ${items.map(item => `
                             <tr>
                                 <td>${item.productName || 'N/A'}</td>
-                                <td>${item.seller_username ? `${item.seller_username} (${item.seller_fullName || ''})` : 'N/A'}</td>
+                                <td>${item.sellerUsername || item.seller_username || item.sellerFullName || item.seller_fullName || 'N/A'}</td>
                                 <td>${item.quantity}</td>
                                 <td>R${Number(item.unitPrice).toLocaleString()}</td>
                                 <td><strong>R${Number(item.lineTotal).toLocaleString()}</strong></td>
@@ -602,7 +663,7 @@
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Customer</span>
-                        <span class="detail-value">${order.username} (${order.email})</span>
+                        <span class="detail-value">${order.buyer?.username || order.username || 'N/A'} (${order.buyer?.email || order.email || 'N/A'})</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Status</span>
@@ -700,6 +761,20 @@
                 alert('Order status updated successfully!');
             } catch (err) {
                 alert('Error updating status: ' + err.message);
+            }
+        }
+
+        async function deleteOrder(orderId) {
+            if (!confirm(`Delete order #${orderId}? This permanently removes its items and payment record.`)) return;
+            try {
+                const response = await fetch(`/api/admin/orders/${orderId}`, { method: 'DELETE' });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || data.error || 'Failed to delete order');
+                allOrders = allOrders.filter(o => Number(o.id) !== Number(orderId));
+                renderOrders();
+                alert('Order deleted successfully.');
+            } catch (err) {
+                alert('Error deleting order: ' + err.message);
             }
         }
 

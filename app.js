@@ -75,6 +75,10 @@ app.get('/faqs', (req, res) => {
     });
 });
 
+app.get('/contact-support', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index', 'contact-support.html'));
+});
+
 app.get('/', (req, res) => res.redirect('/index/index.html'));
 app.get('/admin', (req, res) => res.redirect('/admin/login.html'));
 

@@ -78,7 +78,7 @@
         </div>
         <div>
             <h3>Contact</h3>
-            <p>info@Ubuntutrade.co.za<br><a href="/contact-admin.php">Contact admin/support</a></p>
+            <p>info@Ubuntutrade.co.za<br><a href="/contact-support">Contact Support</a></p>
         </div>
         <div>
             <h3>Legal</h3>
@@ -228,7 +228,7 @@
 
         loadConversations();
 
-        // If redirected via /contact-admin.php?with=admin, create/open a conversation with an Admin
+        // If redirected with ?with=admin, create/open a conversation with an Admin
         async function startChatWithAdminParam() {
             try {
                 const params = new URLSearchParams(window.location.search);

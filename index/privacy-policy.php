@@ -164,7 +164,7 @@ $effective_date = '1 June 2026';
     </div>
     <div>
         <h3>Contact</h3>
-        <p>info@Ubuntutrade.co.za</p>
+        <p>info@Ubuntutrade.co.za<br><a href="/contact-support">Contact Support</a></p>
     </div>
     <div>
         <h3>Legal</h3>

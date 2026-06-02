@@ -139,7 +139,7 @@ async function seed() {
                 lineTotal   DECIMAL(10,2) NOT NULL,
                 createdAt   DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt   DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (orderId) REFERENCES orders(id)
+                FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE
             )
         `);
         await conn.query(`
@@ -153,7 +153,7 @@ async function seed() {
                 transactionId VARCHAR(255) NOT NULL UNIQUE,
                 createdAt     DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (orderId) REFERENCES orders(id),
+                FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE,
                 FOREIGN KEY (userId)  REFERENCES users(id)
             )
         `);

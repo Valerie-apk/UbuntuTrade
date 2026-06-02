@@ -4,7 +4,7 @@ const OrderItem = require('../models/OrderItem');
 const CartItem  = require('../models/CartItem');
 const pool      = require('../config/db');
 
-const deliveryFeeFor = subtotal => (subtotal > 0 && subtotal < 1000 ? 60 : 0);
+const deliveryFeeFor = subtotal => (subtotal > 0 ? 60 : 0);
 
 // GET /api/orders/detail/:id
 router.get('/detail/:id', async (req, res) => {
