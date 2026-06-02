@@ -151,12 +151,12 @@
             try {
                 const res = await fetch('/api/pay/checkout', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ orderId: pendingOrder.order.id, userId: user.id, amount: pendingOrder.order.total, method })
+                    body: JSON.stringify({ orderId: pendingOrder.order.id, userId: user.id, amount: pendingOrder.order.total, method, deliveryAddress })
                 });
                 const data = await res.json();
                 if (!res.ok) { errEl.textContent = data.message || 'Payment failed.'; errEl.style.display = 'block'; this.disabled = false; this.innerHTML = '<i class="fas fa-lock"></i> Confirm Payment'; return; }
                 localStorage.removeItem('utPendingOrder');
-                window.location.href = 'success.html';
+                window.location.href = 'success.html?orderId=' + encodeURIComponent(pendingOrder.order.id);
             } catch (e) { errEl.textContent = 'Network error. Please try again.'; errEl.style.display = 'block'; this.disabled = false; this.innerHTML = '<i class="fas fa-lock"></i> Confirm Payment'; }
         });
     </script>

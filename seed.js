@@ -21,7 +21,7 @@ async function seed() {
 
         // Drop & recreate all tables
         await conn.query('SET FOREIGN_KEY_CHECKS = 0');
-        for (const t of ['messages','conversations','payments','order_items','orders','wishlist_items','cart_items','seller_reports','seller_verifications','products','users']) {
+        for (const t of ['notifications','messages','conversations','payments','order_items','orders','wishlist_items','cart_items','seller_reports','seller_verifications','products','users']) {
             await conn.query(`DROP TABLE IF EXISTS ${t}`);
         }
         await conn.query('SET FOREIGN_KEY_CHECKS = 1');
@@ -155,6 +155,23 @@ async function seed() {
                 updatedAt     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (orderId) REFERENCES orders(id),
                 FOREIGN KEY (userId)  REFERENCES users(id)
+            )
+        `);
+        await conn.query(`
+            CREATE TABLE IF NOT EXISTS notifications (
+                id        INT AUTO_INCREMENT PRIMARY KEY,
+                userId    INT NOT NULL,
+                type      VARCHAR(50) NOT NULL,
+                title     VARCHAR(255) NOT NULL,
+                message   TEXT,
+                relatedId INT,
+                actionUrl VARCHAR(500),
+                isRead    BOOLEAN DEFAULT 0,
+                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+                INDEX idx_user_read (userId, isRead),
+                INDEX idx_created (createdAt)
             )
         `);
         await conn.query(`

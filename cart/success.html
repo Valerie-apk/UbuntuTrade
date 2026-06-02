@@ -304,33 +304,58 @@
     <script>
         UTComponents.init({ type: 'customer' });
         const user = UTComponents.getUser();
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get('orderId');
         const pendingOrder = JSON.parse(localStorage.getItem('utPendingOrder') || 'null');
 
-        if (!pendingOrder) {
+        function showMissingOrder() {
             document.querySelector('.order-confirmation h1').textContent = 'Order Not Found';
             document.querySelector('.order-confirmation p').textContent = 'Unable to find your order details. Please contact support.';
             document.getElementById('receiptItems').innerHTML = '<p style="color:#999;">No order found. <a href="cart.html">Go back to cart.</a></p>';
-            return;
         }
 
-        const order = pendingOrder.order;
-        const items = pendingOrder.items || [];
+        function renderOrder(order) {
+            const items = order.items || [];
+            document.getElementById('orderNum').textContent = order.id;
+            document.getElementById('subtotal').textContent = 'R' + Number(order.subtotal || 0).toLocaleString();
+            document.getElementById('delivery').textContent = 'R' + Number(order.deliveryFee || 0).toLocaleString();
+            document.getElementById('total').textContent = 'R' + Number(order.total || 0).toLocaleString();
+            document.getElementById('deliveryAddr').textContent = order.deliveryAddress || 'Not specified';
 
-        document.getElementById('orderNum').textContent = order.id;
-        document.getElementById('subtotal').textContent = 'R' + Number(order.subtotal || 0).toLocaleString();
-        document.getElementById('delivery').textContent = 'R' + Number(order.deliveryFee || 0).toLocaleString();
-        document.getElementById('total').textContent = 'R' + Number(order.total || 0).toLocaleString();
-        document.getElementById('deliveryAddr').textContent = order.deliveryAddress || 'Not specified';
-
-        document.getElementById('receiptItems').innerHTML = items.map(item => `
-            <div class="receipt-item">
-                <div class="item-details">
-                    <span class="item-name">${item.productName}</span>
-                    <span class="item-qty">Qty: ${item.quantity}</span>
+            document.getElementById('receiptItems').innerHTML = items.map(item => `
+                <div class="receipt-item">
+                    <div class="item-details">
+                        <span class="item-name">${item.productName}</span>
+                        <span class="item-qty">Qty: ${item.quantity}</span>
+                    </div>
+                    <div class="item-price">R${Number(item.lineTotal).toLocaleString()}</div>
                 </div>
-                <div class="item-price">R${Number(item.lineTotal).toLocaleString()}</div>
-            </div>
-        `).join('') || '<p style="color:#999;">No items in order.</p>';
+            `).join('') || '<p style="color:#999;">No items in order.</p>';
+        }
+
+        async function loadOrder() {
+            if (orderId) {
+                try {
+                    const response = await fetch('/api/orders/detail/' + encodeURIComponent(orderId));
+                    if (!response.ok) throw new Error('Order not found');
+                    const order = await response.json();
+                    if (user && Number(order.userId) !== Number(user.id)) throw new Error('Order belongs to another user');
+                    renderOrder(order);
+                    return;
+                } catch (err) {
+                    console.error('Unable to load order confirmation:', err);
+                }
+            }
+
+            if (pendingOrder && pendingOrder.order) {
+                renderOrder({ ...pendingOrder.order, items: pendingOrder.items || [] });
+                return;
+            }
+
+            showMissingOrder();
+        }
+
+        loadOrder();
     </script>
 </body>
 </html>
