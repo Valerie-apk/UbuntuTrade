@@ -6,7 +6,7 @@
         { href: '/br-product/browse-products.html', icon: 'fa-store',         label: 'Browse Products',  page: 'browse' },
         { href: '/dashboard/my-products.html',      icon: 'fa-box',           label: 'My Products',      page: 'my-products' },
         { href: '/dashboard/messages.html',         icon: 'fa-envelope',      label: 'Messages',         page: 'messages' },
-        { href: '#',                                icon: 'fa-shopping-cart', label: 'Orders',           page: 'orders' },
+        { href: '/dashboard/my-orders.html',        icon: 'fa-shopping-cart', label: 'Orders',           page: 'orders' },
         { href: '/dashboard/settings.html',         icon: 'fa-cog',           label: 'Settings',         page: 'settings' }
     ];
 

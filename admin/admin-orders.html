@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Orders Management - UbuntuTrade</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .orders-section {
+            display: none;
+        }
+
+        .orders-section.active {
+            display: block;
+        }
+
+        .orders-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .orders-search {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .orders-search input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .orders-search button {
+            padding: 8px 16px;
+            background: #e04a2f;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .orders-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: #e04a2f;
+            color: #fff;
+            border-color: #e04a2f;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .orders-table thead {
+            background: #f9f9f9;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .orders-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .orders-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 13px;
+        }
+
+        .orders-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .buyer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .buyer-name {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .buyer-email {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .seller-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .seller-name {
+            font-weight: 600;
+        }
+
+        .seller-email {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .order-items-cell {
+            max-width: 200px;
+        }
+
+        .order-item {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .order-item-last {
+            margin-bottom: 0;
+        }
+
+        .order-amount {
+            font-weight: 700;
+            color: #e04a2f;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-badge.pending {
+            background: #fff7df;
+            color: #a16207;
+        }
+
+        .status-badge.processing {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .status-badge.delivered {
+            background: #ddf8e3;
+            color: #15803d;
+        }
+
+        .status-badge.cancelled {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            padding: 6px 10px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .action-btn.danger {
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+        .action-btn.danger:hover {
+            background: #ffebeb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .order-details {
+            margin-bottom: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .detail-label {
+            color: #666;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .items-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .items-table th {
+            padding: 8px;
+            background: #f0f0f0;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .items-table td {
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 12px;
+        }
+
+        .status-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #e04a2f;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #c83d26;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .orders-table {
+                font-size: 11px;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 8px;
+            }
+
+            .order-items-cell {
+                max-width: 100px;
+            }
+
+            .action-btns {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+
+    <div class="dashboard-wrapper" style="display: flex;">
+        <div id="sidebarContainer"></div>
+
+        <main class="main-content" style="flex: 1; padding: 20px;">
+            <div class="orders-section active" id="ordersSection">
+                <div style="margin-bottom: 24px;">
+                    <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 4px;">Orders Management</h1>
+                    <p style="color: #888; margin: 0; font-size: 13px;">Manage all customer orders and track shipments</p>
+                </div>
+
+                <div class="orders-controls">
+                    <div class="orders-search">
+                        <input type="text" id="searchInput" placeholder="Search by order ID, customer name or email...">
+                        <button onclick="searchOrders()"><i class="fas fa-search"></i> Search</button>
+                    </div>
+                </div>
+
+                <div class="orders-filters">
+                    <button class="filter-btn active" data-status="all">All Orders</button>
+                    <button class="filter-btn" data-status="Pending">Pending</button>
+                    <button class="filter-btn" data-status="Processing">Processing</button>
+                    <button class="filter-btn" data-status="Delivered">Delivered</button>
+                    <button class="filter-btn" data-status="Cancelled">Cancelled</button>
+                </div>
+
+                <div style="margin-top: 20px; overflow-x: auto;">
+                    <div id="ordersTableContainer">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Loading orders...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <button class="modal-close" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div id="orderModalContent"></div>
+        </div>
+    </div>
+
+    <script src="/components.js"></script>
+    <script>
+        UTComponents.init({ type: 'admin', activePage: 'admin' });
+        let allOrders = [];
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        async function loadOrders() {
+            try {
+                const response = await fetch('/api/admin/orders');
+                if (!response.ok) throw new Error('Failed to load orders');
+                const data = await response.json();
+                
+                // Fetch complete order details with items for each order
+                allOrders = await Promise.all(data.map(async (order) => {
+                    const detailResponse = await fetch(`/api/orders/detail/${order.id}`);
+                    if (detailResponse.ok) {
+                        const details = await detailResponse.json();
+                        return { ...order, items: details.items || [] };
+                    }
+                    return order;
+                }));
+                
+                renderOrders();
+            } catch (err) {
+                console.error('Error loading orders:', err);
+                document.getElementById('ordersTableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <p>Unable to load orders: ${err.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderOrders() {
+            let filtered = allOrders;
+
+            // Apply status filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(o => o.status === currentFilter);
+            }
+
+            // Apply search filter
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                filtered = filtered.filter(o =>
+                    String(o.id).includes(term) ||
+                    (o.username && o.username.toLowerCase().includes(term)) ||
+                    (o.email && o.email.toLowerCase().includes(term))
+                );
+            }
+
+            if (filtered.length === 0) {
+                document.getElementById('ordersTableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <p>No orders found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const tableHTML = `
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(order => {
+                            const items = order.items || [];
+                            const statusClass = (order.status || 'Pending').toLowerCase();
+                            const orderDate = new Date(order.createdAt).toLocaleDateString('en-ZA');
+                            const itemsText = items.length > 0 ? items.slice(0, 2).map(i => i.productName).join(', ') + (items.length > 2 ? ` (+${items.length - 2} more)` : '') : 'No items';
+
+                            return `
+                                <tr>
+                                    <td><span class="order-id">#${order.id}</span></td>
+                                    <td>
+                                        <div class="buyer-info">
+                                            <span class="buyer-name">${order.username || 'N/A'}</span>
+                                            <span class="buyer-email">${order.email || 'N/A'}</span>
+                                        </div>
+                                    </td>
+                                    <td class="order-items-cell">
+                                        <span title="${itemsText}">${itemsText}</span>
+                                    </td>
+                                    <td><span class="order-amount">R${Number(order.total || 0).toLocaleString()}</span></td>
+                                    <td><span class="status-badge ${statusClass}"><i class="fas fa-circle"></i>${order.status || 'Pending'}</span></td>
+                                    <td>${orderDate}</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="action-btn" onclick="viewOrderDetails(${order.id})">
+                                                <i class="fas fa-eye"></i> View
+                                            </button>
+                                            <button class="action-btn" onclick="updateOrderStatus(${order.id})">
+                                                <i class="fas fa-edit"></i> Update
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('ordersTableContainer').innerHTML = tableHTML;
+        }
+
+        function viewOrderDetails(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const items = order.items || [];
+            const statusClass = (order.status || 'Pending').toLowerCase();
+            const orderDate = new Date(order.createdAt).toLocaleString('en-ZA');
+
+            const itemsTableHTML = items.length > 0 ? `
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Seller</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${items.map(item => `
+                            <tr>
+                                <td>${item.productName || 'N/A'}</td>
+                                <td>${item.seller_username ? `${item.seller_username} (${item.seller_fullName || ''})` : 'N/A'}</td>
+                                <td>${item.quantity}</td>
+                                <td>R${Number(item.unitPrice).toLocaleString()}</td>
+                                <td><strong>R${Number(item.lineTotal).toLocaleString()}</strong></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            ` : '<p>No items in order</p>';
+
+            const detailsHTML = `
+                <div class="order-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Order ID</span>
+                        <span class="detail-value">#${order.id}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Customer</span>
+                        <span class="detail-value">${order.username} (${order.email})</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="status-badge ${statusClass}">${order.status || 'Pending'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value">${orderDate}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Delivery Address</span>
+                        <span class="detail-value">${order.deliveryAddress || 'Not provided'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Subtotal</span>
+                        <span class="detail-value">R${Number(order.subtotal || 0).toLocaleString()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Delivery Fee</span>
+                        <span class="detail-value">R${Number(order.deliveryFee || 0).toLocaleString()}</span>
+                    </div>
+                    <div class="detail-row" style="border-bottom: 2px solid #f0f0f0;">
+                        <span class="detail-label" style="font-weight: 700;">Total</span>
+                        <span class="detail-value" style="color: #e04a2f; font-size: 16px;">R${Number(order.total || 0).toLocaleString()}</span>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 14px; font-weight: 700; margin: 20px 0 12px;">Order Items</h3>
+                ${itemsTableHTML}
+
+                ${order.notes ? `
+                    <div style="margin-top: 20px; padding: 12px; background: #f9f9f9; border-radius: 6px;">
+                        <strong style="font-size: 12px; color: #666;">Notes:</strong>
+                        <p style="margin: 4px 0 0; font-size: 13px; color: #333;">${order.notes}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('orderModalContent').innerHTML = detailsHTML;
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        function updateOrderStatus(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const updateHTML = `
+                <div>
+                    <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 16px;">Update Order Status</h3>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 13px;">
+                            Order #${order.id} - Current Status: <span class="status-badge" style="margin-left: 8px;">${order.status || 'Pending'}</span>
+                        </label>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 13px;">New Status</label>
+                        <select id="statusSelect" class="status-select">
+                            <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                            <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                            <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" onclick="closeOrderModal()">Cancel</button>
+                        <button class="btn btn-primary" onclick="saveOrderStatus(${order.id})">Update Status</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('orderModalContent').innerHTML = updateHTML;
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        async function saveOrderStatus(orderId) {
+            const newStatus = document.getElementById('statusSelect').value;
+            try {
+                const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (!response.ok) throw new Error('Failed to update status');
+
+                // Update local order
+                const order = allOrders.find(o => o.id === orderId);
+                if (order) order.status = newStatus;
+
+                closeOrderModal();
+                renderOrders();
+                alert('Order status updated successfully!');
+            } catch (err) {
+                alert('Error updating status: ' + err.message);
+            }
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+
+        function searchOrders() {
+            searchTerm = document.getElementById('searchInput').value;
+            renderOrders();
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.status;
+                renderOrders();
+            });
+        });
+
+        // Close modal on background click
+        document.getElementById('orderModal').addEventListener('click', function(e) {
+            if (e.target === this) closeOrderModal();
+        });
+
+        // Initial load
+        loadOrders();
+    </script>
+</body>
+</html>

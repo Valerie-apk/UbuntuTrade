@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - UbuntuTrade</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="my-products.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .orders-container {
+            width: 100%;
+        }
+
+        .orders-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .orders-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .orders-header p {
+            color: #888;
+            margin: 4px 0 0;
+            font-size: 13px;
+        }
+
+        .order-status-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .status-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .status-btn:hover,
+        .status-btn.active {
+            background: #e04a2f;
+            color: #fff;
+            border-color: #e04a2f;
+        }
+
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .order-card {
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 16px;
+            transition: box-shadow 0.2s;
+        }
+
+        .order-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .order-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .order-number {
+            font-weight: 700;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+
+        .order-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .order-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .order-status.pending {
+            background: #fff7df;
+            color: #a16207;
+        }
+
+        .order-status.processing {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .order-status.delivered {
+            background: #ddf8e3;
+            color: #15803d;
+        }
+
+        .order-status.cancelled {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .order-card-items {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .order-item-preview {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .order-item-img {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .order-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .order-total {
+            font-size: 16px;
+            font-weight: 700;
+            color: #e04a2f;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-view {
+            padding: 8px 16px;
+            background: #e04a2f;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-view:hover {
+            background: #c83d26;
+        }
+
+        .btn-receipt {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-receipt:hover {
+            background: #e8e8e8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            color: #ddd;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h2 {
+            font-size: 18px;
+            color: #666;
+            margin: 0 0 8px;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin: 0 0 20px;
+        }
+
+        .empty-state-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            background: #e04a2f;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .empty-state-btn:hover {
+            background: #c83d26;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        @media (max-width: 640px) {
+            .order-card-header {
+                flex-direction: column;
+            }
+
+            .order-card-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .order-actions {
+                width: 100%;
+            }
+
+            .btn-view,
+            .btn-receipt {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <div id="navbarContainer"></div>
+
+    <div class="dashboard-wrapper">
+        <div id="sidebarContainer"></div>
+
+        <main class="main-content">
+            <section class="dashboard-content orders-container">
+                <div class="orders-header">
+                    <div>
+                        <h1>My Orders</h1>
+                        <p>Track and manage all your orders</p>
+                    </div>
+                </div>
+
+                <div class="order-status-filter">
+                    <button class="status-btn active" data-status="all">All Orders</button>
+                    <button class="status-btn" data-status="Pending">Pending</button>
+                    <button class="status-btn" data-status="Processing">Processing</button>
+                    <button class="status-btn" data-status="Delivered">Delivered</button>
+                    <button class="status-btn" data-status="Cancelled">Cancelled</button>
+                </div>
+
+                <div class="orders-list" id="ordersList">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading your orders...
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="modal" id="receiptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Order Receipt</h2>
+                <button class="modal-close" onclick="closeReceiptModal()">&times;</button>
+            </div>
+            <div id="receiptContent"></div>
+            <div style="margin-top: 20px; text-align: right;">
+                <button class="btn-receipt" onclick="window.print(); return false;">
+                    <i class="fas fa-print"></i> Print Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div>
+            <h3>About UbuntuTrade</h3>
+            <p>Connecting local buyers &amp; sellers</p>
+        </div>
+        <div>
+            <h3>Contact</h3>
+            <p>info@Ubuntutrade.co.za</p>
+        </div>
+        <div>
+            <h3>Legal</h3>
+            <a href="/privacy-policy">View Privacy Policy</a>
+            <a href="/faqs">FAQs</a>
+        </div>
+    </footer>
+
+    <script src="/components.js"></script>
+    <script>
+        UTComponents.init({ type: 'customer', activePage: 'orders' });
+        const user = UTComponents.getUser();
+        let allOrders = [];
+        let currentFilter = 'all';
+
+        if (!user) {
+            document.getElementById('ordersList').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-lock"></i></div>
+                    <h2>Please log in</h2>
+                    <p>You need to be logged in to view your orders.</p>
+                    <a href="/index/login.html" class="empty-state-btn">
+                        <i class="fas fa-sign-in-alt"></i> Go to Login
+                    </a>
+                </div>
+            `;
+            return;
+        }
+
+        async function loadOrders() {
+            try {
+                const response = await fetch(`/api/orders/${user.id}`);
+                if (!response.ok) throw new Error('Failed to load orders');
+                allOrders = await response.json();
+                renderOrders();
+            } catch (err) {
+                console.error('Error loading orders:', err);
+                document.getElementById('ordersList').innerHTML = `
+                    <div class="empty-state">
+                        <h2>Unable to load orders</h2>
+                        <p>${err.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderOrders() {
+            const filtered = currentFilter === 'all' 
+                ? allOrders 
+                : allOrders.filter(o => o.status === currentFilter);
+
+            if (filtered.length === 0) {
+                document.getElementById('ordersList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                        <h2>No orders found</h2>
+                        <p>${currentFilter === 'all' ? 'You haven\'t placed any orders yet.' : `No ${currentFilter.toLowerCase()} orders.`}</p>
+                        <a href="/br-product/browse-products.html" class="empty-state-btn">
+                            <i class="fas fa-shopping-bag"></i> Start Shopping
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            const orderHTML = filtered.map(order => {
+                const items = order.items || [];
+                const itemsPreview = items.slice(0, 2).map(item => `
+                    <div class="order-item-preview">
+                        ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.productName}" class="order-item-img">` : ''}
+                        <div>${item.productName}</div>
+                    </div>
+                `).join('');
+                const hasMore = items.length > 2;
+
+                const statusClass = order.status.toLowerCase();
+                const statusIcon = {
+                    'pending': 'fa-clock',
+                    'processing': 'fa-box',
+                    'delivered': 'fa-check-circle',
+                    'cancelled': 'fa-times-circle'
+                }[statusClass] || 'fa-circle';
+
+                const orderDate = new Date(order.createdAt).toLocaleDateString('en-ZA', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                return `
+                    <div class="order-card">
+                        <div class="order-card-header">
+                            <div class="order-card-info">
+                                <div class="order-number">Order #${order.id}</div>
+                                <div class="order-date">Placed on ${orderDate}</div>
+                            </div>
+                            <div class="order-status ${statusClass}">
+                                <i class="fas ${statusIcon}"></i>
+                                ${order.status}
+                            </div>
+                        </div>
+
+                        <div class="order-card-items">
+                            ${itemsPreview}
+                            ${hasMore ? `<div class="order-item-preview">+${items.length - 2} more</div>` : ''}
+                        </div>
+
+                        <div class="order-card-footer">
+                            <div class="order-total">R${Number(order.total || 0).toLocaleString()}</div>
+                            <div class="order-actions">
+                                <button class="btn-view" onclick="viewOrderDetails(${order.id})">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                                <button class="btn-receipt" onclick="showReceipt(${order.id})">
+                                    <i class="fas fa-file-pdf"></i> Receipt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('ordersList').innerHTML = orderHTML;
+        }
+
+        function viewOrderDetails(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const items = order.items || [];
+            const itemsHTML = items.map(item => `
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                    <div>
+                        <div style="font-weight: 600;">${item.productName}</div>
+                        <div style="font-size: 12px; color: #999;">Qty: ${item.quantity} × R${Number(item.unitPrice).toLocaleString()}</div>
+                    </div>
+                    <div style="font-weight: 700; color: #e04a2f;">R${Number(item.lineTotal).toLocaleString()}</div>
+                </div>
+            `).join('');
+
+            const detailsHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 12px;">Items</h3>
+                    ${itemsHTML}
+                </div>
+
+                <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Subtotal</span>
+                        <strong>R${Number(order.subtotal || 0).toLocaleString()}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Delivery Fee</span>
+                        <strong>R${Number(order.deliveryFee || 0).toLocaleString()}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; padding-top: 8px; border-top: 1px solid #ddd;">
+                        <span>Total</span>
+                        <strong style="color: #e04a2f;">R${Number(order.total || 0).toLocaleString()}</strong>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 8px;">Delivery Address</h3>
+                    <p style="margin: 0; color: #666; line-height: 1.5;">${order.deliveryAddress || 'Not specified'}</p>
+                </div>
+
+                ${order.notes ? `
+                    <div style="margin-top: 16px;">
+                        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 8px;">Notes</h3>
+                        <p style="margin: 0; color: #666;">${order.notes}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('receiptContent').innerHTML = detailsHTML;
+            document.getElementById('receiptModal').classList.add('active');
+        }
+
+        function showReceipt(orderId) {
+            viewOrderDetails(orderId);
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').classList.remove('active');
+        }
+
+        // Status filter buttons
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.status;
+                renderOrders();
+            });
+        });
+
+        // Close modal on background click
+        document.getElementById('receiptModal').addEventListener('click', function(e) {
+            if (e.target === this) closeReceiptModal();
+        });
+
+        loadOrders();
+    </script>
+</body>
+</html>
