@@ -3,49 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation - UbuntuTrade</title>
+    <title>Order Confirmed - UbuntuTrade</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/components.js"></script>
     <style>
-        .order-confirmation {
-            max-width: 900px;
+        .confirmation-wrap {
+            max-width: 860px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 20px 0 40px;
+        }
+
+        .order-steps {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .order-steps .step-done {
+            color: #22c55e;
+            font-weight: 700;
+        }
+
+        .order-steps .chevron {
+            font-size: 10px;
+        }
+
+        .success-banner {
             text-align: center;
+            margin-bottom: 28px;
         }
 
         .success-icon {
-            font-size: 80px;
+            font-size: 72px;
             color: #22c55e;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             animation: bounce 0.8s ease-in-out;
         }
 
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-16px); }
         }
 
-        .order-confirmation h1 {
-            font-size: 32px;
+        .success-banner h1 {
+            font-size: 28px;
             font-weight: 700;
             color: #1a1a1a;
-            margin: 0 0 10px;
+            margin: 0 0 8px;
         }
 
-        .order-confirmation p {
-            font-size: 16px;
+        .success-banner p {
+            font-size: 15px;
             color: #666;
-            margin: 0 0 30px;
+            margin: 0;
         }
 
         .receipt-container {
             background: #fff;
             border-radius: 12px;
-            padding: 30px;
-            margin: 30px 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            text-align: left;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.07);
             border: 1px solid #f0f0f0;
         }
 
@@ -53,45 +75,43 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 20px;
+            padding-bottom: 18px;
             border-bottom: 2px solid #f0f0f0;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .receipt-header h2 {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
             color: #1a1a1a;
         }
 
-        .order-number {
-            font-size: 14px;
+        .order-number-badge {
+            font-size: 13px;
             color: #666;
             background: #f5f5f5;
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: 6px;
             font-weight: 600;
         }
 
         .receipt-items {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .receipt-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
+            padding: 11px 0;
             border-bottom: 1px solid #f0f0f0;
             font-size: 14px;
         }
 
         .receipt-item:last-child {
             border-bottom: none;
-        }
-
-        .item-details {
-            flex: 1;
         }
 
         .item-name {
@@ -115,8 +135,8 @@
         }
 
         .receipt-totals {
-            margin-top: 20px;
-            padding-top: 20px;
+            margin-top: 18px;
+            padding-top: 18px;
             border-top: 2px solid #f0f0f0;
         }
 
@@ -125,42 +145,54 @@
             justify-content: space-between;
             margin-bottom: 8px;
             font-size: 14px;
+            color: #555;
         }
 
         .total-row.final {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             color: #1a1a1a;
-            margin-top: 12px;
-            padding-top: 12px;
+            margin-top: 10px;
+            padding-top: 10px;
             border-top: 1px solid #f0f0f0;
         }
 
-        .delivery-info {
-            margin-top: 20px;
-            padding: 15px;
+        .delivery-info-box {
+            margin-top: 18px;
+            padding: 14px 16px;
             background: #f9f9f9;
             border-radius: 8px;
             font-size: 13px;
-            text-align: center;
         }
 
-        .delivery-info strong {
+        .delivery-info-box strong {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             color: #1a1a1a;
         }
 
-        .actions {
+        .payment-info-box {
+            margin-top: 10px;
+            padding: 14px 16px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #15803d;
+        }
+
+        .payment-info-box i {
+            margin-right: 6px;
+        }
+
+        .confirmation-actions {
             display: flex;
             gap: 12px;
             justify-content: center;
-            margin-top: 30px;
             flex-wrap: wrap;
         }
 
-        .btn {
-            padding: 12px 28px;
+        .btn-confirm {
+            padding: 12px 26px;
             border-radius: 8px;
             border: none;
             font-size: 14px;
@@ -173,115 +205,128 @@
             transition: all 0.2s;
         }
 
-        .btn-primary {
+        .btn-primary-conf {
             background: #e04a2f;
             color: #fff;
         }
 
-        .btn-primary:hover {
+        .btn-primary-conf:hover {
             background: #c83d26;
         }
 
-        .btn-secondary {
+        .btn-secondary-conf {
             background: #f0f0f0;
             color: #333;
             border: 1px solid #ddd;
         }
 
-        .btn-secondary:hover {
+        .btn-secondary-conf:hover {
             background: #e8e8e8;
         }
 
-        .print-btn {
+        .print-link {
             background: none;
             border: none;
             color: #e04a2f;
             cursor: pointer;
             font-weight: 600;
             text-decoration: underline;
-            font-size: 14px;
-        }
-
-        .print-btn:hover {
-            color: #c83d26;
+            font-size: 13px;
         }
 
         @media print {
-            .order-confirmation h1,
-            .order-confirmation > p,
-            .actions,
-            .print-btn {
-                display: none;
-            }
-
-            .receipt-container {
-                box-shadow: none;
-                border: none;
-                padding: 0;
-            }
-
-            body {
-                background: #fff;
-            }
+            #navbarContainer, #sidebarContainer, .order-steps,
+            .confirmation-actions, .print-link, .footer { display: none !important; }
+            .dashboard-wrapper { display: block !important; }
+            .main-content { overflow: visible !important; }
+            .receipt-container { box-shadow: none; border: none; }
         }
     </style>
 </head>
-<body>
+<body class="dashboard-page">
     <div id="navbarContainer"></div>
 
-    <div class="order-confirmation">
-        <div class="success-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
+    <div class="dashboard-wrapper">
+        <div id="sidebarContainer"></div>
 
-        <h1>Order Confirmed!</h1>
-        <p>Thank you for your purchase. Your order has been successfully placed.</p>
+        <main class="main-content">
+            <div class="dashboard-content" style="background:#f5f1eb;">
+                <div class="confirmation-wrap">
 
-        <div class="receipt-container">
-            <div class="receipt-header">
-                <h2>Order Receipt</h2>
-                <div class="order-number" id="orderNumber">Order #<span id="orderNum">-</span></div>
-            </div>
+                    <!-- Step breadcrumb -->
+                    <div class="order-steps">
+                        <span><i class="fas fa-shopping-cart"></i> Cart</span>
+                        <i class="fas fa-chevron-right chevron"></i>
+                        <span><i class="fas fa-credit-card"></i> Payment</span>
+                        <i class="fas fa-chevron-right chevron"></i>
+                        <span class="step-done"><i class="fas fa-check-circle"></i> Confirmed</span>
+                    </div>
 
-            <div class="receipt-items" id="receiptItems">
-                <p style="color:#999;">Loading order details...</p>
-            </div>
+                    <!-- Success banner -->
+                    <div class="success-banner">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h1 id="confirmTitle">Order Confirmed!</h1>
+                        <p id="confirmSubtitle">Thank you for your purchase. Your order has been successfully placed.</p>
+                    </div>
 
-            <div class="receipt-totals">
-                <div class="total-row">
-                    <span>Subtotal</span>
-                    <span id="subtotal">R0</span>
+                    <!-- Receipt -->
+                    <div class="receipt-container">
+                        <div class="receipt-header">
+                            <h2>Order Receipt</h2>
+                            <div class="order-number-badge">Order #<span id="orderNum">—</span></div>
+                        </div>
+
+                        <div class="receipt-items" id="receiptItems">
+                            <p style="color:#999;">Loading order details...</p>
+                        </div>
+
+                        <div class="receipt-totals">
+                            <div class="total-row">
+                                <span>Subtotal</span>
+                                <span id="subtotal">R0</span>
+                            </div>
+                            <div class="total-row">
+                                <span>Delivery Fee</span>
+                                <span id="delivery">R0</span>
+                            </div>
+                            <div class="total-row final">
+                                <span>Total Paid</span>
+                                <span id="total">R0</span>
+                            </div>
+                        </div>
+
+                        <div class="delivery-info-box">
+                            <strong><i class="fas fa-map-marker-alt"></i> Delivery Address</strong>
+                            <div id="deliveryAddr">—</div>
+                        </div>
+
+                        <div class="payment-info-box" id="paymentInfoBox" style="display:none;">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="paymentInfoText">Payment confirmed</span>
+                        </div>
+
+                        <div style="margin-top:18px;text-align:center;">
+                            <button class="print-link" onclick="window.print()">
+                                <i class="fas fa-print"></i> Print Receipt
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="confirmation-actions">
+                        <a href="/dashboard/my-orders.html" class="btn-confirm btn-primary-conf">
+                            <i class="fas fa-history"></i> View My Orders
+                        </a>
+                        <a href="/br-product/browse-products.html" class="btn-confirm btn-secondary-conf">
+                            <i class="fas fa-store"></i> Continue Shopping
+                        </a>
+                    </div>
+
                 </div>
-                <div class="total-row">
-                    <span>Delivery Fee</span>
-                    <span id="delivery">R0</span>
-                </div>
-                <div class="total-row final">
-                    <span>Total Paid</span>
-                    <span id="total">R0</span>
-                </div>
             </div>
-
-            <div class="delivery-info">
-                <strong>Delivery Address</strong>
-                <div id="deliveryAddr">-</div>
-            </div>
-
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="print-btn" onclick="window.print();">
-                    <i class="fas fa-print"></i> Print Receipt
-                </button>
-            </div>
-        </div>
-
-        <div class="actions">
-            <a href="/dashboard/my-orders.html" class="btn btn-primary">
-                <i class="fas fa-history"></i> View All Orders
-            </a>
-            <a href="/br-product/browse-products.html" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Shopping
-            </a>
-        </div>
+        </main>
     </div>
 
     <footer class="footer">
@@ -300,19 +345,11 @@
         </div>
     </footer>
 
-    <script src="/components.js"></script>
     <script>
-        UTComponents.init({ type: 'customer' });
+        UTComponents.init({ type: 'customer', activePage: 'orders' });
         const user = UTComponents.getUser();
         const params = new URLSearchParams(window.location.search);
         const orderId = params.get('orderId');
-        const pendingOrder = JSON.parse(localStorage.getItem('utPendingOrder') || 'null');
-
-        function showMissingOrder() {
-            document.querySelector('.order-confirmation h1').textContent = 'Order Not Found';
-            document.querySelector('.order-confirmation p').textContent = 'Unable to find your order details. Please contact support.';
-            document.getElementById('receiptItems').innerHTML = '<p style="color:#999;">No order found. <a href="cart.html">Go back to cart.</a></p>';
-        }
 
         function renderOrder(order) {
             const items = order.items || [];
@@ -322,37 +359,53 @@
             document.getElementById('total').textContent = 'R' + Number(order.total || 0).toLocaleString();
             document.getElementById('deliveryAddr').textContent = order.deliveryAddress || 'Not specified';
 
-            document.getElementById('receiptItems').innerHTML = items.map(item => `
-                <div class="receipt-item">
-                    <div class="item-details">
-                        <span class="item-name">${item.productName}</span>
-                        <span class="item-qty">Qty: ${item.quantity}</span>
-                    </div>
-                    <div class="item-price">R${Number(item.lineTotal).toLocaleString()}</div>
-                </div>
-            `).join('') || '<p style="color:#999;">No items in order.</p>';
+            if (order.payment) {
+                const box = document.getElementById('paymentInfoBox');
+                box.style.display = 'block';
+                document.getElementById('paymentInfoText').textContent =
+                    'Payment via ' + (order.payment.method || 'Card') + ' — ' + (order.payment.transactionId || '');
+            }
+
+            document.getElementById('receiptItems').innerHTML = items.length
+                ? items.map(item => `
+                    <div class="receipt-item">
+                        <div>
+                            <span class="item-name">${item.productName}</span>
+                            <span class="item-qty">Qty: ${item.quantity} &times; R${Number(item.unitPrice || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="item-price">R${Number(item.lineTotal || 0).toLocaleString()}</div>
+                    </div>`).join('')
+                : '<p style="color:#999;">No items in order.</p>';
+        }
+
+        function showError() {
+            document.getElementById('confirmTitle').textContent = 'Order Not Found';
+            document.getElementById('confirmSubtitle').textContent = 'Unable to load your order details. Please check My Orders.';
+            document.getElementById('receiptItems').innerHTML = '<p style="color:#999;"><a href="/dashboard/my-orders.html">Go to My Orders</a></p>';
         }
 
         async function loadOrder() {
             if (orderId) {
                 try {
-                    const response = await fetch('/api/orders/detail/' + encodeURIComponent(orderId));
-                    if (!response.ok) throw new Error('Order not found');
-                    const order = await response.json();
-                    if (user && Number(order.userId) !== Number(user.id)) throw new Error('Order belongs to another user');
+                    const res = await fetch('/api/orders/detail/' + encodeURIComponent(orderId));
+                    if (!res.ok) throw new Error('not found');
+                    const order = await res.json();
                     renderOrder(order);
                     return;
-                } catch (err) {
-                    console.error('Unable to load order confirmation:', err);
+                } catch (e) {
+                    console.error('Could not load order from API:', e);
                 }
             }
 
-            if (pendingOrder && pendingOrder.order) {
-                renderOrder({ ...pendingOrder.order, items: pendingOrder.items || [] });
+            // Fallback to localStorage (immediately after checkout)
+            const pending = JSON.parse(localStorage.getItem('utPendingOrder') || 'null');
+            if (pending && pending.order) {
+                renderOrder({ ...pending.order, items: pending.items || [] });
+                localStorage.removeItem('utPendingOrder');
                 return;
             }
 
-            showMissingOrder();
+            showError();
         }
 
         loadOrder();

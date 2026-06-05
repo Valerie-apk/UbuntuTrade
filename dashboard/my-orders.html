@@ -506,11 +506,11 @@
                         <div class="order-card-footer">
                             <div class="order-total">R${Number(order.total || 0).toLocaleString()}</div>
                             <div class="order-actions">
-                                <button class="btn-view" onclick="viewOrderDetails(${order.id})">
+                                <a href="/cart/success.html?orderId=${order.id}" class="btn-view">
                                     <i class="fas fa-eye"></i> View Details
-                                </button>
+                                </a>
                                 <button class="btn-receipt" onclick="showReceipt(${order.id})">
-                                    <i class="fas fa-file-pdf"></i> Receipt
+                                    <i class="fas fa-receipt"></i> Receipt
                                 </button>
                             </div>
                         </div>
