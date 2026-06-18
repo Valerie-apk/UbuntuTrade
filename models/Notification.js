@@ -15,6 +15,23 @@ const Notification = {
         }
     },
 
+    async createForAdmins({ type, title, message, relatedId, actionUrl }) {
+        try {
+            const [admins] = await pool.query('SELECT id FROM users WHERE role = ?', ['Admin']);
+            await Promise.all(admins.map(admin => this.create({
+                userId: admin.id,
+                type,
+                title,
+                message,
+                relatedId,
+                actionUrl
+            })));
+        } catch (err) {
+            console.error('Error creating admin notifications:', err.message);
+            throw err;
+        }
+    },
+
     async findByUser(userId) {
         try {
             const [notifications] = await pool.query(

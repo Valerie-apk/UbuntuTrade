@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const User   = require('../models/User');
+const Notification = require('../models/Notification');
 const pool   = require('../config/db');
 
 // POST /api/auth/register
@@ -15,6 +16,17 @@ router.post('/register', async (req, res) => {
         }
         const displayName = username || fullName || name || email.split('@')[0];
         const user = await User.create({ username: displayName, fullName: fullName || name || displayName, email, password, location });
+        try {
+            await Notification.createForAdmins({
+                type: 'new_user',
+                title: 'New user registered',
+                message: `${user.username || user.fullName || user.email} joined UbuntuTrade.`,
+                relatedId: user.id,
+                actionUrl: '/admin/admin.html'
+            });
+        } catch (notifyErr) {
+            console.error('Failed to create admin notification:', notifyErr.message);
+        }
         res.status(201).json({ message: 'User registered successfully', user });
     } catch (err) {
         res.status(500).json({ message: 'Database error', error: err.message });

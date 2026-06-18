@@ -3,6 +3,7 @@ const pool         = require('../config/db');
 const User         = require('../models/User');
 const Product      = require('../models/Product');
 const WishlistItem = require('../models/WishlistItem');
+const Notification = require('../models/Notification');
 
 // GET /api/users
 router.get('/', async (req, res) => {
@@ -56,6 +57,17 @@ router.post('/:id/seller-verification', async (req, res) => {
             [req.params.id, idDocumentUrl, notes || null]
         );
         const user = await User.findById(req.params.id);
+        try {
+            await Notification.createForAdmins({
+                type: 'seller_request',
+                title: 'Seller approval request',
+                message: `${user.username || user.fullName || user.email} submitted an ID for seller approval.`,
+                relatedId: user.id,
+                actionUrl: '/admin/admin.html'
+            });
+        } catch (notifyErr) {
+            console.error('Failed to create admin notification:', notifyErr.message);
+        }
         res.status(201).json({ success: true, message: 'Seller verification submitted for admin review.', user });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });

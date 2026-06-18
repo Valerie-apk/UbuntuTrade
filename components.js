@@ -338,9 +338,11 @@
                                         html += '<div class="nav-notif-empty">No new notifications</div>';
                                     } else {
                                         notifications.forEach(function (notif) {
-                                            var icon = notif.type === 'seller_approved' ? '🎉' : 
+                                            var icon = notif.type === 'seller_approved' ? '🎉' :
                                                       notif.type === 'new_order' ? '📦' :
-                                                      notif.type === 'seller_flagged' ? '⚠️' : '📢';
+                                                      notif.type === 'seller_flagged' ? '⚠️' :
+                                                      notif.type === 'new_user' ? '👤' :
+                                                      notif.type === 'seller_request' ? '🪪' : '📢';
                                             var time = new Date(notif.createdAt).toLocaleDateString();
                                             html += '<div class="nav-notif-item ' + (notif.isRead ? '' : 'unread') + '" onclick="' +
                                                 (notif.actionUrl ? 'window.location.href=\'' + notif.actionUrl + '\'' : '') +
