@@ -159,6 +159,11 @@
     overflow: hidden;
 }
 
+.cart-popup-quantity.fixed-quantity {
+    width: 44px;
+    grid-template-columns: 1fr;
+}
+
 .cart-popup-quantity span {
     text-align: center;
     font-weight: 700;

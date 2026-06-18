@@ -62,7 +62,6 @@
             itemsEl.innerHTML = items.map(item => {
                 const p    = item.product || {};
                 const price = Number(p.price || 0);
-                const qty  = item.quantity || 1;
                 const img  = p.imageUrl && p.imageUrl !== 'default-product.png' ? p.imageUrl : '';
                 return `
                 <article class="cart-popup-item" data-item-id="${item.id}">
@@ -75,10 +74,8 @@
                         <strong>R${price.toLocaleString()}</strong>
                     </div>
                     <div class="cart-popup-actions">
-                        <div class="cart-popup-quantity">
-                            <button type="button" data-action="decrease" data-item="${item.id}" data-qty="${qty}" aria-label="Decrease"><i class="fas fa-minus"></i></button>
-                            <span>${qty}</span>
-                            <button type="button" data-action="increase" data-item="${item.id}" data-qty="${qty}" aria-label="Increase"><i class="fas fa-plus"></i></button>
+                        <div class="cart-popup-quantity fixed-quantity" aria-label="Quantity">
+                            <span>1</span>
                         </div>
                         <button class="cart-popup-remove" type="button" data-action="remove" data-item="${item.id}" aria-label="Remove">
                             <i class="far fa-trash-alt"></i>
@@ -118,27 +115,7 @@
             if (!btn) return;
             const action = btn.dataset.action;
             const itemId = btn.dataset.item;
-            const qty    = Number(btn.dataset.qty || 1);
-
-            if (action === 'decrease') {
-                if (qty <= 1) {
-                    await fetch(`${API}/api/cart/${itemId}`, { method: 'DELETE' });
-                } else {
-                    await fetch(`${API}/api/cart/${itemId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ quantity: qty - 1 })
-                    });
-                }
-                loadCart();
-            } else if (action === 'increase') {
-                await fetch(`${API}/api/cart/${itemId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ quantity: qty + 1 })
-                });
-                loadCart();
-            } else if (action === 'remove') {
+            if (action === 'remove') {
                 await fetch(`${API}/api/cart/${itemId}`, { method: 'DELETE' });
                 loadCart();
             }

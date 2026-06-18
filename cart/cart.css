@@ -166,6 +166,11 @@
     font-weight: 700;
 }
 
+.quantity-control.fixed-quantity {
+    width: 64px;
+    grid-template-columns: 1fr;
+}
+
 .icon-btn {
     width: 36px;
     height: 36px;

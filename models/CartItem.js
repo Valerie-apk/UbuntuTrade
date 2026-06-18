@@ -13,7 +13,7 @@ const CART_SQL = `
 function format(row) {
     return {
         id: row.id, userId: row.userId, productId: row.productId,
-        quantity: row.quantity, createdAt: row.createdAt,
+        quantity: 1, createdAt: row.createdAt,
         product: {
             id: row.productId, name: row.name, price: row.price,
             imageUrl: row.imageUrl, status: row.status, category: row.category, location: row.location,
@@ -44,19 +44,18 @@ const CartItem = {
     async upsert(userId, productId, quantity = 1) {
         const existing = await this.findOne(userId, productId);
         if (existing) {
-            const newQty = existing.quantity + (Number(quantity) || 1);
-            await pool.query('UPDATE cart_items SET quantity = ? WHERE id = ?', [newQty, existing.id]);
+            await pool.query('UPDATE cart_items SET quantity = 1 WHERE id = ?', [existing.id]);
             return { item: await this.findById(existing.id), created: false };
         }
         const [result] = await pool.query(
             'INSERT INTO cart_items (userId, productId, quantity) VALUES (?, ?, ?)',
-            [userId, productId, Number(quantity) || 1]
+            [userId, productId, 1]
         );
         return { item: await this.findById(result.insertId), created: true };
     },
 
     async updateQuantity(id, quantity) {
-        await pool.query('UPDATE cart_items SET quantity = ? WHERE id = ?', [quantity, id]);
+        await pool.query('UPDATE cart_items SET quantity = 1 WHERE id = ?', [id]);
         return this.findById(id);
     },
 
@@ -70,10 +69,10 @@ const CartItem = {
     },
 
     buildSummary(items) {
-        const subtotal = items.reduce((sum, i) => sum + Number(i.product.price) * i.quantity, 0);
+        const subtotal = items.reduce((sum, i) => sum + Number(i.product.price), 0);
         const deliveryFee = subtotal > 0 && subtotal < 1000 ? 60 : 0;
         return {
-            itemCount: items.reduce((sum, i) => sum + i.quantity, 0),
+            itemCount: items.length,
             subtotal, deliveryFee, total: subtotal + deliveryFee
         };
     }

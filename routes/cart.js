@@ -40,14 +40,10 @@ router.post('/', addToCart);
 // PUT /api/cart/:id
 router.put('/:id', async (req, res) => {
     try {
-        const { quantity } = req.body;
-        if (!quantity || Number(quantity) < 1) {
-            return res.status(400).json({ message: 'quantity must be at least 1' });
-        }
         const existing = await CartItem.findById(req.params.id);
         if (!existing) return res.status(404).json({ message: 'Cart item not found' });
 
-        const item = await CartItem.updateQuantity(req.params.id, quantity);
+        const item = await CartItem.updateQuantity(req.params.id, 1);
         res.json({ success: true, item });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });

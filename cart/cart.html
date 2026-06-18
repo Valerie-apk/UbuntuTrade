@@ -157,7 +157,7 @@
 
         function buildCartRow(item) {
             const p = item.product;
-            const lineTotal = Number(p.price) * item.quantity;
+            const lineTotal = Number(p.price);
             return `<article class="cart-item" data-cart-id="${item.id}">
                 <div class="cart-product">
                     <div style="width:60px;height:60px;background:#f0f0f0;border-radius:8px;flex-shrink:0;"></div>
@@ -168,10 +168,8 @@
                     </div>
                 </div>
                 <strong>R${Number(p.price).toLocaleString()}</strong>
-                <div class="quantity-control" aria-label="Quantity controls">
-                    <button type="button" class="qty-dec" data-id="${item.id}" aria-label="Decrease"><i class="fas fa-minus"></i></button>
-                    <span class="qty-val">${item.quantity}</span>
-                    <button type="button" class="qty-inc" data-id="${item.id}" aria-label="Increase"><i class="fas fa-plus"></i></button>
+                <div class="quantity-control fixed-quantity" aria-label="Quantity">
+                    <span class="qty-val">1</span>
                 </div>
                 <strong>R${lineTotal.toLocaleString()}</strong>
                 <button class="icon-btn danger remove-btn" data-id="${item.id}" type="button" aria-label="Remove">
@@ -214,21 +212,10 @@
 
         loadCart();
 
-        // Quantity and remove via event delegation
+        // Remove via event delegation
         document.getElementById('cartItemsContainer').addEventListener('click', async function(e) {
-            const decBtn = e.target.closest('.qty-dec');
-            const incBtn = e.target.closest('.qty-inc');
             const remBtn = e.target.closest('.remove-btn');
 
-            if (decBtn || incBtn) {
-                const id = (decBtn || incBtn).dataset.id;
-                const item = cartItems.find(i => i.id == id);
-                if (!item) return;
-                const newQty = decBtn ? item.quantity - 1 : item.quantity + 1;
-                if (newQty < 1) { await fetch('/api/cart/' + id, { method: 'DELETE' }); }
-                else { await fetch('/api/cart/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quantity: newQty }) }); }
-                loadCart();
-            }
             if (remBtn) {
                 const id = remBtn.dataset.id;
                 await fetch('/api/cart/' + id, { method: 'DELETE' });
