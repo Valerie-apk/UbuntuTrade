@@ -34,15 +34,13 @@
                             <span class="seller-status-pill pending" id="sellerStatusBadge" style="display:none;">Pending</span>
                         </div>
 
-                        <div class="seller-rating">
-                            <span><i class="fas fa-star"></i> <strong id="sellerRating">—</strong> rating</span>
+                        <div class="seller-sales-row">
                             <span id="sellerSoldCount">— sales</span>
                         </div>
 
                         <ul class="seller-facts" id="sellerFacts">
                             <li><i class="fas fa-location-dot"></i> <span id="sellerLocation">—</span></li>
                             <li><i class="far fa-calendar"></i> <span id="sellerSince">—</span></li>
-                            <li><i class="far fa-message"></i> Response rate: <span id="sellerResponseRate">—</span></li>
                         </ul>
                     </div>
 
@@ -82,7 +80,6 @@
                                 <dt>Name</dt><dd id="siName">—</dd>
                                 <dt>Location</dt><dd id="siLocation">—</dd>
                                 <dt>Member Since</dt><dd id="siSince">—</dd>
-                                <dt>Response Rate</dt><dd id="siResponse">—</dd>
                             </dl>
                             <button class="report-user-btn" type="button" id="reportSellerBtn">
                                 <i class="fas fa-flag"></i>
@@ -175,11 +172,9 @@
                 statusBadge.textContent = sellerStatus;
                 statusBadge.className = 'seller-status-pill ' + sellerStatus.toLowerCase();
                 statusBadge.style.display = 'inline-flex';
-                document.getElementById('sellerRating').textContent = s.rating || '—';
                 document.getElementById('sellerSoldCount').textContent = (products.filter(p => p.status === 'Sold').length) + ' sales';
                 document.getElementById('sellerLocation').textContent = s.location || '—';
                 document.getElementById('sellerSince').textContent = 'Member since ' + new Date(s.createdAt).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' });
-                document.getElementById('sellerResponseRate').textContent = s.responseRate ? s.responseRate + '%' : '—';
                 document.getElementById('sellerAboutTitle').textContent = 'About ' + name;
                 document.getElementById('sellerAboutText').textContent = 'Seller on UbuntuTrade. ' + products.length + ' products listed.';
                 document.getElementById('metricSold').textContent = products.filter(p => p.status === 'Sold').length;
@@ -188,7 +183,6 @@
                 document.getElementById('siName').textContent = name;
                 document.getElementById('siLocation').textContent = s.location || '—';
                 document.getElementById('siSince').textContent = new Date(s.createdAt).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' });
-                document.getElementById('siResponse').textContent = s.responseRate ? s.responseRate + '%' : '—';
                 document.getElementById('sellerProductsTitle').textContent = 'Products by ' + name;
                 document.getElementById('sellerProductsCount').textContent = 'Showing ' + products.length + ' products';
 

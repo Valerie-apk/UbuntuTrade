@@ -115,7 +115,7 @@
     color: #b91c1c;
 }
 
-.seller-rating {
+.seller-sales-row {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
@@ -123,7 +123,6 @@
     color: #3f4652;
 }
 
-.seller-rating i,
 .seller-product-card span i {
     color: #ffa400;
 }

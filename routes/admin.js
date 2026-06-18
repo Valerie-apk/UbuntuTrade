@@ -326,6 +326,8 @@ router.put('/sellers/:id/status', async (req, res) => {
         const { sellerStatus, isSuspended, adminId } = req.body;
         const allowed = ['Pending', 'Approved', 'Flagged'];
         if (!allowed.includes(sellerStatus)) return res.status(400).json({ message: 'Invalid sellerStatus' });
+        const [[previousSeller]] = await pool.query('SELECT sellerStatus FROM users WHERE id = ?', [req.params.id]);
+
         await pool.query(
             `UPDATE users SET role = 'Seller', sellerStatus = ?, isVerified = ?, isSuspended = ? WHERE id = ?`,
             [sellerStatus, sellerStatus === 'Approved' ? 1 : 0, isSuspended ? 1 : 0, req.params.id]
@@ -339,7 +341,7 @@ router.put('/sellers/:id/status', async (req, res) => {
         );
 
         // Create notification for seller if approved
-        if (sellerStatus === 'Approved') {
+        if (sellerStatus === 'Approved' && previousSeller && previousSeller.sellerStatus !== 'Approved') {
             try {
                 await Notification.create({
                     userId: req.params.id,

@@ -93,11 +93,11 @@ router.post('/checkout', async (req, res) => {
                     .join(', ');
                 return Notification.create({
                     userId: Number(sellerId),
-                    type: 'new_paid_order',
-                    title: 'New paid order received',
+                    type: 'new_order',
+                    title: 'Item purchased',
                     message: `Order #${orderId} has been paid for. Items: ${itemsList}. Total: R${Number(paidOrder.total || amount).toLocaleString()}.`,
                     relatedId: orderId,
-                    actionUrl: `/admin/admin.html#orders`
+                    actionUrl: `/dashboard/my-products.html`
                 });
             }));
         } catch (notifyErr) {
