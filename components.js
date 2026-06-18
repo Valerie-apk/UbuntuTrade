@@ -299,17 +299,23 @@
                         
                         // Create dropdown if it doesn't exist
                         if (!notifDropdown) {
+                            var originalParent = bellBtn.parentNode;
+                            var nextSibling = bellBtn.nextSibling;
+                            var notifContainer = document.createElement('div');
+                            notifContainer.className = 'nav-notifications-dropdown';
+
                             notifDropdown = document.createElement('div');
                             notifDropdown.className = 'nav-notif-menu';
                             notifDropdown.innerHTML = '<div style="padding:20px;text-align:center;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
-                            bellBtn.insertAdjacentElement('afterend', notifDropdown);
 
-                            var notifContainer = document.createElement('div');
-                            notifContainer.className = 'nav-notifications-dropdown';
                             notifContainer.appendChild(bellBtn);
                             notifContainer.appendChild(notifDropdown);
-                            bellBtn.parentNode.replaceChild(notifContainer, bellBtn);
+                            originalParent.insertBefore(notifContainer, nextSibling);
                             bellBtn = notifContainer.querySelector('#navBellBtn');
+
+                            notifDropdown.addEventListener('click', function (event) {
+                                event.stopPropagation();
+                            });
                         }
 
                         // Toggle dropdown
