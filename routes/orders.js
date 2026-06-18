@@ -27,6 +27,48 @@ router.get('/:userId', async (req, res) => {
     }
 });
 
+// PUT /api/orders/:id/cancel
+router.put('/:id/cancel', async (req, res) => {
+    const conn = await pool.getConnection();
+    try {
+        const { userId } = req.body;
+        if (!userId) return res.status(400).json({ message: 'userId is required' });
+
+        await conn.beginTransaction();
+
+        const [[order]] = await conn.query('SELECT id, userId, status FROM orders WHERE id = ? FOR UPDATE', [req.params.id]);
+        if (!order) {
+            await conn.rollback();
+            return res.status(404).json({ message: 'Order not found' });
+        }
+        if (Number(order.userId) !== Number(userId)) {
+            await conn.rollback();
+            return res.status(403).json({ message: 'You cannot cancel this order' });
+        }
+        if (!['Pending', 'Paid', 'Processing'].includes(order.status)) {
+            await conn.rollback();
+            return res.status(409).json({ message: 'This order can no longer be cancelled' });
+        }
+
+        await conn.query('UPDATE orders SET status = ? WHERE id = ?', ['Cancelled', req.params.id]);
+        await conn.query(
+            `UPDATE products p
+             JOIN order_items oi ON oi.productId = p.id
+             SET p.status = 'Active', p.soldCount = GREATEST(p.soldCount - oi.quantity, 0)
+             WHERE oi.orderId = ? AND p.status = 'Sold'`,
+            [req.params.id]
+        );
+
+        await conn.commit();
+        res.json({ success: true, message: 'Order cancelled' });
+    } catch (err) {
+        await conn.rollback();
+        res.status(500).json({ success: false, error: err.message });
+    } finally {
+        conn.release();
+    }
+});
+
 // POST /api/orders/checkout
 router.post('/checkout', async (req, res) => {
     const conn = await pool.getConnection();

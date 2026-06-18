@@ -131,6 +131,11 @@
             color: #0369a1;
         }
 
+        .order-status.paid {
+            background: #eaf4ff;
+            color: #1d4ed8;
+        }
+
         .order-status.delivered {
             background: #ddf8e3;
             color: #15803d;
@@ -232,6 +237,26 @@
 
         .btn-receipt:hover {
             background: #e8e8e8;
+        }
+
+        .btn-cancel-order {
+            padding: 8px 16px;
+            background: #fff;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .btn-cancel-order:hover {
+            background: #fff1f2;
+            border-color: #fca5a5;
         }
 
         .empty-state {
@@ -376,7 +401,8 @@
             }
 
             .btn-view,
-            .btn-receipt {
+            .btn-receipt,
+            .btn-cancel-order {
                 flex: 1;
                 justify-content: center;
                 min-width: 130px;
@@ -405,7 +431,8 @@
             }
 
             .btn-view,
-            .btn-receipt {
+            .btn-receipt,
+            .btn-cancel-order {
                 width: 100%;
             }
         }
@@ -546,10 +573,12 @@
                 const statusClass = order.status.toLowerCase();
                 const statusIcon = {
                     'pending': 'fa-clock',
+                    'paid': 'fa-credit-card',
                     'processing': 'fa-box',
                     'delivered': 'fa-check-circle',
                     'cancelled': 'fa-times-circle'
                 }[statusClass] || 'fa-circle';
+                const canCancel = ['Pending', 'Paid', 'Processing'].includes(order.status);
 
                 const orderDate = new Date(order.createdAt).toLocaleDateString('en-ZA', {
                     year: 'numeric',
@@ -584,6 +613,11 @@
                                 <button class="btn-receipt" onclick="showReceipt(${order.id})">
                                     <i class="fas fa-receipt"></i> Receipt
                                 </button>
+                                ${canCancel ? `
+                                    <button class="btn-cancel-order" onclick="cancelOrder(${order.id})">
+                                        <i class="fas fa-ban"></i> Cancel Order
+                                    </button>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -652,6 +686,22 @@
 
         function closeReceiptModal() {
             document.getElementById('receiptModal').classList.remove('active');
+        }
+
+        async function cancelOrder(orderId) {
+            if (!confirm('Cancel this order?')) return;
+            try {
+                const response = await fetch(`/api/orders/${orderId}/cancel`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user.id })
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || 'Could not cancel order');
+                await loadOrders();
+            } catch (err) {
+                alert(err.message);
+            }
         }
 
         // Status filter buttons
