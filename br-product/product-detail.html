@@ -48,8 +48,7 @@
                     <section class="product-info-panel" aria-label="Product information">
                         <h1 id="productName" style="color:#aaa;font-style:italic;">Loading...</h1>
 
-                        <div class="rating-row" id="productRating">
-                            <span><i class="fas fa-star"></i> —</span>
+                        <div class="product-sales-row" id="productSales">
                             <span>— sold</span>
                         </div>
 
@@ -216,8 +215,7 @@
             document.getElementById('productName').textContent = p.name;
             document.getElementById('productName').style.cssText = '';
             document.getElementById('productPrice').textContent = 'R' + Number(p.price).toLocaleString();
-            document.getElementById('productRating').innerHTML =
-                `<span><i class="fas fa-star" style="color:#f5a623;"></i> ${p.rating || '0'} (${p.reviewCount || 0} reviews)</span><span>${p.soldCount || 0} sold</span>`;
+            document.getElementById('productSales').innerHTML = `<span>${p.soldCount || 0} sold</span>`;
 
             document.getElementById('productMeta').innerHTML = `
                 <div><span>Condition:</span><strong class="condition-pill">${p.condition || 'N/A'}</strong></div>
@@ -239,7 +237,6 @@
                 document.getElementById('sellerProfile').innerHTML =
                     `${avatarHTML}<div><h3>${p.seller.username || p.seller.fullName}</h3><span>${p.seller.isVerified ? 'Verified Seller' : 'Seller'}</span></div>`;
                 document.getElementById('sellerStats').innerHTML = `
-                    <li><i class="fas fa-star"></i> <strong>${p.seller.rating || '0'}</strong> rating</li>
                     <li><i class="fas fa-location-dot"></i> ${p.seller.location || 'SA'}</li>
                     <li><i class="far fa-message"></i> Response rate: ${p.seller.responseRate || 'N/A'}%</li>
                 `;

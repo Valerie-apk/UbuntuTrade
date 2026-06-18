@@ -134,7 +134,7 @@
     line-height: 1.2;
 }
 
-.rating-row {
+.product-sales-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -143,14 +143,12 @@
     color: #374151;
 }
 
-.rating-row span + span {
+.product-sales-row span + span {
     border-left: 1px solid #d9dee7;
     padding-left: 14px;
 }
 
-.rating-row i,
-.recommendation-card span i,
-.seller-stats i.fa-star {
+.recommendation-card span i {
     color: #ffa400;
 }
 
@@ -329,7 +327,7 @@
     align-items: center;
 }
 
-.seller-stats i:not(.fa-star) {
+.seller-stats i {
     color: #313844;
     width: 16px;
 }
