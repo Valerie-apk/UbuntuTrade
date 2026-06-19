@@ -4,6 +4,26 @@
     padding: 26px 30px 36px;
 }
 
+.seller-back-btn {
+    min-height: 40px;
+    border: 1px solid #dce2ea;
+    border-radius: 7px;
+    background: white;
+    color: #313844;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 800;
+    margin-bottom: 18px;
+    padding: 0 14px;
+}
+
+.seller-back-btn:hover {
+    border-color: #ef4d00;
+    color: #ef4d00;
+}
+
 .seller-hero {
     display: grid;
     grid-template-columns: 220px minmax(250px, 0.8fr) minmax(380px, 1.25fr);

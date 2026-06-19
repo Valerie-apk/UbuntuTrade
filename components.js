@@ -139,7 +139,7 @@
             ? '<img src="' + user.avatarUrl + '" alt="' + name + '" onerror="this.outerHTML=\'<span>' + initial + '</span>\'">'
             : initial;
 
-        var logoHref = type === 'admin' ? '/admin/admin.html' : '/dashboard/market.html';
+        var logoHref = '/index/index.html';
         var bellHTML = user ? '<button class="navbar-bell-btn" id="navBellBtn" aria-label="Notifications" title="Notifications" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;position:relative;">' +
               '<i class="fas fa-bell"></i>' +
               '<span class="navbar-notif-count" id="navNotifCount" style="position:absolute;top:-5px;right:-5px;background:#e04a2f;color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;display:none;"></span>' +
