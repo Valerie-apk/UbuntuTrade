@@ -9,6 +9,115 @@
     <link rel="stylesheet" href="my-products.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/components.js"></script>
+    <style>
+        .edit-product-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .45);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .edit-product-dialog {
+            width: min(760px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: #fff;
+            border-radius: 8px;
+            padding: 22px;
+            box-shadow: 0 18px 50px rgba(15, 23, 42, .22);
+        }
+
+        .edit-product-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .edit-product-header h2 {
+            margin: 0;
+            font-size: 22px;
+            color: #1f2933;
+        }
+
+        .edit-product-close {
+            border: 0;
+            background: #f3f4f6;
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .edit-product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .edit-product-field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .edit-product-field input,
+        .edit-product-field select,
+        .edit-product-field textarea {
+            border: 1px solid #d8dde5;
+            border-radius: 6px;
+            padding: 11px 12px;
+            font: inherit;
+            font-weight: 400;
+            color: #111827;
+        }
+
+        .edit-product-field textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .edit-product-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .edit-product-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .edit-product-save {
+            border: 0;
+            border-radius: 6px;
+            background: #e07b39;
+            color: #fff;
+            height: 42px;
+            padding: 0 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .edit-product-status {
+            font-size: 13px;
+            color: #168c34;
+        }
+
+        @media (max-width: 700px) {
+            .edit-product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body class="dashboard-page">
     <div id="navbarContainer"></div>
@@ -107,6 +216,74 @@
         </div>
     </footer>
 
+    <div class="edit-product-modal" id="editProductModal">
+        <form class="edit-product-dialog" id="editProductForm">
+            <div class="edit-product-header">
+                <h2>Edit Product</h2>
+                <button class="edit-product-close" type="button" id="closeEditProduct" aria-label="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <input type="hidden" id="editProductId">
+            <div class="edit-product-grid">
+                <label class="edit-product-field">
+                    Product title
+                    <input id="editName" required>
+                </label>
+                <label class="edit-product-field">
+                    Price (R)
+                    <input id="editPrice" type="number" min="0" required>
+                </label>
+                <label class="edit-product-field">
+                    Category
+                    <select id="editCategory" required>
+                        <option value="">Select a category</option>
+                        <option value="Shoes">Shoes</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Home & Living">Home &amp; Living</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Jewelry">Jewelry</option>
+                    </select>
+                </label>
+                <label class="edit-product-field">
+                    Condition
+                    <select id="editCondition" required>
+                        <option value="">Select condition</option>
+                        <option value="Brand New">Brand New</option>
+                        <option value="Like New">Like New</option>
+                        <option value="Good">Good</option>
+                        <option value="Used">Used</option>
+                    </select>
+                </label>
+                <label class="edit-product-field">
+                    Location
+                    <input id="editLocation" required>
+                </label>
+                <label class="edit-product-field">
+                    Status
+                    <select id="editStatus">
+                        <option value="Active">Active</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Sold">Sold</option>
+                        <option value="Removed">Removed</option>
+                    </select>
+                </label>
+                <label class="edit-product-field full">
+                    Image URL
+                    <input id="editImageUrl" type="url" placeholder="https://example.com/image.jpg">
+                </label>
+                <label class="edit-product-field full">
+                    Description
+                    <textarea id="editDescription" maxlength="500" required></textarea>
+                </label>
+            </div>
+            <div class="edit-product-actions">
+                <button class="edit-product-save" type="submit"><i class="fas fa-save"></i> Save Product</button>
+                <span class="edit-product-status" id="editProductStatus"></span>
+            </div>
+        </form>
+    </div>
+
     <script>
         UTComponents.init({ type: 'customer', activePage: 'my-products' });
         const user = UTComponents.getUser();
@@ -144,10 +321,31 @@
                     <td>${p.views || 0}</td>
                     <td><span class="date">${formatDate(p.createdAt)}</span></td>
                     <td class="actions-cell">
+                        <button class="action-btn edit-btn" data-id="${p.id}" title="Edit"><i class="fas fa-pen"></i> Edit</button>
                         <button class="action-btn delete-btn" data-id="${p.id}" title="Delete"><i class="fas fa-trash"></i> Delete</button>
                     </td>
                 </tr>`).join('');
             updateTabCounts(products);
+        }
+
+        function openEditProduct(id) {
+            const product = allProducts.find(p => String(p.id) === String(id));
+            if (!product) return;
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('editName').value = product.name || '';
+            document.getElementById('editPrice').value = product.price || '';
+            document.getElementById('editCategory').value = product.category || '';
+            document.getElementById('editCondition').value = product.condition || '';
+            document.getElementById('editLocation').value = product.location || '';
+            document.getElementById('editStatus').value = product.status || 'Active';
+            document.getElementById('editImageUrl').value = product.imageUrl || '';
+            document.getElementById('editDescription').value = product.description || '';
+            document.getElementById('editProductStatus').textContent = '';
+            document.getElementById('editProductModal').style.display = 'flex';
+        }
+
+        function closeEditProduct() {
+            document.getElementById('editProductModal').style.display = 'none';
         }
 
         function updateTabCounts(products) {
@@ -185,6 +383,11 @@
 
         // Delete
         document.getElementById('myProductsBody').addEventListener('click', async function(e) {
+            const editBtn = e.target.closest('.edit-btn');
+            if (editBtn) {
+                openEditProduct(editBtn.dataset.id);
+                return;
+            }
             const btn = e.target.closest('.delete-btn');
             if (!btn) return;
             if (!confirm('Are you sure you want to remove this product?')) return;
@@ -196,6 +399,47 @@
                     renderProducts(allProducts);
                 }
             } catch (err) { alert('Failed to delete product.'); }
+        });
+
+        document.getElementById('closeEditProduct').addEventListener('click', closeEditProduct);
+        document.getElementById('editProductModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEditProduct();
+        });
+
+        document.getElementById('editProductForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!user) return;
+            const id = document.getElementById('editProductId').value;
+            const status = document.getElementById('editProductStatus');
+            const body = {
+                userId: user.id,
+                name: document.getElementById('editName').value.trim(),
+                price: document.getElementById('editPrice').value,
+                category: document.getElementById('editCategory').value,
+                condition: document.getElementById('editCondition').value,
+                location: document.getElementById('editLocation').value.trim(),
+                status: document.getElementById('editStatus').value,
+                imageUrl: document.getElementById('editImageUrl').value.trim(),
+                description: document.getElementById('editDescription').value.trim()
+            };
+            status.style.color = '#168c34';
+            status.textContent = 'Saving...';
+            try {
+                const res = await fetch('/api/products/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || data.error || 'Failed to save product');
+                allProducts = allProducts.map(p => String(p.id) === String(id) ? data.data : p);
+                renderProducts(allProducts);
+                status.textContent = 'Saved';
+                setTimeout(closeEditProduct, 700);
+            } catch (err) {
+                status.style.color = '#d33';
+                status.textContent = err.message || 'Failed to save product';
+            }
         });
 
         // Search

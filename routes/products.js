@@ -65,6 +65,9 @@ router.put('/:id', async (req, res) => {
     try {
         const existing = await Product.findById(req.params.id);
         if (!existing) return res.status(404).json({ message: 'Product not found' });
+        if (req.body.userId && Number(existing.userId) !== Number(req.body.userId)) {
+            return res.status(403).json({ message: 'You can only edit your own products' });
+        }
         const updated = await Product.update(req.params.id, req.body);
         if (!updated) return res.status(400).json({ message: 'No valid fields to update' });
         res.json({ success: true, message: 'Product updated successfully', data: updated });
